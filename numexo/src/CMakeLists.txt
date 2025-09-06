@@ -1,0 +1,7 @@
+add_library(NPnumexo SHARED NumexoDetector.cxx NumexoSpectra.cxx)
+target_link_libraries(NPnumexo PUBLIC PUBLIC ROOT::RIO ROOT::Hist ROOT::Tree ROOT::Gpad ROOT::Physics ROOT::Imt NPRoot nptool )
+if(MFM_FOUND)
+  target_compile_definitions(NPnumexo PUBLIC MFM_FOUND)
+  target_link_libraries(NPnumexo PUBLIC ${MFMCOMPLIB})
+endif()
+install(DIRECTORY ./ DESTINATION ${CMAKE_INCLUDE_OUTPUT_DIRECTORY} FILES_MATCHING PATTERN "*.h" )

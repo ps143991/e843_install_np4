@@ -1,0 +1,4 @@
+analysis analysis libNPUserAnalysis.so
+analysis_tac analysis_tac libNPUserAnalysisTAC.so
+analysis_beamspot analysis_beamspot libNPUserAnalysisBEAMSPOT.so
+analysis_zdd analysis_zdd libNPUserAnalysisZDD.so

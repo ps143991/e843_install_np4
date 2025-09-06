@@ -1,0 +1,10 @@
+module "NPRoot" {
+  requires cplusplus
+  module "NPRootHTMLUserInterface.h" { header "NPRootHTMLUserInterface.h" export * }
+  module "NPRootAsciiFile.h" { header "NPRootAsciiFile.h" export * }
+  module "NPRootTreeServer.h" { header "NPRootTreeServer.h" export * }
+  module "NPRootTreeClient.h" { header "NPRootTreeClient.h" export * }
+  link "libNPRoot.so"
+  export *
+}
+

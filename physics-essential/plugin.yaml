@@ -1,0 +1,13 @@
+Package:
+ name: physics-essential 
+ type: library
+ groups: essential
+ url: https://gitlab.in2p3.fr/nptool/physics-essential.git
+ version: 0.1
+ author: Adrien Matta
+ mail: matta@lpccaen.in2p3.fr
+ description: Basic class used to describe particle, nuclei, quadrivector, ...
+ dependencies: root
+Plugin: 
+ token: physics-essential
+ library: NPPhysicsEssential

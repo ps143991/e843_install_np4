@@ -1,0 +1,19 @@
+zdd:
+ Type: PL
+ Board: 208
+ NUMEXOChannel: 0 1 2 3 4 5 6 7 8 9 
+
+zdd:
+ Type: IC 
+ Board: 215
+ NUMEXOChannel: 0 1 2 3 8 9
+
+zdd:
+ Type: DC
+ Board: 212
+ NUMEXOChannel: 0 1 2 3
+
+zdd:
+ Type: EXO
+ Board: 218
+ NUMEXOChannel: 0 1 2 3

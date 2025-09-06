@@ -1,0 +1,59 @@
+# ---- Compiled object files, shared libs, executables ----
+*.o
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+
+# ---- Libraries and archives ----
+*.a
+*.la
+*.lo
+
+# ---- Build directories ----
+build/
+cmake-build*/
+CMakeFiles/
+CMakeCache.txt
+Makefile
+*.ninja
+*.ninja_deps
+*.ninja_log
+compile_commands.json
+Testing/
+CTestTestfile.cmake
+install_manifest.txt
+
+# ---- ROOT files ----
+*.root
+*.pcm
+*.ds
+*.rint
+*.ps
+data/
+*.zip
+*.tar
+
+
+# ---- Logs and temp files ----
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+*.old
+*~
+
+# ---- IDE/editor specific ----
+.vscode/
+.idea/
+*.code-workspace
+
+# ---- Mac specific ----
+.DS_Store
+
+# ---- Linux specific ----
+*.lock

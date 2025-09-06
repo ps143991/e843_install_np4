@@ -1,0 +1,7 @@
+source:
+  position: 0 0 0 mm
+  particle: 12C 
+  energies: 5 6 7 MeV
+  half-angle-min: 0 deg
+  half-angle-max: 10 deg
+ 

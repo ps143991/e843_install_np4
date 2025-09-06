@@ -1,0 +1,131 @@
+exogam:
+   Board: 113
+   Flange: 2
+   NUMEXOChannel: 0 1
+   NUMEXOChannelGroup: 0
+exogam:
+   Board: 119
+   Flange: 2
+   NUMEXOChannel: 2 3
+   NUMEXOChannelGroup: 1
+
+exogam:
+   Board: 123
+   Flange: 3
+   NUMEXOChannel: 0 1
+   NUMEXOChannelGroup: 0
+exogam:
+   Board: 134
+   Flange: 3
+   NUMEXOChannel: 2 3
+   NUMEXOChannelGroup: 1
+
+exogam:
+   Board: 125
+   Flange: 4
+   NUMEXOChannel: 0 1
+   NUMEXOChannelGroup: 0
+exogam:
+   Board: 128
+   Flange: 4
+   NUMEXOChannel: 2 3
+   NUMEXOChannelGroup: 1
+
+exogam:
+   Board: 132
+   Flange: 5
+   NUMEXOChannel: 0 1
+   NUMEXOChannelGroup: 0
+exogam:
+   Board: 117
+   Flange: 5
+   NUMEXOChannel: 2 3
+   NUMEXOChannelGroup: 1
+
+exogam:
+   Board: 138
+   Flange: 6
+   NUMEXOChannel: 0 1
+   NUMEXOChannelGroup: 0
+exogam:
+   Board: 136
+   Flange: 6
+   NUMEXOChannel: 2 3
+   NUMEXOChannelGroup: 1
+
+exogam:
+   Board: 133
+   Flange: 7
+   NUMEXOChannel: 0 1
+   NUMEXOChannelGroup: 0
+exogam:
+   Board: 141
+   Flange: 7
+   NUMEXOChannel: 2 3
+   NUMEXOChannelGroup: 1
+
+exogam:
+   Board: 116
+   Flange: 8
+   NUMEXOChannel: 0 1
+   NUMEXOChannelGroup: 0
+exogam:
+   Board: 126
+   Flange: 8
+   NUMEXOChannel: 2 3
+   NUMEXOChannelGroup: 1
+
+exogam:
+   Board: 135
+   Flange: 9
+   NUMEXOChannel: 0 1
+   NUMEXOChannelGroup: 0
+exogam:
+   Board: 108
+   Flange: 9
+   NUMEXOChannel: 2 3
+   NUMEXOChannelGroup: 1
+
+exogam:
+   Board: 124
+   Flange: 10
+   NUMEXOChannel: 0 1
+   NUMEXOChannelGroup: 0
+exogam:
+   Board: 118
+   Flange: 10
+   NUMEXOChannel: 2 3
+   NUMEXOChannelGroup: 1
+
+exogam:
+   Board: 111
+   Flange: 11
+   NUMEXOChannel: 0 1
+   NUMEXOChannelGroup: 0
+exogam:
+   Board: 130
+   Flange: 11
+   NUMEXOChannel: 2 3
+   NUMEXOChannelGroup: 1
+
+exogam:
+   Board: 121
+   Flange: 12
+   NUMEXOChannel: 0 1
+   NUMEXOChannelGroup: 0
+exogam:
+   Board: 127
+   Flange: 12
+   NUMEXOChannel: 2 3
+   NUMEXOChannelGroup: 1
+
+exogam:
+   Board: 122
+   Flange: 13
+   NUMEXOChannel: 0 1
+   NUMEXOChannelGroup: 0
+exogam:
+   Board: 129
+   Flange: 13
+   NUMEXOChannel: 2 3
+   NUMEXOChannelGroup: 1

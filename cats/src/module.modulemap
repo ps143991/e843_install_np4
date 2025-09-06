@@ -1,0 +1,9 @@
+module "NPCats" {
+  requires cplusplus
+  module "CatsData.h" { header "CatsData.h" export * }
+  module "CatsPhysics.h" { header "CatsPhysics.h" export * }
+  module "CatsSpectra.h" { header "CatsSpectra.h" export * }
+  link "libNPCats.so"
+  export *
+}
+

@@ -1,0 +1,48 @@
+CalibrationFilePath
+%%%MUST2 Energy%%%%
+  /home/aktas/lise2024/calibration/Energy/Calibration/lise2024_alpha_run155/Cal_Str_X_E_MM1.cal
+  /home/aktas/lise2024/calibration/Energy/Calibration/lise2024_alpha_run155/Cal_Str_X_E_MM2.cal
+  /home/aktas/lise2024/calibration/Energy/Calibration/lise2024_alpha_run155/Cal_Str_X_E_MM3.cal
+  /home/aktas/lise2024/calibration/Energy/Calibration/lise2024_alpha_run155/Cal_Str_X_E_MM4.cal
+  /home/aktas/lise2024/calibration/Energy/Calibration/lise2024_alpha_run155/Cal_Str_Y_E_MM1.cal
+  /home/aktas/lise2024/calibration/Energy/Calibration/lise2024_alpha_run155/Cal_Str_Y_E_MM2.cal
+  /home/aktas/lise2024/calibration/Energy/Calibration/lise2024_alpha_run155/Cal_Str_Y_E_MM3.cal
+  /home/aktas/lise2024/calibration/Energy/Calibration/lise2024_alpha_run155/Cal_Str_Y_E_MM4.cal
+%%%%MUST2 TIME %%%%%
+  /home/aktas/lise2024/calibration/Time/Coeff/Cal_Str_X_T_MM1_r0512.cal
+  /home/aktas/lise2024/calibration/Time/Coeff/Cal_Str_X_T_MM2_r0512.cal
+  /home/aktas/lise2024/calibration/Time/Coeff/Cal_Str_X_T_MM3_r0514.cal
+  /home/aktas/lise2024/calibration/Time/Coeff/Cal_Str_X_T_MM4_r0516.cal
+  /home/aktas/lise2024/calibration/Time/Coeff/Cal_Str_Y_T_MM1_r0513.cal
+  /home/aktas/lise2024/calibration/Time/Coeff/Cal_Str_Y_T_MM2_r0513.cal
+  /home/aktas/lise2024/calibration/Time/Coeff/Cal_Str_Y_T_MM3_r0515.cal
+  /home/aktas/lise2024/calibration/Time/Coeff/Cal_Str_Y_T_MM4_r0517.cal
+%%%CSI %%%%%%
+  /home/aktas/lise2024/calibration/CsI/calib/CsI_MM1.txt
+  /home/aktas/lise2024/calibration/CsI/calib/CsI_MM2.txt
+  /home/aktas/lise2024/calibration/CsI/calib/CsI_MM3.txt
+  /home/aktas/lise2024/calibration/CsI/calib/CsI_MM4.txt
+%%%CATS%%%%%
+  %% Cal e869
+  %/home/aktas/lise2024/calibration/CATS/CATS1X/CATSLin1X_r0129wPedes.txt
+  %/home/aktas/lise2024/calibration/CATS/CATS1Y/CATSLin1Y_r0129.txt
+  %/home/aktas/lise2024/calibration/CATS/CATS2X/CATSLin2X_r0041.txt
+  %/home/aktas/lise2024/calibration/CATS/CATS2Y/CATSLin2Y_r0041.txt
+
+  %% Cal e870
+  /home/aktas/lise2024/calibration/CATS/CATS1X/CATS_D1_X_Cal5p.txt
+  /home/aktas/lise2024/calibration/CATS/CATS1Y/CATS_D1_Y_Cal5p.txt
+  %% Good cal up to run 233
+  %% /home/aktas/lise2024/calibration/CATS/CATS2X/CATS_D2_X_Cal5p.txt
+  %% /home/aktas/lise2024/calibration/CATS/CATS2Y/CATS_D2_Y_Cal5p.txt
+  %% Good cal after run 233
+  /home/aktas/lise2024/calibration/CATS/CATS2X/CATS_D2_X_Cal.txt
+  /home/aktas/lise2024/calibration/CATS/CATS2Y/CATS_D2_Y_Cal.txt
+
+%%%EXOGAM%%%%%
+  /home/aktas/lise2024/calibration/Exogam/exogam183jun20/Exogam_E/Cal_Exogam_E.cal
+  /home/aktas/lise2024/calibration/Exogam/exogam183jun20/Exogam_EHG/Cal_Exogam_EHG.cal
+  /home/aktas/lise2024/calibration/Exogam/exogam183jun20/Exogam_Outer/Cal_Exogam_Outer.cal
+
+%%%EXOZDD%%%%%
+  /home/aktas/lise2024/calibration/ZDDExo_E/ExoZDD.cal

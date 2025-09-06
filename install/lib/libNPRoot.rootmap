@@ -1,0 +1,12 @@
+{ decls }
+namespace nptool {  }
+namespace nptool { namespace root {  } }
+
+[ libNPRoot.so ]
+# List of selected classes
+class nptool::RootAsciiFile
+class nptool::root::RootTreeClient
+class nptool::root::RootTreeServer
+header NPRootAsciiFile.h
+header NPRootTreeClient.h
+header NPRootTreeServer.h

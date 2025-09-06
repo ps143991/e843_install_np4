@@ -1,0 +1,9 @@
+module "NPTac" {
+  requires cplusplus
+  module "TacData.h" { header "TacData.h" export * }
+  module "TacPhysics.h" { header "TacPhysics.h" export * }
+  module "TacSpectra.h" { header "TacSpectra.h" export * }
+  link "libNPTac.so"
+  export *
+}
+

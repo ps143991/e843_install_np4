@@ -1,0 +1,9 @@
+module "NPMust2" {
+  requires cplusplus
+  module "Must2Data.h" { header "Must2Data.h" export * }
+  module "Must2Physics.h" { header "Must2Physics.h" export * }
+  module "Must2Spectra.h" { header "Must2Spectra.h" export * }
+  link "libNPMust2.so"
+  export *
+}
+

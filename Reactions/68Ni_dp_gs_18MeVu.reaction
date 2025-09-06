@@ -1,0 +1,33 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%% Reaction file for 68Ni(p,d)67Ni reaction %%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Beam
+  Particle= 68Ni
+  Energy= 1224 MeV
+  SigmaEnergy= 60 MeV
+  ExcitationEnergy= 0.0 MeV
+  SigmaThetaX= 0.1 mrad
+  SigmaPhiY= 0.1 mrad
+  SigmaX= 2 mm
+  SigmaY= 2 mm
+  MeanThetaX= 0 mrad
+  MeanPhiY= 0 mrad
+  MeanX= 0 mm
+  MeanY= 0 mm
+  %EnergyProfilePath= eLise.txt EL
+  %XThetaXProfilePath=
+  %YPhiYProfilePath=
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+TwoBodyReaction
+ Beam= 68Ni
+ Target= 2H
+ Light= 1H
+ Heavy= 69Ni
+ ExcitationEnergyLight= 0.0 MeV
+ ExcitationEnergyHeavy= 0.0 MeV
+ %CrossSectionPath= Reactions/58Ni_pd_gs.txt CS58Ni1
+ CrossSectionPath= flat.txt CSflat
+ ShootLight= 1
+ ShootHeavy= 1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

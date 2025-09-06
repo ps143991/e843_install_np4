@@ -1,0 +1,39 @@
+### a detector file in yaml format
+# a target block with a subblock
+target:
+ thickness: 15 um
+ radius: 2 mm
+ material: CD2
+ angle: 0 deg
+ x: 1 mm
+ y: 2 mm
+ z: 3 mm
+ stl file: "/path/to/stl"
+ material: 
+ name: CD2
+ density: 1.06 g/cm3
+
+zdd:
+ Type: PL
+ Board: 208
+ NUMEXOChannel: 0 1 2 3 4 5 6 7 8 9 
+
+zdd:
+ Type: IC 
+ Board: 215
+ NUMEXOChannel: 0 1 2 3
+
+zdd:
+ Type: DC
+ Board: 215
+ NUMEXOChannel: 12 13 14 15 
+
+zdd:
+ Type: EXO
+ Board: 212
+ NUMEXOChannel: 0 1 2 3
+ 
+tac:
+ Board: 216
+ NUMEXOChannel: 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
+ NUMEXOChannelName: TAC_D4_CATS1 TAC_CATS_HF TAC_CATS_PL TAC_CATS2_CATS1 TAC_CATS_EXOGAM TAC_MMG_CATS2 TAC_MMG_CATS1 TAC_MMG_EXOGAM TAC_D4_CATS1_LISE T_CATSD6_1_DD4 T_CATS1_HF_LISE TAC_PL_1 TAC_PL_2 TAC_PL_3 TAC_PL_4 TAC_PL_5

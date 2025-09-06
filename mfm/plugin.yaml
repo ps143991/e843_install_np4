@@ -1,0 +1,25 @@
+Package:
+ name: mfm
+ type: dataformat
+ groups: data
+ url: https://gitlab.in2p3.fr/valerian.girard-alcindor/mfm
+ version: 0.1
+ author: Valerian Girard-Alcindor
+ mail: girard-alcindor@ijclab.in2p3.fr
+ description: mfm
+ dependencies: root
+
+Plugin: 
+  token: mfm
+  library: NPMfm
+ 
+PluginCitation:
+ type: 
+ citation: 
+ url: 
+
+PluginCitation:
+ type: 
+ citation: 
+ url: 
+

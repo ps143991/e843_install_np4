@@ -1,0 +1,29 @@
+Package:
+ name: must2
+ type: detector
+ groups: ganil silicon
+ url: https://gitlab.in2p3.fr/mugast/must2
+ version: 0.1
+ author: Adrien Matta
+ mail: matta@lpccaen.in2p3.fr
+ description: MUST2 (Mur a Strip version 2) is a set of Si-Si(Li)-CsI telescopes used for direct reaction studies
+ dependencies: root
+
+Plugin: 
+  token: must2
+  library: NPMust2
+
+Plugin: 
+  token: must2-geant4
+  library: NPMust2Geant4
+ 
+PluginCitation:
+ type: Detector
+ citation: E.C Pollacco and the MUST2 collab EPJA 25, 287 (2005)
+ url: https://link.springer.com/article/10.1140%2Fepjad%2Fi2005-06-162-5
+
+PluginCitation:
+ type: Analysis
+ citation: something else
+ url: www.another-link.org
+

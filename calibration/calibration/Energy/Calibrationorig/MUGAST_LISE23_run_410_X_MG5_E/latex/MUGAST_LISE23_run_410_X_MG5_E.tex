@@ -1,0 +1,107 @@
+\documentclass[a4paper,6pt]{article}
+\usepackage[french]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{fullpage}
+\topmargin = 0pt
+\headsep = 0pt
+\begin{document}
+\title{Mugast DSSD Energy Calibration Report}
+\date{}
+\maketitle
+\section{Calibration Summary}
+\begin{itemize}
+	 \item[{\bf Experiment:}] MUGAST_LISE23
+	 \item[{\bf Operator:}] Laurie and Hugo
+	 \item[{\bf App. Date:}] 24/05/23
+	 \item[{\bf Source:}] 3 alpha peaks $^{239}$Pu, $^{241}$Am, $^{244}$Cm
+	 \item[{\bf Dead Layer:}] Al 0.3$\mu$m + Si 0$\mu$m
+	 \item[{\bf Comment:}] Mugast
+	 \item[] 
+	 \item[{\bf Calibration Method:}]  ZeroExtrapolation 
+	 \item[{\bf Telescope Treated:}]  5
+	 \item[{\bf Strip Treated:}]  1 to 128 
+	 \item[{\bf DSSD Side:}]  X
+\end{itemize}
+\begin{itemize}
+	 \item[] 
+	 \item[] 
+\end{itemize}
+{\bf Source Description:} 
+\begin{center}
+\begin{tabular}{ | c | c | c | } 
+\hline 
+Isotope & Original Energy (MeV) & Branching Ratio \\ \hline 
+$^{239}$Pu & 5.15659 & 70.77 \\ \hline
+$^{239}$Pu & 5.14438 & 17.11 \\ \hline
+$^{239}$Pu & 5.1055 & 11.94 \\ \hline
+$^{241}$Am & 5.48556 & 84.8 \\ \hline
+$^{241}$Am & 5.4428 & 13.1 \\ \hline
+$^{241}$Am & 5.388 & 1.66 \\ \hline
+$^{244}$Cm & 5.80477 & 76.4 \\ \hline
+$^{244}$Cm & 5.76264 & 23.6 \\ \hline
+\end{tabular} 
+\end{center}
+\pagebreak
+\section{Telescope 5 }
+ Bad Strip:
+\begin{center}
+\begin{tabular}{ | c | c | } 
+\hline 
+ Strip Number & Problem \\ \hline 
+1 &  zero extrapolation too high:-370.05channels;  \\ \hline 
+2 &  zero extrapolation too high:78.1288channels;  \\ \hline 
+3 &  zero extrapolation too high:49.3862channels;  \\ \hline 
+4 &  zero extrapolation too high:-63.0843channels;  \\ \hline 
+5 &  zero extrapolation too high:-103.74channels;  \\ \hline 
+8 &  zero extrapolation too high:-71.5282channels;  \\ \hline 
+9 &  0 peak(s) found; zero extrapolation too high:8203.4channels;  \\ \hline 
+10 &  0 peak(s) found; zero extrapolation too high:8203.4channels;  \\ \hline 
+12 &  0 peak(s) found; zero extrapolation too high:8203.4channels;  \\ \hline 
+13 &  0 peak(s) found; zero extrapolation too high:8203.4channels;  \\ \hline 
+15 &  zero extrapolation too high:116.189channels;  \\ \hline 
+16 &  zero extrapolation too high:89.3072channels;  \\ \hline 
+18 &  zero extrapolation too high:30.7649channels;  \\ \hline 
+21 &  zero extrapolation too high:34.5466channels;  \\ \hline 
+22 &  zero extrapolation too high:42.9763channels;  \\ \hline 
+23 &  zero extrapolation too high:30.3691channels;  \\ \hline 
+24 &  zero extrapolation too high:32.0163channels;  \\ \hline 
+25 &  zero extrapolation too high:-98.5421channels;  \\ \hline 
+30 &  zero extrapolation too high:33.0459channels;  \\ \hline 
+43 &  zero extrapolation too high:35.1432channels;  \\ \hline 
+50 &  zero extrapolation too high:31.3659channels;  \\ \hline 
+55 &  zero extrapolation too high:-42.098channels;  \\ \hline 
+57 &  zero extrapolation too high:39.263channels;  \\ \hline 
+62 &  2 peak(s) found; zero extrapolation too high:8203.4channels;  \\ \hline 
+88 &  zero extrapolation too high:31.0443channels;  \\ \hline 
+96 &  zero extrapolation too high:36.459channels;  \\ \hline 
+104 &  zero extrapolation too high:36.9861channels;  \\ \hline 
+108 &  zero extrapolation too high:36.2459channels;  \\ \hline 
+112 &  zero extrapolation too high:36.0279channels;  \\ \hline 
+114 &  zero extrapolation too high:32.4558channels;  \\ \hline 
+115 &  zero extrapolation too high:-70.8774channels;  \\ \hline 
+116 &  zero extrapolation too high:40.147channels;  \\ \hline 
+117 &  zero extrapolation too high:31.9332channels;  \\ \hline 
+118 &  2 peak(s) found; zero extrapolation too high:8203.4channels;  \\ \hline 
+119 &  zero extrapolation too high:-191.62channels;  \\ \hline 
+120 &  zero extrapolation too high:38.5017channels;  \\ \hline 
+121 &  2 peak(s) found; zero extrapolation too high:8203.4channels;  \\ \hline 
+122 &  zero extrapolation too high:75.6035channels;  \\ \hline 
+123 &  zero extrapolation too high:700.138channels;  \\ \hline 
+124 &  zero extrapolation too high:47.3656channels;  \\ \hline 
+126 &  zero extrapolation too high:808.016channels;  \\ \hline 
+127 &  zero extrapolation too high:1196.05channels;  \\ \hline 
+128 &  1 peak(s) found; zero extrapolation too high:8203.4channels;  \\ \hline 
+\end{tabular} 
+\end{center}
+\begin{figure}[htcb!]
+\begin{center}
+\includegraphics[width=0.7\textwidth]{./Calibration/MUGAST_LISE23_run_410_X_MG5_E/latex/pictures/Telescope5Summary.pdf}
+\end{center}
+\end{figure}
+\pagebreak
+Sigma fit centroid: 3.10388
+
+Sigma fit sigma: 0.363395
+
+\end{document}

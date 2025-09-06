@@ -1,0 +1,10 @@
+add_library(NPTac SHARED TacDetector.cxx TacData.cxx TacPhysics.cxx TacSpectra.cxx)
+# target_link_libraries(NPTac PUBLIC PUBLIC ROOT::RIO ROOT::Tree ROOT::Physics ROOT::Imt NPRoot nptool )
+target_link_libraries(NPTac PUBLIC PUBLIC ROOT::RIO ROOT::Tree ROOT::Physics ROOT::Gpad ROOT::Imt ROOT::Hist NPRoot nptool )
+
+if(MFM_FOUND)
+  target_compile_definitions(NPTac PUBLIC MFM_FOUND)
+  target_link_libraries(NPTac PUBLIC ${MFMCOMPLIB})
+endif()
+install(DIRECTORY ./ DESTINATION ${CMAKE_INCLUDE_OUTPUT_DIRECTORY} FILES_MATCHING PATTERN "*.h" )
+ROOT_GENERATE_DICTIONARY(TacDict TacData.h TacPhysics.h TacSpectra.h LINKDEF Taclinkdef.hh MODULE NPTac)

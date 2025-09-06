@@ -1,0 +1,9 @@
+{ decls }
+namespace zdd {  }
+
+[ libNPZdd.so ]
+# List of selected classes
+class zdd::ZddData
+class zdd::ZddPhysics
+header ZddData.h
+header ZddPhysics.h

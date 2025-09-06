@@ -1,0 +1,69 @@
+numexo:
+ Board: 216
+ NUMEXOChannel: 0 
+ NUMEXOChannelName: TAC_CATS_PL 
+
+numexo:
+ Board: 216
+ NUMEXOChannel: 1 
+ NUMEXOChannelName: TAC_MMG_EXOGAM
+
+numexo:
+ Board: 216
+ NUMEXOChannel: 2 
+ NUMEXOChannelName: TAC_CATS_EXOGAM
+
+numexo:
+ Board: 216
+ NUMEXOChannel: 3 
+ NUMEXOChannelName: TAC_MMG_CATS2 
+
+numexo:
+ Board: 216
+ NUMEXOChannel: 4 
+ NUMEXOChannelName: TAC_MMG_CATS1 
+
+numexo:
+ Board: 216
+ NUMEXOChannel: 5 
+ NUMEXOChannelName: TAC_CATS_HF
+
+numexo:
+ Board: 216
+ NUMEXOChannel: 6 
+ NUMEXOChannelName: TAC_CATS2_CATS1
+
+numexo:
+ Board: 216
+ NUMEXOChannel: 7 
+ NUMEXOChannelName: TAC_D4_CATS1
+
+numexo:
+ Board: 216
+ NUMEXOChannel: 8 
+ NUMEXOChannelName: TAC_PL_1
+
+numexo:
+ Board: 216
+ NUMEXOChannel: 9 
+ NUMEXOChannelName: TAC_PL2
+
+numexo:
+ Board: 216
+ NUMEXOChannel: 10
+ NUMEXOChannelName: TAC_PL3
+
+numexo:
+ Board: 216
+ NUMEXOChannel: 10
+ NUMEXOChannelName: TAC_PL4
+
+numexo:
+ Board: 216
+ NUMEXOChannel: 11
+ NUMEXOChannelName: TAC_PL5
+
+numexo:
+ Board: 216
+ NUMEXOChannel: 12
+ NUMEXOChannelName: TAC_DD6_DD4

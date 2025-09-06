@@ -1,0 +1,10 @@
+npreader -D ./DetectorConfiguration/ZDD_PS.detector -E ./Reactions/68Ni_dp_gs_18MeVu.reaction -R ./RunToTreat/RunToTreat_1_4.txt -O 4_PS_501_0.root -C Calibration.txt
+npreader -D ./DetectorConfiguration/ZDD_PS.detector -E ./Reactions/68Ni_dp_gs_18MeVu.reaction -R ./RunToTreat/RunToTreat_2_4.txt -O 4_PS_502_0.root -C Calibration.txt
+npreader -D ./DetectorConfiguration/ZDD_PS.detector -E ./Reactions/68Ni_dp_gs_18MeVu.reaction -R ./RunToTreat/RunToTreat_3_4.txt -O 4_PS_503_0.root -C Calibration.txt
+npreader -D ./DetectorConfiguration/ZDD_PS.detector -E ./Reactions/68Ni_dp_gs_18MeVu.reaction -R ./RunToTreat/RunToTreat_4_4.txt -O 4_PS_509_0.root -C Calibration.txt
+npreader -D ./DetectorConfiguration/ZDD_PS.detector -E ./Reactions/68Ni_dp_gs_18MeVu.reaction -R ./RunToTreat/RunToTreat_5_4.txt -O 4_PS_511_0.root -C Calibration.txt
+npreader -D ./DetectorConfiguration/ZDD_PS.detector -E ./Reactions/68Ni_dp_gs_18MeVu.reaction -R ./RunToTreat/RunToTreat_6_4.txt -O 4_PS_512_0.root -C Calibration.txt
+npreader -D ./DetectorConfiguration/ZDD_PS.detector -E ./Reactions/68Ni_dp_gs_18MeVu.reaction -R ./RunToTreat/RunToTreat_7_4.txt -O 4_PS_514_0.root -C Calibration.txt
+npreader -D ./DetectorConfiguration/ZDD_PS.detector -E ./Reactions/68Ni_dp_gs_18MeVu.reaction -R ./RunToTreat/RunToTreat_8_4.txt -O 4_PS_519_0.root -C Calibration.txt
+npreader -D ./DetectorConfiguration/ZDD_PS.detector -E ./Reactions/68Ni_dp_gs_18MeVu.reaction -R ./RunToTreat/RunToTreat_9_4.txt -O 4_PS_522_0.root -C Calibration.txt
+npreader -D ./DetectorConfiguration/ZDD_PS.detector -E ./Reactions/68Ni_dp_gs_18MeVu.reaction -R ./RunToTreat/RunToTreat_10_4.txt -O 4_PS_523_0.root -C Calibration.txt

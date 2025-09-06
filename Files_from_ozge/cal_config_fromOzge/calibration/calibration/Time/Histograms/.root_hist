@@ -1,0 +1,24 @@
+TFile *_file0 = TFile::Open("r0012_RawMUST2Histos.root")
+new TBrowser
+.q
+new TBrowser
+..q
+.q
+TFile *_file0 = TFile::Open("r190_RawMUST2Histos.root")
+new TBrowser
+.q
+.q
+TFile *_file0 = TFile::Open("r0189_RawMUST2Histos.root")
+new TBrowser
+.q
+new TBrowser
+TFile *_file0 = TFile::Open("r0190_RawMUST2Histos.root")
+TBrowser tb
+.q
+TFile *_file0 = TFile::Open("r0101_RawMugastHistos.root")
+new TBrowser
+.qqqqqqqqqqqqqq
+TFile *_file0 = TFile::Open("r0189_RawMUST2Histos.root")
+new Tbrowser
+new TBrowser
+.qqqqqqqqqqqqqqqqqqq

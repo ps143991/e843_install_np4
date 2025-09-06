@@ -1,0 +1,8 @@
+add_library(NPCats SHARED CatsDetector.cxx CatsData.cxx CatsPhysics.cxx CatsSpectra.cxx)
+target_link_libraries(NPCats PUBLIC PUBLIC ROOT::RIO ROOT::Hist ROOT::Tree ROOT::Gpad ROOT::Physics ROOT::Imt NPRoot nptool )
+if(MFM_FOUND)
+  target_compile_definitions(NPCats PUBLIC MFM_FOUND)
+  target_link_libraries(NPCats PUBLIC ${MFMCOMPLIB})
+endif()
+install(DIRECTORY ./ DESTINATION ${CMAKE_INCLUDE_OUTPUT_DIRECTORY} FILES_MATCHING PATTERN "*.h" )
+ROOT_GENERATE_DICTIONARY(CatsDict CatsData.h CatsPhysics.h CatsSpectra.h LINKDEF Catslinkdef.hh MODULE NPCats)

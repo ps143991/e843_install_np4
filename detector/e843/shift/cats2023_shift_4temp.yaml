@@ -1,0 +1,26 @@
+cats:
+# CATS 1
+ CATSNumber: 1
+ X01_Y01: 43.8  -41.77 -1587.1 mm
+ X28_Y01: -27.2  -41.77  -1587.1 mm
+ X01_Y28: 43.8  30.35  -1587.1 mm
+ X28_Y28: -27.2  30.35  -1587.1 mm
+
+cats:
+ #CATS 2
+ CATSNumber: 2
+ X01_Y01: -49.769  -36.58   -1090.1 mm
+ X28_Y01:  21.331    -36.58   -1090.1 mm
+ X01_Y28:  -49.769  34.54   -1090.1 mm
+ X28_Y28: 21.331  34.54    -1090.1 mm
+ 
+mask:
+ MaskNumber: 1
+ Z: -1732.1 mm
+mask:
+ MaskNumber: 2
+ Z: -1235.1 mm
+
+#2 shift CATS 2 X by -2
+#3 shift CATS 1 X by +0.2
+#4 shift CATS 2 X by -1

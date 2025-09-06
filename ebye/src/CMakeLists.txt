@@ -1,0 +1,7 @@
+add_library(NPebye SHARED EbyEDetector.cxx)
+target_link_libraries(NPebye PUBLIC PUBLIC ROOT::RIO ROOT::Tree ROOT::Physics ROOT::Imt NPRoot nptool )
+if(MFM_FOUND)
+  target_compile_definitions(NPebye PUBLIC MFM_FOUND)
+  target_link_libraries(NPebye PUBLIC ${MFMCOMPLIB})
+endif()
+install(DIRECTORY ./ DESTINATION ${CMAKE_INCLUDE_OUTPUT_DIRECTORY} FILES_MATCHING PATTERN "*.h" )

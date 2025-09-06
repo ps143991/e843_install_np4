@@ -1,0 +1,15 @@
+Package:
+ name: root  
+ type: library
+ groups: analysis
+ url: https://gitlab.in2p3.fr/nptool/root.git
+ version: 0.1
+ author: Adrien Matta
+ mail: matta@lpccaen.in2p3.fr
+ description: ROOT library interface for nptool. Include ROOT I/O.
+ dependencies: 
+
+Plugin: 
+ token: root
+ library: NPRoot
+ 

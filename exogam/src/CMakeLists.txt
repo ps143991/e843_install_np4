@@ -1,0 +1,8 @@
+add_library(NPExogam SHARED ExogamDetector.cxx ExogamData.cxx ExogamPhysics.cxx ExogamSpectra.cxx)
+target_link_libraries(NPExogam PUBLIC PUBLIC ROOT::RIO ROOT::Tree ROOT::Physics ROOT::Gpad ROOT::Imt ROOT::Hist NPRoot nptool )
+if(MFM_FOUND)
+  target_compile_definitions(NPExogam PUBLIC MFM_FOUND)
+  target_link_libraries(NPExogam PUBLIC ${MFMCOMPLIB})
+endif()
+install(DIRECTORY ./ DESTINATION ${CMAKE_INCLUDE_OUTPUT_DIRECTORY} FILES_MATCHING PATTERN "*.h" )
+ROOT_GENERATE_DICTIONARY(ExogamDict ExogamData.h ExogamPhysics.h ExogamSpectra.h LINKDEF Exogamlinkdef.hh MODULE NPExogam)

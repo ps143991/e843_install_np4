@@ -1,0 +1,10 @@
+module "NPPhysicsEssential" {
+  requires cplusplus
+  module "NPBeam.h" { header "NPBeam.h" export * }
+  module "NPParticle.h" { header "NPParticle.h" export * }
+  module "NPReaction.h" { header "NPReaction.h" export * }
+  module "NPEnergyLoss.h" { header "NPEnergyLoss.h" export * }
+  link "libNPPhysicsEssential.so"
+  export *
+}
+

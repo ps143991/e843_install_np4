@@ -1,0 +1,9 @@
+{ decls }
+namespace cats {  }
+
+[ libNPCats.so ]
+# List of selected classes
+class cats::CatsData
+class cats::CatsPhysics
+header CatsData.h
+header CatsPhysics.h

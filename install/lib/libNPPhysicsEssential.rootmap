@@ -1,0 +1,15 @@
+{ decls }
+namespace nptool {  }
+
+[ libNPPhysicsEssential.so ]
+# List of selected classes
+class nptool::Beam
+class nptool::EnergyLoss
+class nptool::Particle
+class nptool::Reaction
+header NPBeam.h
+header NPEnergyLoss.h
+header NPParticle.h
+header NPReaction.h
+# List of selected namespaces
+namespace nptool

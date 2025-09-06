@@ -1,0 +1,9 @@
+{ decls }
+namespace must2 {  }
+
+[ libNPMust2.so ]
+# List of selected classes
+class must2::Must2Data
+class must2::Must2Physics
+header Must2Data.h
+header Must2Physics.h

@@ -1,0 +1,25 @@
+Package:
+ name: tac
+ type: detector
+ groups: ganil germanium
+ url:  https://gitlab.in2p3.fr/valerian.girard-alcindor/tac
+ version: 0.1
+ author: Valerian Girard-Alcindor
+ mail: girard-alcindor@ijclab.in2p3.fr
+ description: tac 
+ dependencies: root
+
+Plugin:
+  token: tac
+  library: NPTac
+ 
+PluginCitation:
+ type: Detector
+ citation: 
+ url: 
+
+PluginCitation:
+ type: Analysis
+ citation: something else
+ url: www.another-link.org
+

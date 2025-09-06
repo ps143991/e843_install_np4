@@ -1,0 +1,689 @@
+#include "response_fitPS.h"
+#include "TFile.h"
+#include "TH1.h"
+#include "TFractionFitter.h"
+#include "TCanvas.h"
+#include "TLegend.h"
+#include "TStyle.h"
+#include "TPaveText.h"
+#include "TROOT.h"
+#include "TMath.h"
+#include "TH1F.h"
+#include "TH2F.h"
+#include "TF1.h"
+#include <TGraph.h>
+#include <iostream>
+#include <TGraphErrors.h>
+#include <TMultiGraph.h>
+
+TH1F* peak1g = nullptr;
+TH1F* peak2g = nullptr;
+TH1F* peak3g = nullptr;
+TH1F* peak4g = nullptr;
+TH1F* peak5g = nullptr;
+TH1F* peak6g = nullptr;
+TH1F* bc = nullptr;
+
+TCanvas* can1 = NULL;
+TCanvas* can2 = NULL;
+TCanvas* can3 = NULL;
+TCanvas* can4 = NULL;
+TCanvas* can5 = NULL;
+TCanvas* can6 = NULL;
+
+
+
+TH1F* all_ex = NULL;
+
+TCanvas* can_reg[5]; 
+TCanvas* call = NULL;
+
+TGraph *DIS1 = NULL;
+TGraph *DIS2 = NULL;  //DIS for distribution
+TGraph *DIS3 = NULL;
+TGraph *DIS4 = NULL;
+TGraph *DIS5 = NULL;
+TGraph *DIS6 = NULL;
+TGraph *DIS7 = NULL;
+TGraph *DIS8 = NULL;
+TGraph *DIS9 = NULL;
+TGraph *DIS10 = NULL;
+TGraph *DIS11 = NULL;
+TGraph *DIS12 = NULL;
+
+TGraph *DIS[7] = {DIS1, DIS2, DIS3, DIS4, DIS5, DIS6, DIS7};
+
+
+Double_t angles[5] = {119.5, 128.5, 137.5, 146.5, 155.5}; // middle of each angular bin
+Double_t integrals[8][5] = {0}; // 5 angular bins, 12 peaks (6 simulated, 6 new)
+
+
+
+void DrawAngularDistribution() {
+  Double_t angles[5]   = {119.5,128.5,137.5,146.5,155.5};
+  // ...fill integrals[12][5] somewhere...
+
+  can5 = new TCanvas("can5","Angular Distribution",1200,800);
+  auto mg = new TMultiGraph();
+
+  for(int i = 0; i < 7; ++i) {
+      DIS[i] = new TGraph(5, angles, integrals[i]);
+      DIS[i]->SetMarkerStyle(20 + i); // Different marker styles
+      DIS[i]->SetMarkerColor(kBlack); // Different colors
+      DIS[i]->SetLineWidth(3);
+      mg->Add(DIS[i], "PC");
+  }
+  DIS[0]->SetLineColor(kMagenta);
+  DIS[1]->SetLineColor(kGreen);
+  DIS[2]->SetLineColor(kBlue);
+  DIS[3]->SetLineColor(kOrange);
+  DIS[4]->SetLineColor(kPink);
+  DIS[5]->SetLineColor(kBrownCyan);
+  DIS[6]->SetLineColor(kYellow + 2);
+    // DIS[7]->SetLineColor(kCyan + 2);
+
+
+  mg->SetTitle("Angular distributions;#theta_{cm} (deg);Counts");
+  mg->Draw("AC");  // draw axes based on all graphs
+
+  auto leg = new TLegend(0.68,0.68,0.88,0.88);
+          leg->SetTextSize(0.02);
+  leg->SetBorderSize(0); leg->SetFillStyle(0); 
+  for(int i = 0; i < 7; ++i){leg->AddEntry(DIS[i], Form("Peak %d", i+1), "lp");}
+  leg->Draw();
+}
+
+    void DrawFunctionsOnTop(TF1* whole, Int_t selection, Int_t reps){
+
+    /***********************************************************************************************************/
+    /***********************************************************************************************************/
+    /********************************************Drawing functions on TOP***************************************/
+    /***********************************************************************************************************/
+    /***********************************************************************************************************/
+    
+/*     TF1* bglandau = new TF1("bglandau", [](double* x, double* par) {
+        return  (par[0] * TMath::Landau(2*par[1] - x[0], par[1], par[2]));}, -1,15, 3);
+    bglandau->SetParameters(whole->GetParameter(18), whole->GetParameter(19), whole->GetParameter(20));
+    bglandau->SetLineColor(kRed+1);
+    bglandau->SetLineWidth(2);
+    bglandau->Draw("same"); */
+
+
+    // TF1* bcf = new TF1("bcf", left_skewed_landau, -2, 15.0, 3);
+
+    // // bcf->SetParameter(0,whole->GetParameter(18));
+    // bcf->FixParameter(0,275);
+    // // bcf->SetParameter(1,whole->GetParameter(19));
+    // bcf->FixParameter(1,8.5);
+    // // bcf->SetParameter(2,whole->GetParameter(20));
+    // bcf->FixParameter(2,0.9);
+    
+    // bcf->SetLineColor(kRed+ 1);
+    // bcf->Draw("same");
+    TF1* bc_pol4 = new TF1("bc_pol4", "[4]*( [0] + [1]*x + [2]*x*x + [3]*x*x*x )", -5, 20);
+    for(int fi = 0; fi < 5; ++fi){
+        bc_pol4->SetParameter(fi, whole->GetParameter(fi));
+    }
+    bc_pol4->SetLineColor(kRed+1);
+    bc_pol4->SetLineWidth(2);
+    bc_pol4->Draw("same");
+
+
+        TF1* peak1gfit = new TF1(Form("%.3f",whole->GetParameter(6)), gaus_plus_pol4, -1, 1, 8);    //0
+    peak1gfit->SetParameters(whole->GetParameter(5), whole->GetParameter(6), whole->GetParameter(7),
+        whole->GetParameter(0), whole->GetParameter(1), whole->GetParameter(2), whole->GetParameter(3), whole->GetParameter(4));
+    peak1gfit->SetLineColor(kMagenta);
+    peak1gfit->SetFillColor(kMagenta);
+    peak1gfit->SetFillStyle(0); // No fill, just line
+    peak1gfit->Draw("same");
+
+        TF1* peak2gfit = new TF1(Form("%.3f",whole->GetParameter(9)), gaus_plus_pol4, -1, 2, 8); //915
+    peak2gfit->SetParameters(whole->GetParameter(8), whole->GetParameter(9), whole->GetParameter(10),
+        whole->GetParameter(0), whole->GetParameter(1), whole->GetParameter(2), whole->GetParameter(3), whole->GetParameter(4));
+    peak2gfit->SetLineColor(kGreen);
+    peak2gfit->SetFillColor(kGreen);
+    peak2gfit->SetFillStyle(0); // No fill, just line
+    peak2gfit->Draw("same");
+
+        TF1* peak3gfit = new TF1(Form("%.3f",whole->GetParameter(12)), gaus_plus_pol4, 0.8, 2.8, 8); //1.8
+    peak3gfit->SetParameters(whole->GetParameter(11), whole->GetParameter(12), whole->GetParameter(13),
+        whole->GetParameter(0), whole->GetParameter(1), whole->GetParameter(2), whole->GetParameter(3), whole->GetParameter(4));
+    peak3gfit->SetLineColor(kBlue);
+    peak3gfit->SetFillColor(kBlue);
+    peak3gfit->SetFillStyle(0); // No fill, just line
+    peak3gfit->Draw("same");
+
+        TF1* peak4gfit = new TF1(Form("%.3f",whole->GetParameter(15)), gaus_plus_pol4, 1.5, 3.5, 8);   //2.5
+    peak4gfit->SetParameters(whole->GetParameter(14), whole->GetParameter(15), whole->GetParameter(16),
+        whole->GetParameter(0), whole->GetParameter(1), whole->GetParameter(2), whole->GetParameter(3), whole->GetParameter(4));
+    peak4gfit->SetLineColor(kOrange);
+    peak4gfit->SetFillColor(kOrange);
+    peak4gfit->SetFillStyle(0); // No fill, just line
+    peak4gfit->Draw("same");
+
+        TF1* peak5gfit = new TF1(Form("%.3f",whole->GetParameter(18)), gaus_plus_pol4, 1.8, 5.8, 8);    //2.8
+    peak5gfit->SetParameters(whole->GetParameter(17), whole->GetParameter(18), whole->GetParameter(19),
+        whole->GetParameter(0), whole->GetParameter(1), whole->GetParameter(2), whole->GetParameter(3), whole->GetParameter(4));
+    peak5gfit->SetLineColor(kPink);
+    peak5gfit->SetFillColor(kPink);
+    peak5gfit->SetFillStyle(0); // No fill, just line
+    peak5gfit->Draw("same");
+
+        TF1* peak6gfit = new TF1(Form("%.3f",whole->GetParameter(21)), gaus_plus_pol4,2.8, 4.8, 8);  //3.8
+    peak6gfit->SetParameters(whole->GetParameter(20), whole->GetParameter(21), whole->GetParameter(22),
+        whole->GetParameter(0), whole->GetParameter(1), whole->GetParameter(2), whole->GetParameter(3), whole->GetParameter(4));    
+    peak6gfit->SetLineColor(kBrownCyan);
+    peak6gfit->SetFillColor(kBrownCyan);
+    peak6gfit->SetFillStyle(0); // No fill, just line
+    peak6gfit->Draw("same");
+
+          TF1* peak7gfit = new TF1(Form("%.3f",whole->GetParameter(24)), gaus_plus_pol4, 3.2, 5.6, 8);  //4.2
+    peak7gfit->SetParameters(whole->GetParameter(23), whole->GetParameter(24), whole->GetParameter(25),
+        whole->GetParameter(0), whole->GetParameter(1), whole->GetParameter(2), whole->GetParameter(3), whole->GetParameter(4));
+    peak7gfit->SetLineColor(kYellow + 2);
+    peak7gfit->SetFillColor(kYellow + 2);
+    peak7gfit->SetFillStyle(0); // No fill, just line
+    peak7gfit->Draw("same");
+
+        
+/* TF1* peak8gfit = new TF1(Form("%.3f",whole->GetParameter(27)), gaus_plus_pol4, 3.8, 6.2, 8);  //4.8
+    peak8gfit->SetParameters(whole->GetParameter(26), whole->GetParameter(27), whole->GetParameter(28),
+        whole->GetParameter(0), whole->GetParameter(1), whole->GetParameter(2), whole->GetParameter(3), whole->GetParameter(4));
+    peak8gfit->SetLineColor(kCyan + 2);
+    peak8gfit->SetFillColor(kCyan + 2);
+    peak8gfit->SetFillStyle(0); // No fill, just line
+    peak8gfit->Draw("same"); */
+
+    	 TLegend* legend = new TLegend(0.75, 0.15, 0.90, 0.55);
+          legend->SetHeader("Fit Components in keV", "C");
+        //   legend->AddEntry((TObject*)nullptr, Form("ThetaLab: %d °", (angmin + angmax)/2), "");
+          legend->SetTextSize(0.02);
+          legend->SetBorderSize(1);
+          legend->AddEntry(peak1gfit,  Form("%.3f; %.2f",whole->GetParameter (6), whole->GetParameter(6+1)), "l");          //0
+          legend->AddEntry(peak2gfit,  Form("%.3f; %.2f",whole->GetParameter (9), whole->GetParameter(9+1)), "l");          //915
+          legend->AddEntry(peak3gfit,  Form("%.3f; %.2f",whole->GetParameter(12), whole->GetParameter(12+1)), "l");         //1.8
+          legend->AddEntry(peak4gfit,  Form("%.3f; %.2f",whole->GetParameter(15), whole->GetParameter(15+1)), "l");         //2.5
+          legend->AddEntry(peak5gfit,  Form("%.3f; %.2f",whole->GetParameter(18), whole->GetParameter(18+1)), "l");         //2.8
+          legend->AddEntry(peak6gfit,  Form("%.3f; %.2f",whole->GetParameter(21), whole->GetParameter(21+1)), "l");         //3,8
+          legend->AddEntry(peak7gfit,  Form("%.3f; %.2f",whole->GetParameter(24), whole->GetParameter(24+1)), "l");         //4.6
+            // legend->AddEntry(peak8gfit,  Form("%.3f; %.2f",whole->GetParameter(27), whole->GetParameter(27+1)), "l");         //4.8
+        //   legend->AddEntry(bc_pol4, "pol4", "l");
+        //   legend->AddEntry(bglandau, "landau", "l");
+        // legend->AddEntry(bcf, "landau", "l");
+        //  legend->AddEntry(peak8f, "Response 8", "l");
+          legend->Draw();         //Dont want to draw the legent right now:: PS
+ /*        c3->SaveAs(Form("pdf/exfit_ang%dto%d.pdf", angmin, angmax));
+        c3->SaveAs(Form("pngout/exfit_ang%dto%d.png", angmin, angmax));
+        c3->SaveAs(Form("rootout/exfit_ang%dto%d.root", angmin, angmax)); */
+
+
+            //Integrals of peak 1 and 6
+    double I1 = peak1gfit->Integral( whole->GetParameter(6) - 3*whole->GetParameter(7), whole->GetParameter(6) + 3*whole->GetParameter(7)) 
+                                    - bc_pol4->Integral(whole->GetParameter(6) - 3*whole->GetParameter(7), whole->GetParameter(6) + 3*whole->GetParameter(7)) ;
+    double I915 = peak2gfit->Integral( whole->GetParameter(9) - 3*whole->GetParameter(10), whole->GetParameter(9) + 3*whole->GetParameter(10)) 
+                                    - bc_pol4->Integral(whole->GetParameter(9) - 3*whole->GetParameter(10), whole->GetParameter(9) + 3*whole->GetParameter(10)) ;
+    double I1860 = peak3gfit->Integral( whole->GetParameter(12) - 3*whole->GetParameter(13), whole->GetParameter(12) + 3*whole->GetParameter(13)) 
+                                    - bc_pol4->Integral(whole->GetParameter(12) - 3*whole->GetParameter(13), whole->GetParameter(12) + 3*whole->GetParameter(13)) ;
+    double I2560 = peak4gfit->Integral( whole->GetParameter(15) - 3*whole->GetParameter(16), whole->GetParameter(15) + 3*whole->GetParameter(16)) 
+                                    - bc_pol4->Integral(whole->GetParameter(15) - 3*whole->GetParameter(16), whole->GetParameter(15) + 3*whole->GetParameter(16)) ;
+    double I2860 = peak5gfit->Integral( whole->GetParameter(18) - 3*whole->GetParameter(19), whole->GetParameter(18) + 3*whole->GetParameter(19)) 
+                                    - bc_pol4->Integral(whole->GetParameter(18) - 3*whole->GetParameter(19), whole->GetParameter(18) + 3*whole->GetParameter(19)) ;
+    double I3820 = peak6gfit->Integral( whole->GetParameter(21) - 3*whole->GetParameter(22), whole->GetParameter(21) + 3*whole->GetParameter(22)) 
+                                    - bc_pol4->Integral(whole->GetParameter(21) - 3*whole->GetParameter(22), whole->GetParameter(21) + 3*whole->GetParameter(22)) ;
+    double I4200 = peak7gfit->Integral( whole->GetParameter(24) - 3*whole->GetParameter(25), whole->GetParameter(24) + 3*whole->GetParameter(25)) 
+                                    - bc_pol4->Integral(whole->GetParameter(24) - 3*whole->GetParameter(25), whole->GetParameter(24) + 3*whole->GetParameter(25)) ;
+    // double I4800 = peak8gfit->Integral( whole->GetParameter(27) - 3*whole->GetParameter(28), whole->GetParameter(27) + 3*whole->GetParameter(28)) 
+                                    // - bc_pol4->Integral(whole->GetParameter(27) - 3*whole->GetParameter(28), whole->GetParameter(27) + 3*whole->GetParameter(28)) ; 
+
+    cout<< "Integral of peak 00: " << I1*10 << endl;                  //10 is the bin width......   IMPORTANT IN CASE OF REBINNED HISTOGRAM
+    cout<< "Integral of peak 915: " << I915*10 << endl;
+    cout<< "Integral of peak 1860: " << I1860*10 << endl;
+    cout<< "Integral of peak 2560: " << I2560*10 << endl;
+    cout<< "Integral of peak 2860: " << I2860*10 << endl;
+    cout<< "Integral of peak 3820: " << I3820*10 << endl;
+    cout<< "Integral of peak 4200: " << I4200*10 << endl;
+    // cout<< "Integral of peak 4800: " << I4800*10 << endl;
+    cout<<"************************************************"<<endl;
+
+    if(selection == 1 && reps >= 0){
+        integrals[0] [reps]= I1*10;
+        integrals[1] [reps]= I915*10;
+        integrals[2] [reps]= I1860*10;
+        integrals[3] [reps]= I2560*10;
+        integrals[4] [reps]= I2860*10;
+        integrals[5] [reps]= I3820*10;
+        integrals[6] [reps]= I4200*10;
+        // integrals[7] [reps]= I4800*10;
+    }
+    for (int i = 0; i < 7; ++i) {
+        std::cout << "Integral of peak " << i << " at angle bin " << reps << ": " << integrals[i][reps] << std::endl;
+    }
+
+
+}
+
+
+
+using namespace std;
+void response_fitPS_v13_for_poster_wo_carbon()
+{
+    const int angmin = 100;
+    const int angmax = 160;
+    const int projXmin = angmin - 100;
+    const int projXmax = angmax - 100;
+
+    Int_t totalparams = 5 + (3*6) +3*1 ; // 5 for pol4, 6 simulated gaus, 1 new gaus
+    Double_t fit_parameters[totalparams];
+
+    TFile* file1 = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/roothistograms/Response_fit/simulation9mm/hhgs.root");
+    TFile* file2 = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/roothistograms/Response_fit/simulation9mm/hh915.root");
+    TFile* file3 = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/roothistograms/Response_fit/simulation9mm/hh1816.root");
+    TFile* file4 = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/roothistograms/Response_fit/simulation9mm/hh2552.root");
+    TFile* file5 = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/roothistograms/Response_fit/simulation9mm/hh2880.root");
+    TFile* file6 = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/roothistograms/Response_fit/simulation9mm/hh4000.root");
+    TFile* datafile = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/roothistograms/hAllthetamore4kev.root");
+    TFile* carbonfile = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/roothistograms/hAllthetamore4kev_carbon2.root");
+    TFile* Breakupfile = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/roothistograms/breakup_deuteron/phase_BU.root");
+
+    if (!file1 || file1->IsZombie() || !file2 || file2->IsZombie() ||!file3 || file3->IsZombie() || !file4 || file4->IsZombie() ||!file5 || file5->IsZombie() || !file6 || file6->IsZombie() ) {
+        printf("Error: One or more response ROOT files could not be opened.\n");
+        return;
+    }
+    if (!Breakupfile || Breakupfile->IsZombie()) {
+        printf("Error: Breakup ROOT file could not be opened.\n");
+        return;
+    }
+    if (!datafile || datafile->IsZombie()) {
+        printf("Error: Data ROOT file could not be opened.\n");
+        return;
+    }
+    if (!carbonfile || carbonfile->IsZombie()) {
+        printf("Error: Carbon ROOT file could not be opened.\n");
+        return;
+    }
+   
+    TH2F* hhdata = (TH2F*)datafile->Get("extheta");
+    TH2F* carbon_2d = (TH2F*)carbonfile->Get("extheta");
+    TH1F* carbon = (TH1F*)carbonfile->Get("ex");
+          all_ex = (TH1F*)datafile->Get("ex");
+    TH2F* hh1 = (TH2F*)file1->Get("hh0");
+    TH2F* hh2 = (TH2F*)file2->Get("hh0");
+    TH2F* hh3 = (TH2F*)file3->Get("hh0");
+    TH2F* hh4 = (TH2F*)file4->Get("hh0");
+    TH2F* hh5 = (TH2F*)file5->Get("hh0");
+    TH2F* hh6 = (TH2F*)file6->Get("hh0");
+                    
+    call= new TCanvas("call", "Response Histograms", 800, 600);
+    call->Divide(3, 2);
+    
+    TH1F* h_data_115_124 = new TH1F();
+    TH1F* h_data_124_133 = new TH1F();
+    TH1F* h_data_133_142 = new TH1F();
+    TH1F* h_data_142_151 = new TH1F();
+    TH1F* h_data_151_160 = new TH1F();
+
+    TH1F* carbon_2d_projected_115_124 = new TH1F();
+    TH1F* carbon_2d_projected_124_133 = new TH1F();
+    TH1F* carbon_2d_projected_133_142 = new TH1F();
+    TH1F* carbon_2d_projected_142_151 = new TH1F();
+    TH1F* carbon_2d_projected_151_160 = new TH1F();
+    
+
+    hhdata->ProjectionY("hdatatemp_115_124", 15, 24)->Copy(*h_data_115_124);    //115 to 160... every angular cut is of 9 degrees
+    hhdata->ProjectionY("hdatatemp_124_133", 24, 33)->Copy(*h_data_124_133);
+    hhdata->ProjectionY("hdatatemp_133_142", 33, 42)->Copy(*h_data_133_142);
+    hhdata->ProjectionY("hdatatemp_142_151", 42, 51)->Copy(*h_data_142_151);
+    hhdata->ProjectionY("hdatatemp_151_160", 51, 60)->Copy(*h_data_151_160);
+
+    carbon_2d->ProjectionY("carbon_temp_115_124", 15, 24)->Copy(*carbon_2d_projected_115_124);
+    carbon_2d->ProjectionY("carbon_temp_124_133", 24, 33)->Copy(*carbon_2d_projected_124_133);
+    carbon_2d->ProjectionY("carbon_temp_133_142", 33, 42)->Copy(*carbon_2d_projected_133_142);
+    carbon_2d->ProjectionY("carbon_temp_142_151", 42, 51)->Copy(*carbon_2d_projected_142_151);
+    carbon_2d->ProjectionY("carbon_temp_151_160", 51, 60)->Copy(*carbon_2d_projected_151_160);
+
+    
+    peak1g = new TH1F(); hh1->ProjectionY("htemp1", projXmin, projXmax)->Copy(*peak1g);
+    peak2g = new TH1F(); hh2->ProjectionY("htemp2", projXmin, projXmax)->Copy(*peak2g);
+    peak3g = new TH1F(); hh3->ProjectionY("htemp3", projXmin, projXmax)->Copy(*peak3g);
+    peak4g = new TH1F(); hh4->ProjectionY("htemp4", projXmin, projXmax)->Copy(*peak4g);
+    peak5g = new TH1F(); hh5->ProjectionY("htemp5", projXmin, projXmax)->Copy(*peak5g);
+    peak6g = new TH1F(); hh6->ProjectionY("htemp6", projXmin, projXmax)->Copy(*peak6g);
+
+// Arrays of pointers to your histograms
+TH1F* h_data_arr[5] = {h_data_115_124, h_data_124_133, h_data_133_142, h_data_142_151, h_data_151_160};
+TH1F* carbon_arr[5] = {carbon_2d_projected_115_124, carbon_2d_projected_124_133, carbon_2d_projected_133_142, carbon_2d_projected_142_151, carbon_2d_projected_151_160};
+
+for (int i = 0; i < 5; ++i) {
+    call->cd(i+1);
+    // h_data_arr[i]->SetMaximum(110);
+    // h_data_arr[i]->Rebin(4);
+    h_data_arr[i]->Draw();
+    TF1* left_skewed_landau_func = new TF1("left_skewed_landau", left_skewed_landau, -5, 15, 3);
+    left_skewed_landau_func->FixParameter(0, 80);
+    left_skewed_landau_func->FixParameter(1, 6.5);
+    left_skewed_landau_func->FixParameter(2, 0.95);
+    // h_data_arr[i]->Fit(left_skewed_landau_func, "R");
+    left_skewed_landau_func->SetLineColor(kRed+1);
+    left_skewed_landau_func->SetLineStyle(1); // Set line style to solid
+    left_skewed_landau_func->SetLineWidth(1);
+    left_skewed_landau_func->Draw("same");
+    // carbon_arr[i]->Rebin(4); // Uncomment if you want to rebin carbon as well
+    // carbon_arr[i]->SetLineColor(kRed);
+    // carbon_arr[i]->Scale(3);
+    // carbon_arr[i]->SetLineStyle(1); // Set line style to solid
+    // carbon_arr[i]->Draw("same L");
+}
+
+    //  TCanvas *cfit = new TCanvas("cfit", "Peak 1 Fit", 800, 600);
+    call->cd(6);
+    
+    /* G.S. */                peak1g->Fit("gaus", "Q", "",-1.0, 1.0);
+    /* 915  */                peak2g->Fit("gaus", "Q", "", 0.0, 2.0);
+    /* 1816 */                peak3g->Fit("gaus", "Q", "", 0.8, 2.8);
+    /* 2552 */                peak4g->Fit("gaus", "Q", "", 1.5, 3.5); 
+    /* 2880 */                peak5g->Fit("gaus", "Q", "", 1.8, 3.8); 
+    /* 4000 */                peak6g->Fit("gaus", "Q", "", 3.0, 5.0);  
+
+
+
+
+    TH1F* peaks[6] = {peak1g, peak2g, peak3g, peak4g, peak5g, peak6g};
+
+    cout<<"Simulation fit parameters:"<<endl;
+    for (int ii = 0; ii < 6; ++ii) {
+    TF1* fitFunc = peaks[ii]->GetFunction("gaus");
+    if (fitFunc){
+        double amplitude = fitFunc->GetParameter(0); // amplitude
+        double mean = fitFunc->GetParameter(1);      // mean
+        double sigma = fitFunc->GetParameter(2);     // sigma
+        
+        // Store fit parameters
+        fit_parameters[5 + (ii * 3)] = amplitude;
+        fit_parameters[5 + (ii * 3 + 1)] = mean;
+        fit_parameters[5 + (ii * 3 + 2)] = sigma; // Adjusted sigma for better fit
+
+        // Print or use as needed
+        printf("Peak    %d: amplitude=%.2f, mean=%.3f, sigma=%.2f\n", ii+1, amplitude, mean, sigma);
+    }}
+    call->Close();
+    // call->Delete();
+
+    can6 = new TCanvas("can6", "Carbon", 800, 600);
+    carbon->Rebin(2);
+    carbon->Sumw2();                   // ensure error storage exists
+    for (int i = 1; i <= carbon->GetNbinsX(); ++i)
+        carbon->SetBinError(i, 1.0);   // unit errors (includes empty bins)
+
+    carbon->SetLineColor(kBlack);
+    carbon->SetLineWidth(2);
+    carbon->SetMarkerSize(0);          // hide markers just in case
+    carbon->Draw("hist same");         // no points, no error bars
+
+
+
+    TF1 *fitpol3 = new TF1("fitpol3", "pol3", -5, 17);
+    fitpol3->SetLineColor(kBlue);
+    fitpol3->SetLineWidth(3);
+    carbon->Fit(fitpol3, "R W");       // 'W' = use BinError (your σ=1)
+    fitpol3->Draw("same");
+
+
+
+                    double a0 = fitpol3->GetParameter(0);
+                    double a1 = fitpol3->GetParameter(1);
+                    double a2 = fitpol3->GetParameter(2);
+                    double a3 = fitpol3->GetParameter(3);
+
+                    TF1 *fCarbonScaled = new TF1("fCarbonScaled","[4]*( [0] + [1]*x + [2]*x*x + [3]*x*x*x )",-5, -1);
+                    // // Fix the polynomial coefficients to the fit results; keep only [0] free
+                    // fCarbonScaled->FixParameter(1, a0);
+                    // fCarbonScaled->FixParameter(2, a1);
+                    // fCarbonScaled->FixParameter(3, a2);
+                    // fCarbonScaled->FixParameter(4, a3);
+
+                    // fCarbonScaled->SetParName(0, "scale");
+                    // fCarbonScaled->SetParameter(0, 15.0);
+                    // fCarbonScaled->SetLineColor(kMagenta+2);
+                    // fCarbonScaled->SetLineStyle(2);
+                    // fCarbonScaled->SetLineWidth(3);
+                    fCarbonScaled->FixParameter(0, a0);
+                    fCarbonScaled->FixParameter(1, a1);
+                    fCarbonScaled->FixParameter(2, a2);
+                    fCarbonScaled->FixParameter(3, a3);
+                    fCarbonScaled->SetParameter(4, 1.0); // initial scale factor
+
+TCanvas* ccan = new TCanvas("ccan", "All data with carbon fit", 800, 600);
+    ccan->cd();
+
+    all_ex->SetLineColor(kYellow+2);
+    all_ex->SetLineWidth(1);
+    all_ex->Rebin(2);
+    all_ex->Draw("hist");
+    all_ex->Fit(fCarbonScaled, "R SAME");
+    fCarbonScaled->Draw("same");
+    cout<<"234543523452435435423***********PARAM*********20938457089432754930"<<fCarbonScaled->GetParameter(0)
+    <<"   "<<fCarbonScaled->GetParameter(1)
+    <<"   "<<fCarbonScaled->GetParameter(2)
+    <<"   "<<fCarbonScaled->GetParameter(3)
+    <<"   "<<fCarbonScaled->GetParameter(4)<<endl;
+
+
+
+    TF1* fitpol3_data = new TF1("fitpol3_data", "[4]*( [0] + [1]*x + [2]*x*x + [3]*x*x*x )", -5, 17);
+    fitpol3_data->SetLineColor(kRed);
+    fitpol3_data->SetLineWidth(2);
+    fitpol3_data->SetParameter(0,fCarbonScaled->GetParameter(0));
+    fitpol3_data->SetParameter(1,fCarbonScaled->GetParameter(1));
+    fitpol3_data->SetParameter(2,fCarbonScaled->GetParameter(2));
+    fitpol3_data->SetParameter(3,fCarbonScaled->GetParameter(3));
+    fitpol3_data->SetParameter(4,fCarbonScaled->GetParameter(4)); // just to show pol4 shape
+    fitpol3_data->Draw("same");
+
+
+    can1 = new TCanvas("can1", "Peaks", 1900, 1050);
+    
+    // TCanvas* c2 = new TCanvas("c2", "carbon", 800, 600);
+
+    // carbon_2d_projected->Draw();
+
+    TF1* landau_carbon = new TF1("landau_carbon", left_skewed_landau, -5, 15, 3);
+    landau_carbon->SetParameters(14, 8, 1.2);
+    // carbon_2d_projected->Fit(landau_carbon, "R");
+    landau_carbon->SetLineColor(kRed+1);
+    // landau_carbon->Draw("same");
+    
+    TF1* carbon_func = new TF1("carbon_func", left_skewed_landau, -5, 15, 3);
+    carbon_func->SetParameters(landau_carbon->GetParameter(0), landau_carbon->GetParameter(1), landau_carbon->GetParameter(2));
+    carbon_func->SetLineColor(kGreen+ 1);
+    // carbon_func->Draw("same");
+
+
+    // TF1* whole = new TF1("whole", allgaus_plus_left_skewed_landau, -2, 5.2, 21);
+    TF1* whole = new TF1("whole", allgaus_plus_pol4, -1.5, 4.8, totalparams);
+
+    Double_t BG_Par[6][5];       // x index for 0-> total, 1-> region1, 2-> region2... 
+                                        // y index for coefficients of pol4
+    // BG_Par[0][0] = 4.6; BG_Par[0][1] = 4.9;  BG_Par[0][2] = 0.44; BG_Par[0][3] = 0.0; BG_Par[0][4] = 0.0; // for total with Rebin(2)
+    // BG_Par[0][0] = 8.0; BG_Par[0][1] = 6.3;  BG_Par[0][2] = 1.8; BG_Par[0][3] = 0.0; BG_Par[0][4] = 0.0; // for total with Rebin(4)
+    // BG_Par[0][0] = fCarbonScaled->GetParameter(0); BG_Par[0][1] = fCarbonScaled->GetParameter(1);  BG_Par[0][2] = fCarbonScaled->GetParameter(2); BG_Par[0][3] = fCarbonScaled->GetParameter(3); BG_Par[0][4] = fCarbonScaled->GetParameter(4); // for total with Rebin(4)
+    BG_Par[0][0] = 0; 
+    BG_Par[0][1] = 0;  
+    BG_Par[0][2] = 0; 
+    BG_Par[0][3] = 0; 
+    BG_Par[0][4] = 0; // for total with Rebin(4)
+
+    
+    for(int li = 5; li < 23; ++li) {
+            whole->SetParameter(li, fit_parameters[li]);
+        }
+        // following line doesn't do anything... only for making root not complain
+        whole->SetParameter(6,  0.0);   whole->SetParameter(9,  0.915);  whole->SetParameter(12, 1.869); whole->SetParameter(15, 2.56);  whole->SetParameter(18, 2.87);  whole->SetParameter(21, 4.059);  
+        whole->SetParLimits(5,  1,500);   whole->SetParLimits(6,  0.0 -0.01, 0.0 +0.01);                                     /*  whole->SetParLimits(7,  0.35, 0.45); */
+        whole->SetParLimits(8,  1,500);   whole->SetParLimits(9,  0.915 -0.01, 0.915 + 0.01);                                    whole->SetParLimits(10,  0.35, 0.36);
+        whole->SetParLimits(11, 1,500);   whole->SetParLimits(12, fit_parameters[12]-0.03, fit_parameters[12] +0.03);            whole->SetParLimits(13,  0.35, 0.36);
+        whole->SetParLimits(14, 1,500);   whole->SetParLimits(15, 2.53, 2.57);                                                   whole->SetParLimits(16,  0.35, 0.36);
+        whole->SetParLimits(17, 1,500);   whole->SetParLimits(18, 2.86, 2.9);                                                    whole->SetParLimits(19, 0.35, 0.36);
+        whole->SetParLimits(20, 1,500);   whole->SetParLimits(21, 3.8-0.15, 3.8 +0.15);                                            whole->SetParLimits(22,  0.35, 0.36);
+        whole->SetParLimits(23, 1,500);   whole->SetParLimits(24, 4.2-0.15,4.2+0.15);                                              whole->SetParLimits(25,  0.35, 0.36);
+        
+        // whole->FixParameter(18, 145);        // background amplitude
+        // whole->FixParameter(19, 7.96);        // MPV
+        // whole->FixParameter(20, 1.63);           // sigma
+        for(int jl = 0; jl < 5; ++jl) {
+            whole->FixParameter(jl, BG_Par[0][jl]);}        // pol4 background parameters
+
+    all_ex->Fit(whole, "R"); // fitting happens here
+    whole ->SetNpx(1000); // Increase number of points for smoother curve
+    TText *text1 = new TText(3.5, 160, Form("RChi: %.2f", whole->GetChisquare()/whole->GetNDF()));  
+    text1->Draw();
+
+    cout<<"*******PS: CHI SQUARE RECIEVED: "<<whole->GetChisquare()<<endl;
+    cout<<"*******PS: NDF RECIEVED: "<<whole->GetNDF()<<endl;
+    cout<<"*******PS: REDUCED CHI SQUARE: "<<whole->GetChisquare()/whole->GetNDF()<<endl;
+
+
+
+    for(int il = 0; il < totalparams; ++il) {
+        fit_parameters[il] = whole->GetParameter(il);
+        cout<<"Parameter "<<il<<" : "<<fit_parameters[il]<<endl;
+    }
+
+
+    whole->SetLineColor(kBlack);
+    whole->SetLineWidth(2);
+    fitpol3_data->Draw("same");
+
+    // whole->Draw("same");
+
+    cout<< "Fit parameters from excitation function: " << endl;
+    for (int iil = 0; iil < 6; ++iil) {
+        printf("Peak %d   : amplitude=%.1f, mean=%.3f, sigma=%.2f\n", iil+1, fit_parameters[5+(iil*3)], fit_parameters[5+(iil*3)+1], fit_parameters[5+(iil*3)+2]);
+    }
+    printf("Peak new 1: amplitude=%.1f, mean=%.3f, sigma=%.2f\n", fit_parameters[23], fit_parameters[24], fit_parameters[25]);
+    printf("Peak new 2: amplitude=%.1f, mean=%.3f, sigma=%.2f\n", fit_parameters[26], fit_parameters[27], fit_parameters[28]);
+    printf("Peak new 3: amplitude=%.1f, mean=%.3f, sigma=%.2f\n", fit_parameters[29], fit_parameters[30], fit_parameters[31]);
+    printf("Peak new 4: amplitude=%.1f, mean=%.3f, sigma=%.2f\n", fit_parameters[32], fit_parameters[33], fit_parameters[34]);
+    printf("Peak new 5: amplitude=%.1f, mean=%.3f, sigma=%.2f\n", fit_parameters[35], fit_parameters[36], fit_parameters[37]);
+    printf("Peak new 6: amplitude=%.1f, mean=%.3f, sigma=%.2f\n", fit_parameters[38], fit_parameters[39], fit_parameters[40]);
+    printf("Background: %.2f + %.2f*x + %.2f*x^2 + %.2f*x^3 + %.2f*x^4\n\n",fit_parameters[0], fit_parameters[1], fit_parameters[2], fit_parameters[3], fit_parameters[4]);
+
+
+    DrawFunctionsOnTop(whole, 0, -1);
+
+
+    /***********************************************************************************************************/
+    /***********************************************************************************************************/
+    /********************************************Time for individual fits***************************************/
+    /***********************************************************************************************************/
+    /***********************************************************************************************************/
+    // can3 = new TCanvas("can3", "divided pads for ang fit", 1900, 1050);
+    // can3->Divide(3,2);
+
+    Double_t sigmas[7] = {0.29, 0.38, 0.32, 0.28, 0.21};
+
+
+
+    for(int ci = 0; ci < 5; ++ci) {
+
+    
+
+    can_reg[ci] = new TCanvas(Form("canreg%d", ci+1), Form("Region %d", ci+1), 1200, 800);
+    can_reg[ci]->cd();
+    // can3->cd(ci+1);
+    h_data_arr[ci]->SetLineColor(kRed);
+    h_data_arr[ci]->Rebin(2);
+    h_data_arr[ci]->Sumw2();                   // ensure error storage exists
+    for (int i = 1; i <= h_data_arr[ci]->GetNbinsX(); ++i)
+        h_data_arr[ci]->SetBinError(i, 1.0);   // unit errors (includes empty bins)
+    h_data_arr[ci]->Draw("hist");
+
+
+    TF1* fitpol3_data_reg = new TF1(Form("fitpol3_data_reg%d", ci+1), "[4]*( [0] + [1]*x + [2]*x*x + [3]*x*x*x )", -5, -1);
+    fitpol3_data_reg->SetLineColor(kBlue);
+    fitpol3_data_reg->SetLineWidth(2);
+    fitpol3_data_reg->FixParameter(0,fCarbonScaled->GetParameter(0));
+    fitpol3_data_reg->FixParameter(1,fCarbonScaled->GetParameter(1));
+    fitpol3_data_reg->FixParameter(2,fCarbonScaled->GetParameter(2));
+    fitpol3_data_reg->FixParameter(3,fCarbonScaled->GetParameter(3));
+    fitpol3_data_reg->SetParameter(4,fCarbonScaled->GetParameter(4)); // just to show pol4 shape
+    h_data_arr[ci]->Fit(fitpol3_data_reg, "R SAME");
+    fitpol3_data_reg->Draw("same");
+    BG_Par[ci+1][0] = fitpol3_data_reg->GetParameter(0);
+    BG_Par[ci+1][1] = fitpol3_data_reg->GetParameter(1);
+    BG_Par[ci+1][2] = fitpol3_data_reg->GetParameter(2);
+    BG_Par[ci+1][3] = fitpol3_data_reg->GetParameter(3);
+    BG_Par[ci+1][4] = fitpol3_data_reg->GetParameter(4);
+    fitpol3_data_reg->Delete();
+
+
+    TF1* whole_region = new TF1(Form("whole_region%d", ci+1), allgaus_plus_pol4, -1.5, 4.8, totalparams);
+    for(int ill = 0; ill < totalparams; ++ill) {
+        whole_region->SetParameter(ill, fit_parameters[ill]);
+    }
+
+        for(int jl = 0; jl < 5; ++jl) {
+            whole_region->FixParameter(jl, BG_Par[ci+1][jl]);
+        }        // pol4 background parameters
+            
+        whole_region->SetParameter(7,  0.2);
+        whole_region->SetParLimits(5,  1,200);   whole_region->SetParLimits(6,  fit_parameters[6]  -0.01,fit_parameters[6]  + 0.01);  whole_region->SetParLimits(7, sigmas[ci]-0.02, sigmas[ci]+0.02);
+        whole_region->SetParLimits(8,  1,200);   whole_region->SetParLimits(9,  fit_parameters[9]  -0.01,fit_parameters[9]  + 0.01);  whole_region->SetParLimits(10,sigmas[ci]-0.01, sigmas[ci]+0.03);
+        whole_region->SetParLimits(11, 1,200);   whole_region->SetParLimits(12, fit_parameters[12] -0.01,fit_parameters[12] + 0.01);  whole_region->SetParLimits(13,sigmas[ci]-0.00, sigmas[ci]+0.04);
+        whole_region->SetParLimits(14, 1,200);   whole_region->SetParLimits(15, fit_parameters[15] -0.01,fit_parameters[15] + 0.01);  whole_region->SetParLimits(16,sigmas[ci]+0.00, sigmas[ci]+0.05);
+        whole_region->SetParLimits(17, 1,200);   whole_region->SetParLimits(18, fit_parameters[18] -0.01,fit_parameters[18] + 0.01);  whole_region->SetParLimits(19,sigmas[ci]+0.00, sigmas[ci]+0.06);
+        whole_region->SetParLimits(20, 1,200);   whole_region->SetParLimits(21, fit_parameters[21] -0.01,fit_parameters[21] + 0.01);  whole_region->SetParLimits(22,sigmas[ci]+0.00, sigmas[ci]+0.07);
+        whole_region->SetParLimits(23, 1,200);   whole_region->SetParLimits(24, fit_parameters[24] -0.01,fit_parameters[24] + 0.01);  whole_region->SetParLimits(25,sigmas[ci]+0.00, sigmas[ci]+0.08);
+
+
+    whole_region->SetNpx(1000); // Increase number of points for smoother curve
+    h_data_arr[ci]->Fit(whole_region, "R Q"); // fitting happens here
+    whole_region->SetLineColor(kBlack);
+    whole_region->SetLineWidth(2);
+    whole_region->Draw("same");
+    TText *text2 = new TText(3.2, 30, Form("RChi: %.2f, Reg%d", whole_region->GetChisquare()/whole_region->GetNDF(), ci+1));  
+    text2->Draw();
+    cout<<"*******PS: REDUCED CHI SQUARE for region "<<ci+1<<": "<<whole_region->GetChisquare()/whole_region->GetNDF()<<endl;
+
+        
+    DrawFunctionsOnTop(whole_region,1,ci);
+
+    h_data_arr[ci]->GetXaxis()->SetRangeUser(-2.0,7.0);
+    // h_data_arr[ci]->GetXaxis()->SetRangeUser(1.5,5.5);
+        // TF1* bg_pol4 = new TF1("bg_pol4", "pol4", -1, 5.2);
+        // bg_pol4->SetParameters(whole_region->GetParameter(18), whole_region->GetParameter(19), whole_region->GetParameter(20), whole_region->GetParameter(21), whole_region->GetParameter(22));
+        // bg_pol4->SetLineColor(kBlack);
+        // bg_pol4->SetLineWidth(2);
+        // bg_pol4->Draw("same");
+    }
+    
+    DrawAngularDistribution();
+
+
+    double r1 = peak1g->Integral(peak1g->FindBin(-5 - whole->GetParameter(5+1)), peak1g->FindBin(20 - whole->GetParameter(5+1))) * whole->GetParameter(5+0) / 10000.0;
+    double r2 = peak2g->Integral(peak2g->FindBin(-5 - whole->GetParameter(5+3)), peak2g->FindBin(20 - whole->GetParameter(5+3))) * whole->GetParameter(5+2) / 10000.0;
+    double r3 = peak3g->Integral(peak3g->FindBin(-5 - whole->GetParameter(5+5)), peak3g->FindBin(20 - whole->GetParameter(5+5))) * whole->GetParameter(5+4) / 10000.0;
+    double r4 = peak4g->Integral(peak4g->FindBin(-5 - whole->GetParameter(5+7)), peak4g->FindBin(20 - whole->GetParameter(5+7))) * whole->GetParameter(5+6) / 10000.0;
+    double r5 = peak5g->Integral(peak5g->FindBin(-5 - whole->GetParameter(5+9)), peak5g->FindBin(20 - whole->GetParameter(5+9))) * whole->GetParameter(5+8) / 10000.0;
+    double r6 = peak6g->Integral(peak6g->FindBin(-5 - whole->GetParameter(5+11)), peak6g->FindBin(20 - whole->GetParameter(5+11))) * whole->GetParameter(5+10) / 10000.0;
+  
+
+    // Output integrals
+    // printf("Integrals: R1=%.2f, R2=%.2f, R3=%.2f, R4=%.2f, R5=%.2f , R6=%.2f\n", r1, r2, r3, r4, r5, r6);
+
+    // Save fit parameters and integrals to CSV
+        FILE* csv = fopen(Form("csv/fit_results NC_ang%dto%d.csv", angmin, angmax), "w");
+        if (csv) {
+            fprintf(csv, "Parameter,Value");
+            for (int i = 5; i < totalparams; ++i) {
+                fprintf(csv, "par[%d],%f", i-5, whole->GetParameter(i));
+            }
+            fprintf(csv, "Integral,R1,R2,R3,R4,R5,R6");
+            fprintf(csv, "Integral,%f,%f,%f,%f,%f,%f", r1, r2, r3, r4, r5, r6);
+            fclose(csv);
+        } else {
+       printf("Error: Could not write CSV file.");
+        }
+        can6->cd();
+        can6->Update();
+
+}

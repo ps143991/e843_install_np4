@@ -1,0 +1,26 @@
+Package:
+ name: geant4
+ type: library
+ groups: simulation
+ url: https://gitlab.in2p3.fr/nptool/geant4.git
+ version: 0.1
+ author: Adrien Matta
+ mail: matta@lpccaen.in2p3.fr
+ description: Geant4 executable for the nptool package
+ dependencies: physics-essential 
+Plugin: 
+ token: geant4
+ library: NPGeant4
+Plugin: 
+ token: source
+ library: NPG4IsotropicSource
+Plugin: 
+ token: beam
+ library: NPG4Beam
+Plugin:
+ token: base-physics-list 
+ library: NPG4BasePhysicsList
+Plugin: 
+ token: target
+ library: NPG4Target
+

@@ -1,0 +1,9 @@
+{ decls }
+namespace tac {  }
+
+[ libNPTac.so ]
+# List of selected classes
+class tac::TacData
+class tac::TacPhysics
+header TacData.h
+header TacPhysics.h

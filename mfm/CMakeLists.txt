@@ -1,0 +1,65 @@
+cmake_minimum_required (VERSION 3.0...3.5)
+project(mfm CXX)
+set(CMAKE_BUILD_TYPE Release)
+include(CMakePackageConfigHelpers)
+
+#Build parameter
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_BUILD_TYPE Release)
+
+set(CMAKE_BINARY_OUTPUT_DIRECTORY  ${CMAKE_INSTALL_PREFIX}/bin )
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_INSTALL_PREFIX}/lib )
+set(CMAKE_INSTALL_LIBDIR ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} )
+set(CMAKE_INCLUDE_OUTPUT_DIRECTORY ${CMAKE_INSTALL_PREFIX}/include )
+### nptool ###
+find_package(nptool QUIET)
+
+include(FindZMQ.cmake)
+set(HAVE_ZMQ_H yes)
+if(${ZMQ_FOUND})
+  add_compile_definitions(ZMQ_FOUND)
+  include_directories(${ZMQ_INCLUDE_DIRS})
+  list(APPEND ZMQ_LIB_LINK ${ZMQ_LIBRARIES})
+endif()
+
+MESSAGE(STATUS "Looking for MFM ...")
+SET(MFM_DIR $ENV{MFMLIB})
+MESSAGE(STATUS "The libraries and software will be build using MFM libraries")
+include(FindMFM.cmake)
+MESSAGE("   + Linking using MFM libraries \(${MFM_LIBRARIES}\) ")
+LIST(APPEND COMPDEF "WITH_MFM")
+LIST(APPEND COMPLIB ${MFM_LIBRARIES})
+LIST(APPEND INCLUDE_DIR ${MFM_INCLUDE_DIRS})
+LIST(APPEND INCLUDE_DIR ${TINYXMLDIR})
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} $ENV{NPLib_DIR})
+SET(NPLib_DIR $ENV{NPLib_DIR})
+SET(NPLib_INCLUDE_DIRS $ENV{NPLib_DIR}/include)
+set(NPLib_LIBRARIES ${NPLib_LIBRARIES} -L${NPLib_DIR}/lib -lnptool -lNPExogam -lNPMUST2 -lNPCATS -lNPZDD -lNPTAC)
+MESSAGE(STATUS "Found NPLib : ${NPLib_DIR}")
+MESSAGE(STATUS "Found include : ${NPLib_INCLUDE_DIRS}")
+MESSAGE(STATUS "Found libraries : ${NPLib_LIBRARIES}")
+
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} $ENV{ROOTSYS} $ENV{ROOTSYS}/cmake $ENV{ROOTSYS}/etc/cmake)
+# find_package(ROOT REQUIRED RIO Net Html Spectrum XMLIO)
+find_package(ROOT REQUIRED RIO Net Spectrum XMLIO)
+if(ROOT_FOUND)
+  message(STATUS "Found ROOT version ${ROOT_VERSION} in $ENV{ROOTSYS}")
+  include_directories(${ROOT_INCLUDE_DIRS})
+  message(STATUS "Found ROOT libs: ${ROOT_LIBRARIES}")
+  LIST(APPEND COMPDEF "WITH_ROOT")
+else(ROOT_FOUND)
+  message(STATUS "ROOT not found !")
+endif(ROOT_FOUND)
+
+include_directories($ENV{NPTOOL}/include)
+include_directories($ENV{NPTOOL_HOME}/$ENV{NPTOOL_ENV}/include)
+link_directories($ENV{NPTOOL}/lib)
+link_directories(../install/lib)
+link_directories($ENV{NPTOOL_HOME}/$ENV{NPTOOL_ENV}/lib)
+
+set (duplicate_include_dir ${CMAKE_CURRENT_SOURCE_DIR}/src PARENT_SCOPE)
+include_directories("src")
+add_subdirectory("src")
+
+

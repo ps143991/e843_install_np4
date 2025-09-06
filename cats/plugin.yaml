@@ -1,0 +1,25 @@
+Package:
+ name: cats
+ type: detector
+ groups: beam tracker
+ url:  https://gitlab.in2p3.fr/valerian.girard-alcindor/cats
+ version: 0.1
+ author: Valerian Girard-Alcindor
+ mail: girard-alcindor@ijclab.in2p3.fr
+ description: cats
+ dependencies: root
+
+Plugin:
+  token: cats
+  library: NPCats
+ 
+PluginCitation:
+ type: Detector
+ citation: test 
+ url: 
+
+PluginCitation:
+ type: Analysis
+ citation: something else
+ url: www.another-link.org
+

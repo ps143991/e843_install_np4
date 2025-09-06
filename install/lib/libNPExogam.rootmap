@@ -1,0 +1,9 @@
+{ decls }
+namespace exogam {  }
+
+[ libNPExogam.so ]
+# List of selected classes
+class exogam::ExogamData
+class exogam::ExogamPhysics
+header ExogamData.h
+header ExogamPhysics.h

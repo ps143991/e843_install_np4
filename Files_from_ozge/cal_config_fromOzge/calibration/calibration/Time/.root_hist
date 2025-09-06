@@ -1,0 +1,381 @@
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0012","MUST2")
+.ls
+.q
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0012","MUST2")
+.q
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0012","MUST2")
+.q
+.L TimeCalibrator.C+
+TimeCalibrator("r0012","X")
+.q
+.L TimeCalibrator.C+
+TimeCalibrator("r0013","Y")
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0013","MUST2")
+TimeCalibrator("r0013","Y")
+.q
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0015","MUST2")
+.L TimeCalibrator.C+
+TimeCalibrator("r0015","X",32,"MUST2",3,3)
+.q
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0016","MUST2")
+.L TimeCalibrator.C+
+TimeCalibrator("r0016","Y",32,"MUST2",3,3)
+ExtractMust2Histos("r0017","MUST2")
+TimeCalibrator("r0017","Y",32,"MUST2",3,3)
+TimeCalibrator("r0017","X",32,"MUST2",4,4)
+ExtractMust2Histos("r0018","MUST2")
+TimeCalibrator("r0018","Y",32,"MUST2",4,4)
+.q
+.q
+.q
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("run_0183","MUST2")
+ExtractMust2Histos("r0183","MUST2")
+ExtractMust2Histos("run0183","MUST2")
+ExtractMust2Histos("r0183","MUST2")
+.q
+.L ExtractRawHisto_T.C+
+ 
+ExtractMust2Histos("r0183","MUST2")
+ExtractMust2Histos("r0184","MUST2")
+ExtractMust2Histos("r0185","MUST2")
+ExtractMust2Histos("r0186","MUST2")
+ExtractMust2Histos("r0187","MUST2")
+ExtractMust2Histos("r0188","MUST2")
+.q
+.L TimeCalibrator.C+
+Time("r0183","X",32,"MUST2",1,2)
+TimeCalibrator("r0183","X",32,"MUST2",1,2)
+TimeCalibrator("r0184","X",32,"MUST2",3,3)
+TimeCalibrator("r0184","Y",32,"MUST2",1,2)
+TimeCalibrator("r0185","X",32,"MUST2",3,3)
+TimeCalibrator("r0185","X",32,"MUST2",4,4)
+.q
+.L TimeCalibrator.C+
+TimeCalibrator("r0187","X",32,"MUST2",4,4)
+TimeCalibrator("r0188","Y",32,"MUST2",4,4)
+.q
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0189","MUST2")
+.L TimeCalibrator.C+
+TimeCalibrator("r0189","X",32,"MUST2",3,3)
+.q
+.L ExtractRawHisto_T.C+
+TimeCalibrator("r190","Y",32,"MUST2",3,3)
+ExtractMust2Histos("r0190","MUST2")
+.L TimeCalibrator.C+
+TimeCalibrator("r190","Y",32,"MUST2",3,3)
+.q
+.L TimeCalibrator.C+
+TimeCalibrator("r190","Y",32,"MUST2",3,3)
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r190","MUST2")
+TimeCalibrator("r0190","Y",32,"MUST2",3,3)
+.q
+.x TimeCalibrator.C
+.q
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0101","Mugast")
+.qqqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0101","Mugast")
+.
+.qqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+.q
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0101","Mugast")
+.qqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0101","Mugast")
+.qqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0101","Mugast")
+.qqqqqqqq
+.L ExtractRawHisto_T.C+
+.q
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0101","Mugast")
+.qqqqqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+.qqqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+.qqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0101","Mugast")
+.qqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0101","Mugast")
+.qqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0101","Mugast")
+new TBrowser
+.qqqqqqqqqqqqq
+TFile *_file0 = TFile::Open("Histograms/r0101_RawMugastHistos.root")
+new TBrowser
+.qqqqqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0101","Mugast")
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0101","Mugast")
+.qqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0102","Mugast")
+.qqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0103","Mugast")
+.qqqqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0104","Mugast")
+.qqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0105","Mugast")
+.qqqqqqqqqqqqqqqqqqqqqqqqqqq
+ExtractMust2Histos("r0106","Mugast")
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0106","Mugast")
+.qqqqqqqqqqqq
+.L TimeCalibrator.C 
+.qqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0101", "X", 24, "Mugast", 1,5)
+.qqqqqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0103", "X", 24, "Mugast", 1,5)
+.qqqqqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0101", "X", 24, "Mugast", 1, 1)
+TFile *_file0 = TFile::Open("Histograms/r0103_RawMugastHistos.root")
+.qqqqqqqqqqqqq
+TFile *_file0 = TFile::Open("Histograms/r0101_RawMugastHistos.root")
+new TBrowser
+.qqqqqqqqqqqqq
+TFile *_file0 = TFile::Open("Histograms/r0103_RawMugastHistos.root")
+new TBrowser
+.qqqqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0101", "X", 24, "Mugast", 1, 1)
+.qqqqqqqqqq
+TimeCalibrator("r0102", "Y", 24, "Mugast", 1, 1)
+.L TimeCalibrator.C+
+TimeCalibrator("r0102", "Y", 24, "Mugast", 1, 1)
+.qqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0103", "X", 24, "Mugast", 2, 3)
+TimeCalibrator("r0104", "Y", 24, "Mugast", 2, 3)
+.qqqqqqqqqqqqqqqqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0105", "X", 24, "Mugast", 4, 5)
+.qqqqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0106", "Y", 24, "Mugast", 4, 5)
+.qqqqqqqqqqqq
+.q
+ExtractMust2Histos("r0106","MUST2")
+.L ExtractRawHisto_T.C
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0106","MUST2")
+.q
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0107","MUST2")
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0101","MUST2")
+.q
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0102","MUST2")
+.q
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0103","MUST2")
+.q
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0104","MUST2")
+.q
+ExtractMust2Histos("r0104","MUST2")
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0105","MUST2")
+.q
+.L TimeCalibrator.C+
+TimeCalibrator("run_0101","X",24,"MUST2",1,2)
+.q
+.L TimeCalibrator.C+
+TimeCalibrator("r0101","X",24,"MUST2",1,2)
+TimeCalibrator("r0102","Y",24,"MUST2",1,2)
+TimeCalibrator("r0103","Y",24,"MUST2",3,3)
+TimeCalibrator("r0103","X",24,"MUST2",3,3)
+TimeCalibrator("r0104","Y",24,"MUST2",3,3)
+TimeCalibrator("r0105","X",24,"MUST2",4,4)
+TimeCalibrator("r0106","6",24,"MUST2",4,4)
+TimeCalibrator("r0106","Y",24,"MUST2",4,4)
+.q
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0200", "Mugast")
+ExtractMust2Histos("r0201", "Mugast")
+ExtractMust2Histos("r0202", "Mugast")
+ExtractMust2Histos("r0203", "Mugast")
+ExtractMust2Histos("r0204", "Mugast")
+ExtractMust2Histos("r0205", "Mugast")
+.qqqqqqqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0200","X",24,"MUST2",1,2)
+.qqqqqqqqq
+TimeCalibrator("r0200","X",24,"Mugast",1,2)
+.L TimeCalibrator.C+
+TimeCalibrator("r0200","X",24,"Mugast",1,2)
+.qqqqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0201","Y",24,"Mugast",1,2)
+.qqqqqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0202","X",24,"Mugast",2,3)
+.qqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0203","Y",24,"Mugast",2,3)
+.qqqqqqqqqqqqqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0204","X",24,"Mugast",4,5)
+.qqqqqqqqqqqqqqqq
+.qqqqqqqqqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0205","Y",24,"Mugast",4,5)
+.qqqqqqqqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0106","Y",24,"MUST2",4,4)
+.q
+TFile *_file0 = TFile::Open("Histograms/r0200_RawMugastHistos.root")
+new TBrowser
+.qqqqqqqqqqqqqqqqqqqqqqqq
+TFile *_file0 = TFile::Open("Histograms/r0101_RawMUST2Histos.root")
+new TBrowser
+.qqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0200", "X", 24, "Mugast", 1, 4)
+.qqqqqqqqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0202", "X", 24, "Mugast", 1, 4)
+.qqqqqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0204", "X", 24, "Mugast", 1, 4)
+  
+.qqqqqqqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0206", "X", 24, "Mugast", 1, 4)
+.qqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+.qqqqqqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0200", "X", 24, "Mugast", 1, 5)
+.qq
+TimeCalibrator("r0202", "X", 24, "Mugast", 1, 5)
+.L TimeCalibrator.C+
+TimeCalibrator("r0202", "X", 24, "Mugast", 1, 5)
+.qqqqqqqqqqqqqqqqq
+TFile *_file0 = TFile::Open("Histograms/r0202_RawMugastHistos.root")
+new TBrowser
+.qqqqqqqqqqqqqqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0200", "Mugast")
+.qqqqqqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0200", "Mugast")
+.qqqqqqqqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0200", "Mugast")
+.qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+ExtractMust2Histos("r0202", "Mugast")
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos("r0202", "Mugast")
+.qqqqqqqqqqqq
+TFile *_file0 = TFile::Open("Histograms/r0202_RawMugastHistos.root")
+hMM2
+hMM2_StripXT
+.ls
+hMM2_STRX_T117
+hMM2_STRX_T117->Draw()
+hMM2_STRX_T1->Draw()
+hMM2_STRX_T2->Draw()
+hMM2_STRX_T3->Draw()
+hMM2_STRX_T4->Draw()
+hMM1_STRX_T4->Draw()
+hMM1_STRX_T90->Draw()
+hMM3_STRX_T4->Draw()
+hMM3_STRX_T60->Draw()
+hMM3_STRX_T32->Draw()
+.qqqqqqqqqqqqqqqqqq
+.qqqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+.qqqqqqqqqqqqqq
+TChain::GetFiles
+TChain::GetFile()
+TChain::GetFile()->GetName()
+TChain *c = new TChain("PhysicsTree")
+c->Add("../../NPRootA_e843/NPr0537_000a.root")
+c->GetFile()
+c->GetFile()->GetName)
+c->GetFile()->GetName()
+.qqqqqqqqqq
+.L TimeCalibrator.C+
+.qqqqqqqqqq
+.L ExtractRawHisto_T.C+
+.qqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+TChain *c = new TChain("PhysicsTree")
+TChain *c = new TChain("PhysicsTree")
+.qqqqqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos(200, "Mugast")
+.qqq
+.qqqqqqqqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+.qqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos(200, "Mugast")
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos(200, "Mugast")
+.L ExtractRawHisto_T.C+
+.qqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos(200, "Mugast")
+.qqqqqqqqqqqqqqqqqqqqq
+TFile *_file0 = TFile::Open("Histograms/r0200_RawMugastHistos.root")
+new TBrowser
+.qqqqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos(202, "Mugast")
+.qqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos(204, "Mugast")
+ExtractMust2Histos(206, "Mugast")
+.qqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos(206, "Mugast")
+.qqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos(204, "Mugast")
+.qqqqqqqqqqqqqqqqqqqq
+TFile *_file0 = TFile::Open("Histograms/r0204_RawMugastHistos.root")
+.ls
+new Tbro
+new TBrowser
+.ls
+.qqqqqqqqqqqqqqqqqqq
+.L ExtractRawHisto_T.C+
+ExtractMust2Histos(204, "Mugast")
+ExtractMust2Histos(202, "Mugast")
+.qqqqqqqqqqqqqqqqqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0200", "X", 24, "Mugast", 1, 5)
+.qqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0202", "X", 24, "Mugast", 1, 5)
+.qqqqqqqqqqqqqq
+.L TimeCalibrator.C+
+TimeCalibrator("r0204", "X", 24, "Mugast", 1, 5)
+.qqqqqqqqqqqqqqqq
+.ls
+ls
+.qqqqqqqqqqqqqq

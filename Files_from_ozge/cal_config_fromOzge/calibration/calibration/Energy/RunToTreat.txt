@@ -1,0 +1,11 @@
+TTreeName 
+	RD
+RootFileName
+  /home/aktas/Ni68/e843_68Ni/RootACalibrationRuns/CalibNPTOOL/r0573_000r.root
+  /home/aktas/Ni68/e843_68Ni/RootACalibrationRuns/CalibNPTOOL/r0573_001r.root
+  /home/aktas/Ni68/e843_68Ni/RootACalibrationRuns/CalibNPTOOL/r0573_002r.root
+  /home/aktas/Ni68/e843_68Ni/RootACalibrationRuns/CalibNPTOOL/r0573_003r.root
+  /home/aktas/Ni68/e843_68Ni/RootACalibrationRuns/CalibNPTOOL/r0573_004r.root
+  /home/aktas/Ni68/e843_68Ni/RootACalibrationRuns/CalibNPTOOL/r0573_005r.root
+  /home/aktas/Ni68/e843_68Ni/RootACalibrationRuns/CalibNPTOOL/r0573_006r.root
+  

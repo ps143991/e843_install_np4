@@ -1,0 +1,25 @@
+Package:
+ name: ebye
+ type: detector
+ groups: ganil
+ url: https://gitlab.in2p3.fr/ganil/nptool-plugins/ebye
+ version: 0.1
+ author: Valerian Girard-Alcindor
+ mail: girard-alcindor@ijclab.in2p3.fr
+ description: generic ebye branch
+ dependencies: root
+
+Plugin:
+  token: ebye
+  library: NPebye
+ 
+PluginCitation:
+ type: 
+ citation: 
+ url: 
+
+PluginCitation:
+ type: 
+ citation:
+ url: 
+

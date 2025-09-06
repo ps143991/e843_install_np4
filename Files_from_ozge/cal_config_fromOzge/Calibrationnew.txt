@@ -1,0 +1,40 @@
+CalibrationFilePath
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%MUST2%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%ENERGY%%%%%
+
+ /home/aktas/Softs/nptool/Projects/OAe843/calibration/Mugast_cal_run573/Cal_Str_X_E_MG1.cal
+ /home/aktas/Softs/nptool/Projects/OAe843/calibration/Mugast_cal_run573/Cal_Str_X_E_MG2.cal
+ /home/aktas/Softs/nptool/Projects/OAe843/calibration/Mugast_cal_run573/Cal_Str_X_E_MG3.cal
+ /home/aktas/Softs/nptool/Projects/OAe843/calibration/Mugast_cal_run573/Cal_Str_X_E_MG4.cal
+ /home/aktas/Softs/nptool/Projects/OAe843/calibration/Mugast_cal_run573/Cal_Str_X_E_MG5.cal
+ /home/aktas/Softs/nptool/Projects/OAe843/calibration/Mugast_cal_run573/Cal_Str_Y_E_MG1.cal
+ /home/aktas/Softs/nptool/Projects/OAe843/calibration/Mugast_cal_run573/Cal_Str_Y_E_MG2.cal
+ /home/aktas/Softs/nptool/Projects/OAe843/calibration/Mugast_cal_run573/Cal_Str_Y_E_MG3.cal
+ /home/aktas/Softs/nptool/Projects/OAe843/calibration/Mugast_cal_run573/Cal_Str_Y_E_MG4.cal
+ /home/aktas/Softs/nptool/Projects/OAe843/calibration/Mugast_cal_run573/Cal_Str_Y_E_MG5.cal
+
+%%%TIME%%%
+
+ /home/aktas/Softs/nptool/Projects/OAe843/calibration/Time/Coeff/Cal_Str_X_T_MG1_r0200.cal
+ /home/aktas/Softs/nptool/Projects/OAe843/calibration/Time/Coeff/Cal_Str_X_T_MG2_r0202.cal
+ /home/aktas/Softs/nptool/Projects/OAe843/calibration/Time/Coeff/Cal_Str_X_T_MG3_r0202.cal
+ /home/aktas/Softs/nptool/Projects/OAe843/calibration/Time/Coeff/Cal_Str_X_T_MG4_r0204.cal
+ /home/aktas/Softs/nptool/Projects/OAe843/calibration/Time/Coeff/Cal_Str_X_T_MG5_r0204.cal
+
+% %%%CATS%%%
+/home/aktas/Softs/nptool/Projects/OAe843/calibration/CATS/CATS1_Xjul3.txt
+/home/aktas/Softs/nptool/Projects/OAe843/calibration/CATS/CATS1_Yjul2.txt
+/home/aktas/Softs/nptool/Projects/OAe843/calibration/CATS/CATS2_Xjul2.txt
+/home/aktas/Softs/nptool/Projects/OAe843/calibration/CATS/CATS2_Yjul2.txt
+
+% %%%EXOGAM%%%
+
+/home/aktas/Softs/nptool/Projects/OAe843/calibration/Exogam/152Eurun567/Exogam_E/Cal_Exogam_E.cal
+/home/aktas/Softs/nptool/Projects/OAe843/calibration/Exogam/152Eurun567/Exogam_EHG/Cal_Exogam_EHG.cal
+/home/aktas/Softs/nptool/Projects/OAe843/calibration/Exogam/152Eurun567/Exogam_Outer/Cal_Exogam_Outer.cal
+
+%File for TACs calibration coefs
+%/home/mugast/analysis/nptool/Projects/MUGAST/e793s/calibTACs_e793s.cal
+% /home/aktas/Softs/nptool/Projects/OAe843/Calibs/TACS_N.cal

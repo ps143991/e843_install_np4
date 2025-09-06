@@ -1,0 +1,134 @@
+#include "Must2Spectra.h"
+#include "NPApplication.h"
+
+using namespace must2;
+////////////////////////////////////////////////////////////////////////////////
+Must2Spectra::Must2Spectra() {
+  // Set Pointers:
+  m_detector = std::dynamic_pointer_cast<Must2Detector>(
+      nptool::Application::GetApplication()->GetDetector("must2"));
+
+  m_RawData     = m_detector->m_RawData;
+  // m_RawData->Clear();
+  m_CalData     = m_detector->m_CalData;
+  // m_CalData->Clear();
+  m_PhysicsData = m_detector->m_PhysicsData;
+  // m_PhysicsData->Clear();
+
+  // Declare Raw Spectra
+  // for (int i = 0; i < m_detector->m_NumberOfTelescope; i++) {
+  for (int i = 0; i < 4; i++) {
+    std::string histo_name = "Telescope";
+    histo_name += nptool::itoa(i + 1);
+    histo_name += "_raw_XE_StripNbr";
+
+    m_raw_hist[histo_name] = new TH2F(histo_name.c_str(), histo_name.c_str(),
+                                      128, 0, 128, 1000, 0, 16384);
+  }
+
+  // Build Raw Canvas
+  auto cEN_raw = new TCanvas("Must2 raw XE vs strip Nbr");
+  cEN_raw->Divide(2, 2);
+  // for (int i = 0; i < m_detector->m_NumberOfTelescope; i++) {
+  for (int i = 0; i < 4; i++) {
+    cEN_raw->cd(i + 1);
+    std::string histo_name = "Telescope";
+    histo_name += nptool::itoa(i + 1);
+    histo_name += "_raw_XE_StripNbr";
+    m_raw_hist[histo_name]->Draw("colz");
+  }
+
+  // Declare Phy Spectra
+  // for (int i = 0; i < m_detector->m_NumberOfTelescope; i++) {
+  for (int i = 0; i < 4; i++) {
+    std::string histo_name = "Telescope";
+    histo_name += nptool::itoa(i + 1);
+    histo_name += "_XE_StripNbr";
+    m_phy_hist[histo_name] = new TH2F(histo_name.c_str(), histo_name.c_str(),
+                                      128, 0, 128, 1000, 0, 20);
+  }
+  // Build Phy Canvas
+  auto cEN_phy = new TCanvas("Must2 XE vs strip Nbr");
+  cEN_phy->Divide(2, 2);
+  // for (int i = 0; i < m_detector->m_NumberOfTelescope; i++) {
+  for (int i = 0; i < 4; i++) {
+    cEN_phy->cd(i + 1);
+    std::string histo_name = "Telescope";
+    histo_name += nptool::itoa(i + 1);
+    histo_name += "_XE_StripNbr";
+    m_phy_hist[histo_name]->Draw("colz");
+  }
+
+
+  // Declare Phy Spectra
+  // for (int i = 0; i < 4; i++) {
+  // for (int i = 0; i < m_detector->m_NumberOfTelescope; i++) {
+  for (int i = 0; i < 4; i++) {
+    std::string histo_name = "Telescope";
+    histo_name += nptool::itoa(i + 1);
+    histo_name += "_FrontBackE";
+    m_phy_hist[histo_name] = new TH2F(histo_name.c_str(), histo_name.c_str(),
+                                      1000, 0, 20, 1000, 0, 20);
+  }
+  // Build Phy Canvas
+  auto cEN_phy2 = new TCanvas("Must2 Front Back E");
+  cEN_phy2->Divide(2, 2);
+  // for (int i = 0; i < m_detector->m_NumberOfTelescope; i++) {
+  for (int i = 0; i < 4; i++) {
+    cEN_phy2->cd(i + 1);
+    std::string histo_name = "Telescope";
+    histo_name += nptool::itoa(i + 1);
+    histo_name += "_FrontBackE";
+    m_phy_hist[histo_name]->Draw("colz");
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+void Must2Spectra::FillRaw() {
+  // auto size = m_RawData->GetMMStripXEMult();
+  // for (unsigned int i = 0; i < size; i++) {
+  //   std::string histo_name = "Telescope";
+  //   histo_name += nptool::itoa(m_RawData->GetMMStripXEDetectorNbr(i));
+  //   histo_name += "_raw_XE_StripNbr";
+  //   auto h = (TH2F*)(m_raw_hist[histo_name]);
+  //   h->Fill(m_RawData->GetMMStripXEStripNbr(i),
+  //           m_RawData->GetMMStripXEEnergy(i));
+  // }
+}
+////////////////////////////////////////////////////////////////////////////////
+void Must2Spectra::FillPhy() {
+  auto size = m_PhysicsData->Si_E.size();
+  for (unsigned int i = 0; i < size; i++) {
+    std::string histo_name = "Telescope";
+    histo_name += nptool::itoa(m_PhysicsData->TelescopeNumber[i]);
+    histo_name += "_XE_StripNbr";
+    auto h = (TH2F*)(m_phy_hist[histo_name]);
+    if(m_PhysicsData->Si_X.size() == size){
+      h->Fill(m_PhysicsData->Si_X[i],
+          m_PhysicsData->Si_E[i]);
+    }
+  }
+
+  // unsigned int sizeX = m_CalData->GetMMStripXEMult();
+  // unsigned int sizeY = m_CalData->GetMMStripYEMult();
+
+  // for (unsigned int i = 0; i < sizeX; i++) {
+  //   for (unsigned int j = 0; j < sizeY; j++) {
+  //     std::string histo_name = "Telescope";
+  //     if(m_CalData->GetMMStripXEDetectorNbr(i) == m_CalData->GetMMStripYEDetectorNbr(j)){
+  //       histo_name += nptool::itoa(m_CalData->GetMMStripXEDetectorNbr(i));
+  //       histo_name += "_FrontBackE";
+  //       auto h = (TH2F*)(m_phy_hist[histo_name]);
+  //       h->Fill(m_CalData->GetMMStripXEEnergy(i),
+  //           m_CalData->GetMMStripYEEnergy(i));
+  //     }
+  //   }
+  // }
+}
+////////////////////////////////////////////////////////////////////////////////
+void Must2Spectra::Clear() {
+  for (auto h : m_raw_hist)
+    h.second->Reset();
+  for (auto h : m_phy_hist)
+    h.second->Reset();
+}
