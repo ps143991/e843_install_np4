@@ -15,6 +15,7 @@ DISABLE_CHANNEL CATS1STRY0
 DISABLE_CHANNEL CATS2STRX0
 DISABLE_CHANNEL CATS2STRY0
 
+
  % RECONSTRUCTION METHOD
  % 4 recosntructions are available:
  % FSECH : for fitted hyperbolic secante method

@@ -43,7 +43,10 @@ namespace user_analysis {
 
     private:                                        //Variables declaration
 
+        Double_t Spot_Plastic_1;
+        Double_t Spot_Plastic_2;
         Double_t Spot_Plastic_3;
+        Double_t Spot_Plastic_4;
         
         // Double_t Spot_DC_X;
         double TAC_D4_CATS1nc;

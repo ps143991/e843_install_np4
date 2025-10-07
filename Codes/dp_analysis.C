@@ -91,6 +91,9 @@ TH1F* h23 = NULL;
 TH1F* h24 = NULL;
 TH1F* h25 = NULL;
 
+TH1F* h_exo = NULL;
+TH2F* h_gamma_ex = NULL;
+
 TH2F* h15 = NULL;
 
     TMust2Physics* M2;
@@ -122,7 +125,7 @@ void loadFILES() {
   tree->Add("/home/sharmap/Workplace/np4/e843/Files_from_ozge/for_Prabhat/rootfiles/RunToTreatA.txt.root");
   tree->Add("/home/sharmap/Workplace/np4/e843/Files_from_ozge/for_Prabhat/rootfiles/RunToTreatB.txt.root");
   tree->Add("/home/sharmap/Workplace/np4/e843/Files_from_ozge/for_Prabhat/rootfiles/RunToTreatC.txt.root");
-  tree->Add("/home/sharmap/Workplace/np4/e843/Files_from_ozge/for_Prabhat/rootfiles/RunToTreatE.txt.root");
+  tree->Add("/home/sharmap/Workplace/np4/e843/Files_from_ozge/for_Prabhat/rootfiles/RunToTreatD.txt.root");
   tree->Add("/home/sharmap/Workplace/np4/e843/Files_from_ozge/for_Prabhat/rootfiles/RunToTreatE.txt.root");
 
 
@@ -171,6 +174,7 @@ void dp_analysis(){
     TTreeReaderArray<unsigned int> IC3(reader, "IC_3");
     TTreeReaderArray<unsigned int> IC4(reader, "IC_4");
     TTreeReaderArray<unsigned int> IC5(reader, "IC_5");
+    TTreeReaderArray<double> exo_doppler(reader, "EXO_Doppler_dp");
 
 
     
@@ -198,6 +202,9 @@ void dp_analysis(){
     h24 = new TH1F("h24", "MG_conditioned_with Pl4", 1200, -10, 20);
     h25 = new TH1F("h25", "MG_conditioned_with TAC_CATS_PL w/o Beam and IC cut", 1200, -10, 20);
 
+    h_exo = new TH1F("h_exo", "EXO_Doppler", 8000, 0, 4000);
+    h_gamma_ex = new TH2F("h_gamma_ex", "EXO_Doppler vs MG_Exnocor", 1200, -10, 20, 8000, 0, 4000);
+
 
 
 
@@ -211,6 +218,7 @@ void dp_analysis(){
         Double_t t6;
         Double_t t7[5];
         Double_t t8;
+        Double_t gamma_energy;
 
         if(GATCONFMASTER_[0] == 1){
             // cout<<"GATCONFMASTER_: "<<GATCONFMASTER_[0]<<endl;
@@ -271,6 +279,10 @@ void dp_analysis(){
             t7[3] = IC4.GetSize()>0 ? IC4[0] : 0;
             t7[4] = IC5.GetSize()>0 ? IC5[0] : 0;
 
+            gamma_energy = exo_doppler.GetSize()>0 ? exo_doppler[0] : 0;
+
+
+
             h14->Fill(t7[2]);   //filling IC3 energy
 
 
@@ -302,6 +314,10 @@ void dp_analysis(){
                 if(t8>300 && t8<400){                                           //cut on TAC_CATS_PL                
                         if(abs(t6-387)<25){                                     //cut on TAC_MMG_CATS1
                                 h25->Fill(t2_1);
+                                if(gamma_energy>0){
+                                    h_exo->Fill(gamma_energy*1000);                 //FILLING EXO_Doppler
+                                    h_gamma_ex -> Fill(t2_1, gamma_energy*1000);
+                                }
                         }
                 }
             }
@@ -367,51 +383,51 @@ void dp_analysis(){
 
         }
     }
-    c1 = new TCanvas("c1", "c1", 800, 600);
-    c1->Divide(1,2);
-    c1->cd(1);
-    h2_1->Draw();
-    c1->cd(2);
-    h2_2->Draw();
-    c2 = new TCanvas("c2", "c2", 800, 600);
-    c2->Divide(1,2);
-    c2->cd(1);
-    h3->Draw();
-    c2->cd(2);
-    h4->Draw(); 
-    c3 = new TCanvas("c3", "ex with IC, TAC_CATS_PL, MMG_CATS, Beam_Impact, Elab>1.0", 800, 600);
-    h5->Draw();
-    // h19->Draw("same");
+    // c1 = new TCanvas("c1", "c1", 800, 600);
+    // c1->Divide(1,2);
+    // c1->cd(1);
+    // h2_1->Draw();
+    // c1->cd(2);
+    // h2_2->Draw();
+    // c2 = new TCanvas("c2", "c2", 800, 600);
+    // c2->Divide(1,2);
+    // c2->cd(1);
+    // h3->Draw();
+    // c2->cd(2);
+    // h4->Draw(); 
+    // c3 = new TCanvas("c3", "ex with IC, TAC_CATS_PL, MMG_CATS, Beam_Impact, Elab>1.0", 800, 600);
+    // h5->Draw();
+    // // h19->Draw("same");
 
-    // c4 = new TCanvas("c4", "c4", 800, 600);
-    // h6->Draw("COLZ");
-    // cutg2->Draw("same");
+    // // c4 = new TCanvas("c4", "c4", 800, 600);
+    // // h6->Draw("COLZ");
+    // // cutg2->Draw("same");
 
-    // c5 = new TCanvas("c5", "c5", 800, 600);
-    // h7->Draw();
+    // // c5 = new TCanvas("c5", "c5", 800, 600);
+    // // h7->Draw();
 
-    c6 = new TCanvas("c6", "beam impact", 800, 600);
-    c6->Divide(2,3);
-    c6->cd(1);
-    h8->Draw("COLZ");
-    c6->cd(2);
-    h9->Draw("COLZ");
-    c6->cd(3);
-    h10->Draw("COLZ");
-    cutgpl3->Draw("same");
-    cutgpl3_small->SetLineColor(kRed);
-    cutgpl3_small->Draw("same");
-    c6->cd(4);
-    h11->Draw("COLZ");
-    cutgpl4->SetLineColor(kRed);
-    cutgpl4->Draw("same");
-    c6->cd(5);
-    h12->Draw("COLZ");
-    c7 = new TCanvas("c7", "tac_mmg_cats", 800, 600);
-    h13->Draw();
+    // c6 = new TCanvas("c6", "beam impact", 800, 600);
+    // c6->Divide(2,3);
+    // c6->cd(1);
+    // h8->Draw("COLZ");
+    // c6->cd(2);
+    // h9->Draw("COLZ");
+    // c6->cd(3);
+    // h10->Draw("COLZ");
+    // cutgpl3->Draw("same");
+    // cutgpl3_small->SetLineColor(kRed);
+    // cutgpl3_small->Draw("same");
+    // c6->cd(4);
+    // h11->Draw("COLZ");
+    // cutgpl4->SetLineColor(kRed);
+    // cutgpl4->Draw("same");
+    // c6->cd(5);
+    // h12->Draw("COLZ");
+    // c7 = new TCanvas("c7", "tac_mmg_cats", 800, 600);
+    // h13->Draw();
 
-    c8 = new TCanvas("c8", "IC_3 energy", 800, 600);
-    h14->Draw();
+    // c8 = new TCanvas("c8", "IC_3 energy", 800, 600);
+    // h14->Draw();
 
   /*   c9 = new TCanvas("c9", "c9", 800, 600);
     // h19->Rebin(4);
@@ -419,26 +435,32 @@ void dp_analysis(){
     h20->Draw();
     h19->Draw("same"); */
 
-    c10 = new TCanvas("c10", "comparison of Pl_energy cut vs tac_cats_pl cut", 800, 600);
-    h21->Draw();
-    h5->Draw("same");
+    // c10 = new TCanvas("c10", "comparison of Pl_energy cut vs tac_cats_pl cut", 800, 600);
+    // h21->Draw();
+    // h5->Draw("same");
     
-    c11 = new TCanvas("c11", "comparison of tac_cats_pl cut w/ and w/o IC cut", 800, 600);
-    h22->Draw();
-    h21->Draw("same");
+    // c11 = new TCanvas("c11", "comparison of tac_cats_pl cut w/ and w/o IC cut", 800, 600);
+    // h22->Draw();
+    // h21->Draw("same");
     
-    c12 = new TCanvas("c12", "comparison of Pl3 cut small", 800, 600);
-    h24->Rebin(4);
-    h23->Rebin(4);
-    h24->Draw();
-    h24->SetLineColor(kRed);
-    h23->Draw("same");
+    // c12 = new TCanvas("c12", "comparison of Pl3 cut small", 800, 600);
+    // h24->Rebin(4);
+    // h23->Rebin(4);
+    // h24->Draw();
+    // h24->SetLineColor(kRed);
+    // h23->Draw("same");
 
     c13 = new TCanvas("c13", "without Beam and IC cut", 800, 600);
     h25->Rebin(4);
     h25->Draw();
-    h21->SetLineColor(kRed);
-    h21->Rebin(4);
-    h21->Draw("same");
+    // h21->SetLineColor(kRed);
+    // h21->Rebin(4);
+    // h21->Draw("same");
 
+    c14 = new TCanvas("c14", "EXO Doppler", 800, 600);
+    h_exo->Draw();
+
+
+    c15 = new TCanvas("c15", "EXO Doppler vs excitation", 800, 600); 
+    h_gamma_ex->Draw("COLZ");
 }

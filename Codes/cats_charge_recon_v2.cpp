@@ -234,7 +234,7 @@ void cats_charge_recon_v2(){
             
             gSystem->Sleep(700); // sleep 0.1s to see the canvas
 
-            // c->WaitPrimitive();
+            c->WaitPrimitive();
             c->Clear();
       }   
     }

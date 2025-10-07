@@ -16,6 +16,8 @@ using namespace nptool;
 #include <TCanvas.h>
 #include <TH1D.h>
 #include <TH2F.h>
+#include <TCutG.h>
+#include <TGraph.h>
 
 #include <iostream>
 using namespace cats;
@@ -130,9 +132,31 @@ TCanvas* c6 = NULL;
 TCanvas* c7 = NULL;
 
 
+TCutG *cut_right;
+TCutG *cut_left;
+TCutG *cut_top;
+TCutG *cut_bottom;
+TCutG *cut_y1y2;
+
 void loadFILES() {
   tree = new TChain("PhysicsTree");
-  tree->Add("../../data/analysed/FIXING_ACTION_FILE/523_trying_Ozges_cats_config.root");
+  tree->Add("/home/sharmap/Workplace/np4/e843/data/analysed/558.root");
+}
+
+void loadCUTS(){
+  TFile *cut_L = new TFile("/home/sharmap/Workplace/np4/e843/Codes/DC/cut_left.root","READ");
+  TFile *cut_R = new TFile("/home/sharmap/Workplace/np4/e843/Codes/DC/cut_right.root","READ");
+  TFile *cut_T = new TFile("/home/sharmap/Workplace/np4/e843/Codes/DC/cut_top.root","READ");
+  TFile *cut_B = new TFile("/home/sharmap/Workplace/np4/e843/Codes/DC/cut_bottom.root","READ");
+  TFile *file_cut_y1y2 = new TFile("/home/sharmap/Workplace/np4/e843/Codes/DC/catsy1y2.root","READ");
+
+  // Load your cuts here if needed
+  cut_left = (TCutG*)cut_L->FindObjectAny("CUTG");
+  cut_right = (TCutG*)cut_R->FindObjectAny("CUTG");
+  cut_top = (TCutG*)cut_T->FindObjectAny("CUTG");
+  cut_bottom = (TCutG*)cut_B->FindObjectAny("CUTG");
+
+  cut_y1y2 = (TCutG*)file_cut_y1y2->FindObjectAny("CUTG");
 }
 
 
@@ -141,6 +165,7 @@ void build_DC(){
     std::cout << "Init dummy application to use the detectors" << std::endl;
     auto app = nptool::Application::InitApplication("");
     loadFILES();
+    loadCUTS();
     cout<<"Total Entries: "<<tree->GetEntries()<<endl;
     TTreeReader reader(tree);
     TTreeReaderValue<ZddPhysics> phy_zdd_r(reader, "zdd");
@@ -151,11 +176,16 @@ void build_DC(){
     TTreeReaderArray<unsigned long long> DC_TS2_r(reader,"DC_TS2");
     TTreeReaderArray<unsigned long long> DC_TS3_r(reader,"DC_TS3");
     TTreeReaderArray<unsigned long long> DC_TS4_r(reader,"DC_TS4");
+    TTreeReaderArray<unsigned int> DC_E1_r(reader,"DC_1");
+    TTreeReaderArray<unsigned int> DC_E2_r(reader,"DC_2");
+    TTreeReaderArray<unsigned int> DC_E3_r(reader,"DC_3");
+    TTreeReaderArray<unsigned int> DC_E4_r(reader,"DC_4");
+
     TTreeReaderValue<CatsPhysics> phy_cats_r(reader, "cats");
 
 
     // TFile* outputFile = new TFile("./../../data/analysed/Build_DC_output_cats_shifted_4_with_C2X_m_1.root", "RECREATE");
-    TFile* outputFile = new TFile("./../../data/analysed/test2.root", "RECREATE");
+    TFile* outputFile = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/macro_output/test.root", "RECREATE");
 
     if (!outputFile || outputFile->IsZombie()) {
         outputFile->Close();
@@ -177,11 +207,16 @@ void build_DC(){
     TH1 *h1s_opposite = new TH1D("h1s_opposite", "DC 1 Time Subtraction cut opposite", 400, -200, 200);
     TH1 *h2s_opposite = new TH1D("h2s_opposite", "DC 2 Time Subtraction cut opposite", 400, -200, 200);
 
+    TH1 *hdc1 = new TH1D("hdc1", "DC 1 Energy", 400, -200, 200);
+    TH1 *hdc2 = new TH1D("hdc2", "DC 2 Energy", 400, -200, 200);
+    TH1 *hdc3 = new TH1D("hdc3", "DC 3 Energy", 400, -200, 200);
+    TH1 *hdc4 = new TH1D("hdc4", "DC 4 Energy", 400, -200, 200);
+    
     TH1 *hadded12 = new TH1D("hadded12", "DC 1 and DC 2 Time Subtraction added", 400, -200, 200);
     TH1 *hadded21 = new TH1D("hadded21", "DC 2 and DC 1 Time Subtraction added", 400, -200, 200);
 
-    TH2F *h_y_cats_cons = new TH2F("h_y_cats_cons", "CATS Y vs TS", 400,-200,200,400, -200, 200);
-    TH2F *h_x_cats_cons = new TH2F("h_x_cats_cons", "CATS X vs TS", 400,-200,200,400, -200, 200);
+    TH2F *h_y_cats_cons = new TH2F("h_y_cats_cons", "CATS Y vs TS", 4000,-200,200,400, -200, 200);
+    TH2F *h_x_cats_cons = new TH2F("h_x_cats_cons", "CATS X vs TS", 4000,-200,200,400, -200, 200);
 
     TH2F *hcats_recons_PS  = new TH2F("hcats_recons_PS", "Beam Spot on Target",          2400, -40, 40, 2400, -40, 40);
 
@@ -200,8 +235,9 @@ void build_DC(){
 
 
 
-    Double_t Position[3] = {-1587.1, -1090.6, 1260.4}; //CATS1 z pos, CATS2 z pos, DC z pos
-    Double_t Position_ZDD[4] = {1140.9, 1385.9, 1560.9, 2060.9}; // Positions of DC1, DC2, IC1, and Plastics
+    
+    Double_t Position[3] = {-1587.1, -1090.1, 1260.9}; //CATS1 z pos, CATS2 z pos, DC z pos
+    Double_t Position_ZDD[4] = {1260.9+10, 1260.9+30, 1560.9, 2060.9}; // Positions of DC1 (1 cm more), DC2 (3 cm more ), IC1, and Plastics
     Double_t Target_Z = 0;
     Double_t x_cats_consDC1 = 0;
     Double_t y_cats_consDC1 = 0;
@@ -209,14 +245,19 @@ void build_DC(){
     Double_t target_cons_y = 0;
     Double_t x_cats_consDC2 = 0;
     Double_t y_cats_consDC2 = 0;
+    unsigned int DC_E1 = 0;
+    unsigned int DC_E2 = 0;
+    unsigned int DC_E3 = 0;
+    unsigned int DC_E4 = 0;
 
 
     // Long64_t tot_entries = tree->GetEntries();
     // Long64_t entry_count = 0;
     // Long64_t max_entries = 5000000; // set your desired limit
     // if(max_entries >= tot_entries) {max_entries = tot_entries;}
+    long long event_counter = 0;
 
-    while(reader.Next()){
+    while(reader.Next()/*  && event_counter < 500000 */) {
         if(reader.GetCurrentEntry() % 1000000 == 0) {
             cout << "Processing entry: " << (static_cast<double>(reader.GetCurrentEntry()) / tree->GetEntries()) * 100.0 << "%" << endl;
         }
@@ -226,6 +267,12 @@ void build_DC(){
             if(phy_cats_r->PositionOnTargetY > -200 && phy_cats_r->PositionOnTargetX > -200){
               
               if(phy_zdd_r->PL_E.size()>0){
+
+                // if(DC_E1_r.GetSize()==1){
+                //     DC_E1 = DC_E1_r[0];
+                // }
+
+
                 Double_t targetX_byCATS = phy_cats_r->PositionOnTargetX;
                 Double_t targetY_byCATS = phy_cats_r->PositionOnTargetY;
 
@@ -233,7 +280,7 @@ void build_DC(){
                 Double_t CATS1_Y =  phy_cats_r->PositionY[0];
                 Double_t CATS1_Z =  phy_cats_r->PositionZ[0];
                 Double_t CATS2_X =  (phy_cats_r->PositionX[1])    /*  - 10 */; // Shift CATS2 X position by 1 cm
-                Double_t CATS2_Y =  phy_cats_r->PositionY[1];
+                Double_t CATS2_Y =  phy_cats_r->PositionY[1]; // Shift CATS2 Y position by -0.3 cm
                 Double_t CATS2_Z =  phy_cats_r->PositionZ[1];
 
                 Double_t ay = (Position[1] - Position[0])/(CATS2_Y - CATS1_Y);
@@ -253,27 +300,36 @@ void build_DC(){
                     Trajectory_XZ->Fill(k, CATS1_X + (k - Position[0])/ax);
                     Trajectory_YZ->Fill(k, CATS1_Y + (k - Position[0])/ay);
                 }
+                
                 unsigned long long cats2_ts = (unsigned long long)(*GATCONFTS_r);
                 // cout<<"DC_TS1_r: "<<DC_TS1_r.GetSize()<<" DC_TS2_r: "<<DC_TS2_r.GetSize()<<" DC_TS3_r: "<<DC_TS3_r.GetSize()<<" DC_TS4_r: "<<DC_TS4_r.GetSize()<<endl;
                 if(DC_TS1_r.GetSize()==1){
                     unsigned long long dc_1_ts  = (unsigned long long)(DC_TS1_r[0]);
                     TS_sub1 = static_cast<Long64_t>(cats2_ts) - static_cast<Long64_t>(dc_1_ts);
                     h1->Fill(TS_sub1);
+                    if(cut_top->IsInside(target_cons_X, target_cons_y))
+                      hdc1 ->Fill(-TS_sub1-153);
                 }
                 if(DC_TS2_r.GetSize()==1){
                     unsigned long long dc_2_ts  = (unsigned long long)(DC_TS2_r[0]);
                     TS_sub2 =  static_cast<Long64_t>(cats2_ts) - static_cast<Long64_t>(dc_2_ts);
                     h2->Fill(TS_sub2);
+                    if(cut_top->IsInside(target_cons_X, target_cons_y))
+                      hdc2 ->Fill(TS_sub2+158);
                 }
                 if(DC_TS3_r.GetSize()==1){
                     unsigned long long dc_3_ts  = (unsigned long long)(DC_TS3_r[0]);
                     TS_sub3 = static_cast<Long64_t>(cats2_ts) - static_cast<Long64_t>(dc_3_ts);
                     h3->Fill(TS_sub3);
+                    if(cut_right->IsInside(target_cons_X, target_cons_y))
+                      hdc3 ->Fill(TS_sub3);
                 }
                 if(DC_TS4_r.GetSize()==1){
                     unsigned long long dc_4_ts  = (unsigned long long)(DC_TS4_r[0]);
                     TS_sub4 =  static_cast<Long64_t>(cats2_ts) - static_cast<Long64_t>(dc_4_ts);
                     h4->Fill(TS_sub4);
+                    if(cut_right->IsInside(target_cons_X, target_cons_y))
+                      hdc4 ->Fill(TS_sub4);
                 }
 
                 if(TS_sub1>(-154) && TS_sub2>(-160)){
@@ -282,13 +338,16 @@ void build_DC(){
 
                     h1s_opposite->Fill(-TS_sub1-153);                           //adjusted time spectra for reference
                     h2s_opposite->Fill(TS_sub2+158);
+                    
 
                     Double_t TS12 = TS_sub1 - TS_sub2 - 5;
                     Double_t TS21 = TS_sub2 - TS_sub1 + 5;
 
                     hadded12->Fill(TS12);                                         //added the adjusted drift time spectra
-                    hadded21->Fill(TS21);                                       
-                    h_y_cats_cons->Fill(y_cats_consDC1, TS21);                       //drawing cats cons vs drift time y
+                    hadded21->Fill(TS21);                       
+                    // if(cut_y1y2->IsInside(CATS1_Y, CATS2_Y)) {               
+                      h_y_cats_cons->Fill(y_cats_consDC1, TS21);
+                    // }                       //drawing cats cons vs drift time y
                     h_x_cats_cons->Fill(x_cats_consDC1, TS21);                       //drawing cats cons vs drift time x
                     h_cats1xcats1y->Fill(CATS1_X, CATS1_Y);                         //CATS1 X:Y
                     h_cats2xcats2y->Fill(CATS2_X, CATS2_Y);                         //CATS2 X:Y
@@ -306,31 +365,32 @@ void build_DC(){
               }
             }
         }
+        event_counter++;
     }
-    // c1 = new TCanvas("c1", "DC12 Time Subtraction", 800, 600);
-    // c2 = new TCanvas("c2", "DC34 Time Subtraction", 800, 600);
+    c1 = new TCanvas("c1", "DC12 Time Subtraction", 800, 600);
+    c2 = new TCanvas("c2", "DC34 Time Subtraction", 800, 600);
 
-    // c1->Divide(1,2);
-    // c1->cd(1);
-    // h1->SetLineColor(kBlue);
-    // h1->Draw(); 
+    c1->Divide(1,2);
+    c1->cd(1);
+    h1->SetLineColor(kBlue);
+    h1->Draw(); 
     // fit_erf_line(h1, -600, 200);
-    // c1->cd(2);
-    // h2->SetLineColor(kBlue);
-    // h2->Draw();
+    c1->cd(2);
+    h2->SetLineColor(kBlue);
+    h2->Draw();
     // fit_erf_line(h2, -600, 200);
     
-    // c2->Divide(1,2);
-    // c2->cd(1);
-    // h3->SetLineColor(kBlue);
-    // h3->Draw();
+    c2->Divide(1,2);
+    c2->cd(1);
+    h3->SetLineColor(kBlue);
+    h3->Draw();
     // fit_erf_line(h3, -600, 200);
-    // c2->cd(2);
-    // h4->SetLineColor(kBlue);
-    // h4->Draw();
+    c2->cd(2);
+    h4->SetLineColor(kBlue);
+    h4->Draw();
     // fit_erf_line(h4, -600, 200);
-    // c1->Update();
-    // c2->Update();
+    c1->Update();
+    c2->Update();
     c3 = new TCanvas("c3", "DC Time Subtraction Added", 800, 600);
     c3->Divide(2,2);
     c3->cd(1);
@@ -346,6 +406,10 @@ void build_DC(){
     h1s_opposite->Draw();
     h2s_opposite->SetLineColor(kBlue+1);
     h2s_opposite->Draw("same");
+    hdc1->SetLineColor(kGreen);
+    hdc1->Draw("same");
+    hdc2->SetLineColor(kOrange);
+    hdc2->Draw("same");
     c3->cd(4);
     hadded21->SetLineColor(kBlue);
     hadded21->Draw();
@@ -409,6 +473,10 @@ void build_DC(){
     c7->Divide(2,2);
     c7->cd(1);
     h_target->Draw("colz");
+    cut_bottom->Draw("same");
+    cut_top->Draw("same");
+    cut_left->Draw("same");
+    cut_right->Draw("same");
     c7->cd(3);
     h_DC1->Draw("colz");
     c7->cd(4);

@@ -275,15 +275,15 @@ void response_fitPS_v13()
     Int_t totalparams = 5 + (3*6) +3*1 ; // 5 for pol4, 6 simulated gaus, 1 new gaus
     Double_t fit_parameters[totalparams];
 
-    TFile* file1 = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/roothistograms/Response_fit/simulation9mm/hhgs.root");
-    TFile* file2 = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/roothistograms/Response_fit/simulation9mm/hh915.root");
-    TFile* file3 = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/roothistograms/Response_fit/simulation9mm/hh1816.root");
-    TFile* file4 = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/roothistograms/Response_fit/simulation9mm/hh2552.root");
-    TFile* file5 = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/roothistograms/Response_fit/simulation9mm/hh2880.root");
-    TFile* file6 = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/roothistograms/Response_fit/simulation9mm/hh4000.root");
-    TFile* datafile = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/roothistograms/hAllthetamore4kev.root");
-    TFile* carbonfile = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/roothistograms/hAllthetamore4kev_carbon2.root");
-    TFile* Breakupfile = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/roothistograms/breakup_deuteron/phase_BU.root");
+    TFile* file1 = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/for_Prabhat/roothistograms/Response_fit/simulation9mm/hhgs.root");
+    TFile* file2 = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/for_Prabhat/roothistograms/Response_fit/simulation9mm/hh915.root");
+    TFile* file3 = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/for_Prabhat/roothistograms/Response_fit/simulation9mm/hh1816.root");
+    TFile* file4 = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/for_Prabhat/roothistograms/Response_fit/simulation9mm/hh2552.root");
+    TFile* file5 = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/for_Prabhat/roothistograms/Response_fit/simulation9mm/hh2880.root");
+    TFile* file6 = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/for_Prabhat/roothistograms/Response_fit/simulation9mm/hh4000.root");
+    TFile* datafile = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/for_Prabhat/roothistograms/hAllthetamore4kev.root");
+    TFile* carbonfile = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/for_Prabhat/roothistograms/hAllthetamore4kev_carbon2.root");
+    TFile* Breakupfile = TFile::Open("/home/sharmap/Workplace/np4/e843/Files_from_ozge/for_Prabhat/roothistograms/breakup_deuteron/phase_BU.root");
 
     if (!file1 || file1->IsZombie() || !file2 || file2->IsZombie() ||!file3 || file3->IsZombie() || !file4 || file4->IsZombie() ||!file5 || file5->IsZombie() || !file6 || file6->IsZombie() ) {
         printf("Error: One or more response ROOT files could not be opened.\n");

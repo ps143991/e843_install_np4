@@ -21,22 +21,46 @@ void user_analysis::Analysis_TAC::TreatEvent() {
 
 void user_analysis::Analysis_TAC::BeamSpot_PL() {
     for(unsigned int i = 0; i < tac->m_PhysicsData->TAC_Time.size(); i++){
-        if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_3") == 0) {
+        if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_1") == 0) {
+            TAC_PL_1 += (tac->m_PhysicsData->TAC_Time[i]);
+            Double_t per_bin_value = (26541 - 19617)/20;                  // for 20 cm
+            Double_t posX= ((TAC_PL_1 - 19617)/per_bin_value) - 10;       // to center about 0.
+            if(abs(posX)<10) {Spot_Plastic_1 = posX;}
+            else Spot_Plastic_1 = -10;
+        }
+        else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_2") == 0) {
+            TAC_PL_2 += (tac->m_PhysicsData->TAC_Time[i]);
+            Double_t per_bin_value = (26322 - 19836)/20;                  // for 20 cm
+            Double_t posX= ((TAC_PL_2 - 19836)/per_bin_value) - 10;       // to center about 0.
+            if(abs(posX)<10) {Spot_Plastic_2 = posX;}
+            else Spot_Plastic_2 = -10;
+        }
+        else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_3") == 0) {
+            // TAC_PL_3.push_back(tac->m_PhysicsData->TAC_Time[i]); 
             TAC_PL_3 += (tac->m_PhysicsData->TAC_Time[i]); 
-            Double_t per_bin_value = (27062 - 18776)/20;                  // for 20 cm
-            Double_t posX= ((TAC_PL_3 - 18776)/per_bin_value) - 10;       // to center about 0.
+            Double_t per_bin_value = (26052 - 20106)/20;                  // for 20 cm
+            Double_t posX= ((TAC_PL_3 - 20106)/per_bin_value) - 10;       // to center about 0.
             if(abs(posX)<10) {Spot_Plastic_3 = posX;}
             else Spot_Plastic_3 = -10;
-          }
+        }
+        else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_4") == 0) {
+            TAC_PL_4 += (tac->m_PhysicsData->TAC_Time[i]);
+            Double_t per_bin_value = (26301 - 19857)/20;                  // for 20 cm
+            Double_t posX= ((TAC_PL_4 - 19857)/per_bin_value) - 10;       // to center about 0.
+            if(abs(posX)<10) {Spot_Plastic_4 = posX;}
+            else Spot_Plastic_4 = -10;
+        }
     }
 }
 
 void user_analysis::Analysis_TAC::TreatTAC(){
+        // cout<<"function Treattac running"<<endl;
 
 //    // TAC_TOF = false;
 //    norm_length=0.0;
 //   //  counterTAC = 0;
     for(unsigned int i = 0; i < tac->m_PhysicsData->TAC_Time.size(); i++){
+        // cout<<"size is: "<<tac->m_PhysicsData->TAC_Time.size()<<endl;
         if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_CATS_PL") == 0)
         {
             TAC_CATS_PL += (tac->m_PhysicsData->TAC_Time[i]*0.01276894);
@@ -115,22 +139,22 @@ void user_analysis::Analysis_TAC::TreatTAC(){
         // } 
     //    PS: uncomment above for e869
 
-        else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_1") == 0)
+        /* else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_1") == 0)
         {
             TAC_PL_1 += (tac->m_PhysicsData->TAC_Time[i]) // +0670.0-19395
             ;
             TAC_PL_1_TS.push_back(tac->m_PhysicsData->TAC_TS[i]);
             // norm_length=((TAC_PL_1-L_Bins[0])/perbin_value[0])-10;
             // h2dPL->Fill(norm_length,5);
-        }
-        else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_2") == 0)
+        } */
+        /* else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_2") == 0)
         {
             TAC_PL_2 += (tac->m_PhysicsData->TAC_Time[i])// +0105.0-19395
             ;
             TAC_PL_2_TS.push_back(tac->m_PhysicsData->TAC_TS[i]);
             // norm_length=((TAC_PL_2-L_Bins[1])/perbin_value[1])-10;
             // h2dPL->Fill(norm_length,4);
-        }
+        } */
         // else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_3") == 0)
         // {
         //     TAC_PL_3 += (tac->m_PhysicsData->TAC_Time[i])// +0000.0-19395
@@ -139,30 +163,31 @@ void user_analysis::Analysis_TAC::TreatTAC(){
         //     // norm_length=((TAC_PL_3-L_Bins[2])/perbin_value[2])-10;
         //     // h2dPL->Fill(norm_length,3);
         // }
-        else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_3") == 0)           /*FIXME: changing  the plastic 3 to normal to take into acc the plastic other than cosmics that passed through all plastsics */
+        /* else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_3") == 0)           //FIXME: changing  the plastic 3 to normal to take into acc the plastic other than cosmics that passed through all plastsics
         {
             TAC_PL_3 += (tac->m_PhysicsData->TAC_Time[i]);
             TAC_PL_3_TS.push_back(tac->m_PhysicsData->TAC_TS[i]);
             // cout<<"TAC_PL_3 value passing: "<<TAC_PL_3<<endl;
+            // cout<<"TAC_PL_3 value passing: "<<TAC_PL_3<<endl;
             // norm_length=((TAC_PL_3-L_Bins[2])/perbin_value[2])-10;
             // h2dPL->Fill(norm_length,3);
-        }
-        else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_4") == 0)
+        } */
+        /* else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_4") == 0)
         {
             TAC_PL_4 += (tac->m_PhysicsData->TAC_Time[i]) //+1217.0-19395
             ;
             TAC_PL_4_TS.push_back(tac->m_PhysicsData->TAC_TS[i]);
             // norm_length=((TAC_PL_4-L_Bins[3])/perbin_value[3])-10;
             // h2dPL->Fill(norm_length,2);
-        }
-        else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_5") == 0)
+        } */
+        /* else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_5") == 0)
         {
             TAC_PL_5 += (tac->m_PhysicsData->TAC_Time[i])//+0474.0-19395
             ;
             TAC_PL_5_TS.push_back(tac->m_PhysicsData->TAC_TS[i]);
             // norm_length=((TAC_PL_5-L_Bins[4])/perbin_value[4])-10;
             // h2dPL->Fill(norm_length,1);
-        }
+        } */
         else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_DD6_DD4") == 0)
         {
             TAC_DD6_DD4 += (tac->m_PhysicsData->TAC_Time[i]*0.00749);
@@ -175,15 +200,16 @@ void user_analysis::Analysis_TAC::TreatTAC(){
             TAC_CATSD6_1_DD4_TS.push_back(tac->m_PhysicsData->TAC_TS[i]);
         }
     }
-
 } 
 
 
 void user_analysis::Analysis_TAC::SetDataOutput(std::shared_ptr<nptool::VDataOutput> output) {
   auto Tree = std::dynamic_pointer_cast<nptool::RootOutput>(output)->GetTree();
 
-
+  Tree->Branch("Spot_Plastic_1",&Spot_Plastic_1);
+  Tree->Branch("Spot_Plastic_2",&Spot_Plastic_2);
   Tree->Branch("Spot_Plastic_3",&Spot_Plastic_3);
+  Tree->Branch("Spot_Plastic_4",&Spot_Plastic_4);
 
   Tree->Branch("TAC_CATS_PL",&TAC_CATS_PL);
   Tree->Branch("TAC_CATS_PL_TS",&TAC_CATS_PL_TS);
@@ -240,6 +266,7 @@ void user_analysis::Analysis_TAC::Clear() {
     TAC_PL_2 = 0.0;
     TAC_PL_2_TS.clear();
     TAC_PL_3 = 0.0;
+    // TAC_PL_3.clear();
     TAC_PL_3_TS.clear();
     TAC_PL_4 = 0.0;
     TAC_PL_4_TS.clear();
@@ -254,7 +281,12 @@ void user_analysis::Analysis_TAC::Clear() {
     TAC_D4_CATS1nc= -1000;
 
 
+    Spot_Plastic_1 = 0;
+    Spot_Plastic_2 = 0;
+    // cout<<"value set to 0: "<<endl;
     Spot_Plastic_3 = 0;
+    Spot_Plastic_4 = 0;
+
 }
 
 
