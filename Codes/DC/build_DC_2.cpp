@@ -233,6 +233,7 @@ void build_DC_2(){
     TH2F *h_DC1 = new TH2F("h_DC1","DC1 reconstruction with cats", 2400, -40, 40, 2400, -40, 40);
     TH2F *h_DC2 = new TH2F("h_DC2","DC2 reconstruction with cats", 2400, -40, 40, 2400, -40, 40);
 
+    TH2F *h_only_dc2 = new TH2F("h_only_dc2","DC2 reconstruction with cats only dc2", 4000,-200,200,400, -200, 200);
 
 
     
@@ -332,6 +333,10 @@ void build_DC_2(){
                       hdc4 ->Fill(TS_sub4);
                 }
 
+                if(TS_sub2>(-160)){
+                  h_only_dc2 ->Fill(TS_sub2+158, target_cons_y);
+                }
+
                 if(TS_sub1>(-154) && TS_sub2>(-160)){
                     h1s->Fill(TS_sub1+153);                                     //drift time spectra
                     h2s->Fill(-TS_sub2-158);                                    //drift time spectra
@@ -345,8 +350,10 @@ void build_DC_2(){
 
                     hadded12->Fill(TS12);                                         //added the adjusted drift time spectra
                     hadded21->Fill(TS21);                       
-                    // if(cut_y1y2->IsInside(CATS1_Y, CATS2_Y)) {               
+                    // if(cut_y1y2->IsInside(CATS1_Y, CATS2_Y)) {
+                    if(DC_TS1_r.GetSize()==1 && DC_TS2_r.GetSize()==0){
                       h_y_cats_cons->Fill(y_cats_consDC1, TS21);
+                    }
                     // }                       //drawing cats cons vs drift time y
                     h_x_cats_cons->Fill(x_cats_consDC1, TS21);                       //drawing cats cons vs drift time x
                     h_cats1xcats1y->Fill(CATS1_X, CATS1_Y);                         //CATS1 X:Y
@@ -481,6 +488,9 @@ void build_DC_2(){
     h_DC1->Draw("colz");
     c7->cd(4);
     h_DC2->Draw("colz");
+
+    TCanvas *c8 = new TCanvas("c8","Only DC2 Reconstructed", 800,600);
+    h_only_dc2->Draw("colz");
 
     
     
