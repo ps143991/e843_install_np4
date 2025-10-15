@@ -21,7 +21,10 @@ ExogamSpectra::ExogamSpectra() {
   TDirectory* exodir = gROOT->mkdir("exogam");
   exodir->cd();
   auto app = nptool::Application::GetApplication();
-  
+
+  // Diagnostic flange canvases? -----------------------------------------------
+  if(app->HasFlag("--exo-expert")){diagcanvas = true;}
+
   // Set Pointers --------------------------------------------------------------
   m_detector = std::dynamic_pointer_cast<ExogamDetector>(
       app->GetDetector("exogam"));
@@ -390,15 +393,19 @@ ExogamSpectra::ExogamSpectra() {
 
   canv_name = "Exo_RatesAndCoincidences";
   m_canvas[canv_name] = new TCanvas(canv_name.c_str(), canv_name.c_str());
-  m_canvas[canv_name]->Divide(2,2);
+  m_canvas[canv_name]->Divide(3,2);
   m_canvas[canv_name]->cd(1);
     if(haveRaw){m_raw_hist_1D["Exo_1D_TS"]->Draw();}
-  m_canvas[canv_name]->cd(2); m_canvas[canv_name]->cd(2)->SetLogy();
-    if(haveRaw){m_raw_hist_1D["Exo_1D_TSDiff"]->Draw();}
-  m_canvas[canv_name]->cd(3);
-    if(havePhy){m_phy_hist_1D["Exo_1D_Pattern-Segment"]->Draw();}
-  m_canvas[canv_name]->cd(4); m_canvas[canv_name]->cd(4)->SetLogz();
+  m_canvas[canv_name]->cd(2);
+    if(havePhy){m_phy_hist_1D["Exo_1D_Pattern-Crystal"]->Draw();}
+  m_canvas[canv_name]->cd(3); m_canvas[canv_name]->cd(3)->SetLogz();
     if(havePhy){m_phy_hist_2D["Exo_2D_Pattern-SegSeg"]->Draw("colz");}
+  m_canvas[canv_name]->cd(4); m_canvas[canv_name]->cd(4)->SetLogy();
+    if(haveRaw){m_raw_hist_1D["Exo_1D_TSDiff"]->Draw();}
+  m_canvas[canv_name]->cd(5); m_canvas[canv_name]->cd(5)->SetLogy();
+    if(havePhy){m_phy_hist_1D["Exo_1D_TSDiff"]->Draw();}
+  m_canvas[canv_name]->cd(6); m_canvas[canv_name]->cd(6)->SetLogy();
+    if(havePhy){m_phy_hist_1D["Exo_1D_TSDiff_SameEvent"]->Draw();}
   
   canv_name = "Exo_EnergyAndTDCs";
   m_canvas[canv_name] = new TCanvas(canv_name.c_str(), canv_name.c_str());
@@ -477,65 +484,67 @@ ExogamSpectra::ExogamSpectra() {
 //    m_canvas[canv_name]->cd(tmp_cnv); m_phy_hist_V1D[hD.c_str()]->Draw();
 //    tmp_cnv +=1;
 //  }
-//
+
+
+
   // Diagnostic, can remove for shifters
-  if(haveRaw){
-    for(int f=2; f<14; f++){
-      canv_name = "Exo_Raw_Flange" + std::to_string(f);
-      m_canvas[canv_name] = new TCanvas(canv_name.c_str(), canv_name.c_str());
-      m_canvas[canv_name]->Divide(6,4);
+  if(diagcanvas){
+    if(haveRaw){
+      for(int f=2; f<14; f++){
+        canv_name = "Exo_Raw_Flange" + std::to_string(f);
+        m_canvas[canv_name] = new TCanvas(canv_name.c_str(), canv_name.c_str());
+        m_canvas[canv_name]->Divide(6,4);
 
-      tmp_cnv = 1;
-      for(int c=f*4; c<f*4+4; c++){
-        std::string id = std::to_string(c);
-        if(id.size() < 2) id = std::string(2-id.size(),'0')+id; // fast prepend
+        tmp_cnv = 1;
+        for(int c=f*4; c<f*4+4; c++){
+          std::string id = std::to_string(c);
+          if(id.size() < 2) id = std::string(2-id.size(),'0')+id; // fast prepend
 
-        hist_name = "Exo_V1D_E_" + id;
-        m_canvas[canv_name]->cd(tmp_cnv); m_raw_hist_V1D[hist_name.c_str()]->Draw();
-        tmp_cnv +=1;
-
-        hist_name = "Exo_V1D_EHG_" + id;
-        m_canvas[canv_name]->cd(tmp_cnv); m_raw_hist_V1D[hist_name.c_str()]->Draw();
-        tmp_cnv +=1;
-
-        for(int s=1; s<5; s++){
-          hist_name = "Exo_V1D_Outers_" + id + "-" + std::to_string(s);
+          hist_name = "Exo_V1D_E_" + id;
           m_canvas[canv_name]->cd(tmp_cnv); m_raw_hist_V1D[hist_name.c_str()]->Draw();
           tmp_cnv +=1;
+
+          hist_name = "Exo_V1D_EHG_" + id;
+          m_canvas[canv_name]->cd(tmp_cnv); m_raw_hist_V1D[hist_name.c_str()]->Draw();
+          tmp_cnv +=1;
+
+          for(int s=1; s<5; s++){
+            hist_name = "Exo_V1D_Outers_" + id + "-" + std::to_string(s);
+            m_canvas[canv_name]->cd(tmp_cnv); m_raw_hist_V1D[hist_name.c_str()]->Draw();
+            tmp_cnv +=1;
+          }
         }
       }
     }
-  }
 
-  //// Diagnostic, can remove for shifters
-  if(havePhy){
-    for(int f=2; f<14; f++){
-      std::string id = std::to_string(f);
-      if(id.size() < 2) id = std::string(2-id.size(),'0')+id; // fast prepend
-      canv_name = "Exo_Phy_Flange" + id;
-      m_canvas[canv_name] = new TCanvas(canv_name.c_str(), canv_name.c_str());
-      m_canvas[canv_name]->Divide(6,4);
+    if(havePhy){
+      for(int f=2; f<14; f++){
+        std::string id = std::to_string(f);
+        if(id.size() < 2) id = std::string(2-id.size(),'0')+id; // fast prepend
+        canv_name = "Exo_Phy_Flange" + id;
+        m_canvas[canv_name] = new TCanvas(canv_name.c_str(), canv_name.c_str());
+        m_canvas[canv_name]->Divide(6,4);
 
-      tmp_cnv = 1;
-      static char cry[] = {"ABCD"};
-      for(int c=0; c<4; c++){
-        hist_name = "Exo_V1D_ECal_" + id + cry[c];
-        m_canvas[canv_name]->cd(tmp_cnv); m_phy_hist_V1D[hist_name.c_str()]->Draw();
-        tmp_cnv +=1;
-
-        hist_name = "Exo_V1D_EAdd_" + id + cry[c];
-        m_canvas[canv_name]->cd(tmp_cnv); m_phy_hist_V1D[hist_name.c_str()]->Draw();
-        tmp_cnv +=1;
-
-        for(int s=1; s<5; s++){
-          hist_name = "Exo_V1D_Seg_" + id + cry[c] + "-" + std::to_string(s);
+        tmp_cnv = 1;
+        static char cry[] = {"ABCD"};
+        for(int c=0; c<4; c++){
+          hist_name = "Exo_V1D_ECal_" + id + cry[c];
           m_canvas[canv_name]->cd(tmp_cnv); m_phy_hist_V1D[hist_name.c_str()]->Draw();
           tmp_cnv +=1;
+
+          hist_name = "Exo_V1D_EAdd_" + id + cry[c];
+          m_canvas[canv_name]->cd(tmp_cnv); m_phy_hist_V1D[hist_name.c_str()]->Draw();
+          tmp_cnv +=1;
+
+          for(int s=1; s<5; s++){
+            hist_name = "Exo_V1D_Seg_" + id + cry[c] + "-" + std::to_string(s);
+            m_canvas[canv_name]->cd(tmp_cnv); m_phy_hist_V1D[hist_name.c_str()]->Draw();
+            tmp_cnv +=1;
+          }
         }
       }
     }
   }
-
 
 
   gROOT->cd();

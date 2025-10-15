@@ -1,3 +1,23 @@
+/*****************************************************************************
+---*
+ * Comment:                                                                  *
+ * Improvements to be made: (1) the exact distance of DC1 and DC2
+ * (2) the window of Drift time to be taken
+ * (3) does the beam spend enough time in the target for physics runs to alter
+ *  the time difference giving us fake drift time?
+ * (4) ...
+ * 
+ * Find the resolution of the drift chambers...
+ * 
+ * 
+ * 
+ * I leave the build_DC_2 with a seed to grow the DC spot... The next version 
+ * (v3) will start with unified planes (not quadrants).. basically vertical and
+ * horizontal complete...
+ *****************************************************************************/
+
+
+
 #include "NPApplication.h"
 using namespace nptool;
 #include "NPDetectorManager.h"
@@ -16,6 +36,7 @@ using namespace nptool;
 #include <TCanvas.h>
 #include <TH1D.h>
 #include <TH2F.h>
+#include <TProfile.h>
 #include <TCutG.h>
 #include <TGraph.h>
 
@@ -122,6 +143,9 @@ void fit_erf_line_graph(TGraph *g, double xmin=0, double xmax=0){
   f->Draw("same");
 }
 
+
+
+
 TChain* tree = NULL;
 TCanvas* c1 = NULL;
 TCanvas* c2 = NULL;
@@ -132,11 +156,19 @@ TCanvas* c6 = NULL;
 TCanvas* c7 = NULL;
 
 
-TCutG *cut_right;
 TCutG *cut_left;
-TCutG *cut_top;
-TCutG *cut_bottom;
-TCutG *cut_y1y2;
+TCutG *cut_right;
+TCutG *cut_up;
+TCutG *cut_down;
+TCutG *cut_cats1_right;
+TCutG *cut_cats1_left;
+TCutG *cut_cats1_top;
+TCutG *cut_cats1_down;
+TCutG* cut_dc1;
+TCutG* cut_dc2;
+TCutG* cut_dc3;
+TCutG* cut_dc4;
+
 
 void loadFILES() {
   tree = new TChain("PhysicsTree");
@@ -144,19 +176,34 @@ void loadFILES() {
 }
 
 void loadCUTS(){
-  TFile *cut_L = new TFile("/home/sharmap/Workplace/np4/e843/Codes/DC/cut_left.root","READ");
-  TFile *cut_R = new TFile("/home/sharmap/Workplace/np4/e843/Codes/DC/cut_right.root","READ");
-  TFile *cut_T = new TFile("/home/sharmap/Workplace/np4/e843/Codes/DC/cut_top.root","READ");
-  TFile *cut_B = new TFile("/home/sharmap/Workplace/np4/e843/Codes/DC/cut_bottom.root","READ");
-  TFile *file_cut_y1y2 = new TFile("/home/sharmap/Workplace/np4/e843/Codes/DC/catsy1y2.root","READ");
+  TFile *cut_L = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/cut_left.root","READ");
+  TFile *cut_R = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/cut_right.root","READ");
+  TFile *cut_U = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/cut_up.root","READ");
+  TFile *cut_D = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/cut_down.root","READ");
+  TFile *cats1_right  = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/cut_cats1_right.root","READ");
+  TFile *cats1_left  = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/cut_cats1_left.root","READ");
+  TFile *cats1_top = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/cut_cats1_top.root","READ");
+  TFile *cats1_down = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/cut_cats1_down.root","READ");
+
+  TFile *dc1_cut = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/dc1.root","READ");
+  TFile *dc2_cut = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/dc2.root","READ");
+  TFile *dc3_cut = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/dc3.root","READ");
+  TFile *dc4_cut = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/dc4.root","READ");
 
   // Load your cuts here if needed
-  cut_left = (TCutG*)cut_L->FindObjectAny("CUTG");
-  cut_right = (TCutG*)cut_R->FindObjectAny("CUTG");
-  cut_top = (TCutG*)cut_T->FindObjectAny("CUTG");
-  cut_bottom = (TCutG*)cut_B->FindObjectAny("CUTG");
+  cut_left = (TCutG*)cut_L->FindObjectAny("cut_theau");
+  cut_right = (TCutG*)cut_R->FindObjectAny("cut_theau2");
+  cut_up = (TCutG*)cut_U->FindObjectAny("cut_up");
+  cut_down = (TCutG*)cut_D->FindObjectAny("cut_down");
+  cut_cats1_right = (TCutG*)cats1_right->FindObjectAny("cut_cats1_right");
+  cut_cats1_left = (TCutG*)cats1_left->FindObjectAny("CUTG");
+  cut_cats1_top = (TCutG*)cats1_top->FindObjectAny("cut_cats1_top");
+  cut_cats1_down = (TCutG*)cats1_down->FindObjectAny("cut_cats1_down");
 
-  cut_y1y2 = (TCutG*)file_cut_y1y2->FindObjectAny("CUTG");
+  cut_dc1 = (TCutG*)dc1_cut->FindObjectAny("CUTG");
+  cut_dc2 = (TCutG*)dc2_cut->FindObjectAny("CUTG");
+  cut_dc3 = (TCutG*)dc3_cut->FindObjectAny("CUTG");
+  cut_dc4 = (TCutG*)dc4_cut->FindObjectAny("CUTG");
 }
 
 
@@ -194,6 +241,8 @@ void build_DC_2(){
     TTree* outputTree = new TTree("t", "Tree");
 
     Double_t TS_sub1, TS_sub2, TS_sub3, TS_sub4;
+    bool dc1_flag, dc2_flag, dc3_flag, dc4_flag;
+    
     outputTree->Branch("TS_DC1_sub", &TS_sub1, "TS_DC1_sub/D");
     outputTree->Branch("TS_DC2_sub", &TS_sub2, "TS_DC2_sub/D");
     outputTree->Branch("TS_DC3_sub", &TS_sub3, "TS_DC3_sub/D");
@@ -236,9 +285,33 @@ void build_DC_2(){
     TH2F *h_only_dc2 = new TH2F("h_only_dc2","DC2 reconstruction with cats only dc2", 4000,-200,200,400, -200, 200);
 
 
+    TH2F* Trajectory_XZ_left_cut = new TH2F("Trajectory_XZ_left_cut", "Reconstruction of beam trajectory in detectors left cut (X projection)", 381, -1700, 2100, 1000, -249, 250 );
+    TH2F* Trajectory_YZ_up_cut = new TH2F("Trajectory_YZ_left_cut", "Reconstruction of beam trajectory in detectors left cut (Y projection)", 381, -1700, 2100, 1000, -249, 250 );
+    TH2F* Trajectory_XZ_right_cut = new TH2F("Trajectory_XZ_right_cut", "Reconstruction of beam trajectory in detectors right cut (X projection)", 381, -1700, 2100, 1000, -249, 250 );
+    TH2F* Trajectory_YZ_down_cut = new TH2F("Trajectory_YZ_right_cut", "Reconstruction of beam trajectory in detectors right cut (Y projection)", 381, -1700, 2100, 1000, -249, 250 );
+
+    TH2F* plot_cons_vs_drift = new TH2F("plot_cons_vs_drift", "CATS Y at DC2 vs TS DC2", 800,-600,200,400, -200, 200);
+    TH1F* hEdc1 = new TH1F("hEdc1", "DC1 Energy", 400, -4000, 4000);
+    TH1F* hEdc2 = new TH1F("hEdc2", "DC2 Energy", 400, -4000, 4000);
+    TH1F* hEdc3 = new TH1F("hEdc3", "DC3 Energy", 400, -4000, 4000);
+    TH1F* hEdc4 = new TH1F("hEdc4", "DC4 Energy", 400, -4000, 4000);
+    TH2F* hNEw3 = new TH2F("hNEw3", "TS DC3 sub vs CATS1 X at DC3", 200,-200,0, 2000, -200, 200);
+    TH2F* hNEw4 = new TH2F("hNEw4", "TS DC4 sub vs CATS1 X at DC4", 200,-200,0, 2000, -200, 200);
+    TH2F* hNEw1 = new TH2F("hNEw1", "TS DC1 sub vs CATS1 Y at DC1", 200,-200,0, 2000, -200, 200);
+    TH2F* hNEw2 = new TH2F("hNEw2", "TS DC2 sub vs CATS1 Y at DC2", 200,-200,0, 2000, -200, 200);
+
+    TH2F* hNEw3_gated = new TH2F("hNEw3_gated", "gated TS DC3 sub vs CATS1 X at DC3", 200,-200,0, 2000, -200, 200);
+    TH2F* hNEw4_gated = new TH2F("hNEw4_gated", "gated TS DC4 sub vs CATS1 X at DC4", 200,-200,0, 2000, -200, 200);
+    TH2F* hNEw1_gated = new TH2F("hNEw1_gated", "gated TS DC1 sub vs CATS1 Y at DC1", 200,-200,0, 2000, -200, 200);
+    TH2F* hNEw2_gated = new TH2F("hNEw2_gated", "gated TS DC2 sub vs CATS1 Y at DC2", 200,-200,0, 2000, -200, 200);
+
+    TH2F* dc_spot = new TH2F("dc_spot", "DC spot", 800,-40,40,800,-40,40);
+
     
     Double_t Position[3] = {-1587.1, -1090.1, 1260.9}; //CATS1 z pos, CATS2 z pos, DC z pos
     Double_t Position_ZDD[4] = {1260.9+10, 1260.9+30, 1560.9, 2060.9}; // Positions of DC1 (1 cm more), DC2 (3 cm more ), IC1, and Plastics
+
+    Double_t DC_coeff[4][2]={{-0.392921,-58.8316}, {0.419384,68.0564}, {0.39777,65.3414}, {-0.452811,-67.5281}}; //{slope, intercept} for DC1, DC2, DC3, DC4
     Double_t Target_Z = 0;
     Double_t x_cats_consDC1 = 0;
     Double_t y_cats_consDC1 = 0;
@@ -258,10 +331,14 @@ void build_DC_2(){
     // if(max_entries >= tot_entries) {max_entries = tot_entries;}
     long long event_counter = 0;
 
-    while(reader.Next()/*  && event_counter < 500000 */) {
+    while(reader.Next() && event_counter < 3000000) {
         if(reader.GetCurrentEntry() % 1000000 == 0) {
             cout << "Processing entry: " << (static_cast<double>(reader.GetCurrentEntry()) / tree->GetEntries()) * 100.0 << "%" << endl;
         }
+        TS_sub1 = -1000;  dc1_flag = false;
+        TS_sub2 = -1000;  dc2_flag = false;
+        TS_sub3 = -1000;  dc3_flag = false;
+        TS_sub4 = -1000;  dc4_flag = false;
         // if (entry_count > max_entries) break;
 
         if (*GATCONF_r == 1 || *GATCONF_r == 2 ||*GATCONF_r == 16 ||*GATCONF_r == 32) {
@@ -308,15 +385,12 @@ void build_DC_2(){
                     unsigned long long dc_1_ts  = (unsigned long long)(DC_TS1_r[0]);
                     TS_sub1 = static_cast<Long64_t>(cats2_ts) - static_cast<Long64_t>(dc_1_ts);
                     h1->Fill(TS_sub1);
-                    if(cut_top->IsInside(target_cons_X, target_cons_y))
-                      hdc1 ->Fill(-TS_sub1-153);
                 }
                 if(DC_TS2_r.GetSize()==1){
                     unsigned long long dc_2_ts  = (unsigned long long)(DC_TS2_r[0]);
                     TS_sub2 =  static_cast<Long64_t>(cats2_ts) - static_cast<Long64_t>(dc_2_ts);
                     h2->Fill(TS_sub2);
-                    if(cut_top->IsInside(target_cons_X, target_cons_y))
-                      hdc2 ->Fill(TS_sub2+158);
+
                 }
                 if(DC_TS3_r.GetSize()==1){
                     unsigned long long dc_3_ts  = (unsigned long long)(DC_TS3_r[0]);
@@ -367,6 +441,66 @@ void build_DC_2(){
                     h_DC2->Fill(x_cats_consDC2,y_cats_consDC2);
                 }
 
+                if(cut_up->IsInside(CATS1_X + ( Target_Z - Position[0])/ax,CATS1_Y + (Target_Z - Position[0])/ay) ){
+                  if(cut_cats1_down->IsInside(CATS1_X,CATS1_Y)){
+                    for(int k= Position[0]; k<Position_ZDD[0]; k+=5){
+                        Trajectory_YZ_up_cut->Fill(k, CATS1_Y + (k - Position[0])/ay);
+                    }
+                    plot_cons_vs_drift -> Fill(TS_sub2, CATS1_Y + (Position_ZDD[1] - Position[0])/ay);
+
+                  }
+                }
+                
+                if(cut_down->IsInside(CATS1_X + ( Target_Z - Position[0])/ax,CATS1_Y + (Target_Z - Position[0])/ay) ){
+                  if(cut_cats1_top->IsInside(CATS1_X,CATS1_Y)){
+                    for(int k= Position[0]; k<Position_ZDD[0]; k+=5){
+                        Trajectory_YZ_down_cut->Fill(k, CATS1_Y + (k - Position[0])/ay);
+                    }
+                  }
+                }
+
+                if(cut_left->IsInside(CATS1_X + ( Target_Z - Position[0])/ax,CATS1_Y + (Target_Z - Position[0])/ay) ){
+                  if(cut_cats1_right->IsInside(CATS1_X,CATS1_Y)){
+                    for(int k= Position[0]; k<Position_ZDD[0]; k+=5){
+                        Trajectory_XZ_left_cut->Fill(k, CATS1_X + (k - Position[0])/ax);
+                    }
+                  }
+                }
+                if(cut_right->IsInside(CATS1_X + ( Target_Z - Position[0])/ax,CATS1_Y + (Target_Z - Position[0])/ay) ){
+                  if(cut_cats1_left->IsInside(CATS1_X,CATS1_Y)){
+                    for(int k= Position[0]; k<Position_ZDD[0]; k+=5){
+                        Trajectory_XZ_right_cut->Fill(k, CATS1_X + (k - Position[0])/ax);
+                    }
+                  }
+                }
+
+
+
+                  if(TS_sub3>(-160) && TS_sub3<(-90))
+                  {
+                    hNEw3->Fill(TS_sub3, CATS1_X + ( Position_ZDD[0] - Position[0])/ax);
+                    dc3_flag = true;
+                  }
+                  if(TS_sub4>(-155) && TS_sub4<(-50))
+                  {
+                    hNEw4->Fill(TS_sub4, CATS1_X + ( Position_ZDD[0] - Position[0])/ax);
+                    dc4_flag = true;
+                  }
+                  if(TS_sub1>(-158) && TS_sub1<(-80)){
+                    hNEw1->Fill(TS_sub1, CATS1_Y + ( Position_ZDD[1] - Position[0])/ay);
+                    dc1_flag = true;
+                  }
+                  if(TS_sub2>(-160) && TS_sub2<(-80)){
+                    hNEw2->Fill(TS_sub2, CATS1_Y + ( Position_ZDD[1] - Position[0])/ay);
+                    dc2_flag = true;
+                  }
+                  //the 4 quadrants
+                  if(dc4_flag && dc2_flag){dc_spot->Fill(((TS_sub4+155)*DC_coeff[3][0] + DC_coeff[3][1]+155), (TS_sub2+160)*DC_coeff[1][0] + DC_coeff[1][1]+160);}  //quad 1
+                  if(dc3_flag && dc2_flag){dc_spot->Fill(-((TS_sub3+160)*DC_coeff[2][0] + DC_coeff[2][1]+160), (TS_sub2+160)*DC_coeff[1][0] + DC_coeff[1][1]+160);}  //quad 2
+                  if(dc3_flag && dc1_flag){dc_spot->Fill(-((TS_sub3+160)*DC_coeff[2][0] + DC_coeff[2][1]+160), -((TS_sub1+158)*DC_coeff[0][0] + DC_coeff[0][1]+158));}  //quad 3
+                  if(dc4_flag && dc1_flag){dc_spot->Fill(((TS_sub4+155)*DC_coeff[3][0] + DC_coeff[3][1]+155), -((TS_sub1+158)*DC_coeff[0][0] + DC_coeff[0][1]+158));}  //quad 4
+
+
                 outputTree->Fill();
                 // cout<<"************************************************"<<endl;
               }
@@ -374,6 +508,8 @@ void build_DC_2(){
         }
         event_counter++;
     }
+
+  
     c1 = new TCanvas("c1", "DC12 Time Subtraction", 800, 600);
     c2 = new TCanvas("c2", "DC34 Time Subtraction", 800, 600);
 
@@ -480,8 +616,7 @@ void build_DC_2(){
     c7->Divide(2,2);
     c7->cd(1);
     h_target->Draw("colz");
-    cut_bottom->Draw("same");
-    cut_top->Draw("same");
+
     cut_left->Draw("same");
     cut_right->Draw("same");
     c7->cd(3);
@@ -492,10 +627,178 @@ void build_DC_2(){
     TCanvas *c8 = new TCanvas("c8","Only DC2 Reconstructed", 800,600);
     h_only_dc2->Draw("colz");
 
-    
-    
 
-    outputTree->Write();
+    TCanvas *c9 = new TCanvas("c9","cut trajectories",1700,1000);
+    c9->Divide(1,4);
+    c9->cd(1);
+    Trajectory_XZ_left_cut->SetTitle("Reconstruction of beam trajectory in detectors left cut (X projection)");
+    Trajectory_XZ_left_cut->GetXaxis()->SetTitle("Z Position (mm)");
+    Trajectory_XZ_left_cut->GetYaxis()->SetTitle("X Position (mm)");
+    Trajectory_XZ_left_cut->Draw("COLZ");
+
+    c9->cd(2);
+    Trajectory_XZ_right_cut->SetTitle("Reconstruction of beam trajectory in detectors right cut (X projection)");
+    Trajectory_XZ_right_cut->GetXaxis()->SetTitle("Z Position (mm)");
+    Trajectory_XZ_right_cut->GetYaxis()->SetTitle("X Position (mm)");
+    Trajectory_XZ_right_cut->Draw("colz");
+  
+
+    
+    c9->cd(3);
+    Trajectory_YZ_up_cut->SetTitle("Reconstruction of beam trajectory in detectors up cut (Y projection)");
+    Trajectory_YZ_up_cut->GetXaxis()->SetTitle("Z Position (mm)");
+    Trajectory_YZ_up_cut->GetYaxis()->SetTitle("Y Position (mm)");
+    Trajectory_YZ_up_cut->Draw("COLZ");
+    
+    c9->cd(4);
+    Trajectory_YZ_down_cut->SetTitle("Reconstruction of beam trajectory in detectors down cut (Y projection)");
+    Trajectory_YZ_down_cut->GetXaxis()->SetTitle("Z Position (mm)");
+    Trajectory_YZ_down_cut->GetYaxis()->SetTitle("Y Position (mm)");
+    Trajectory_YZ_down_cut->Draw("COLZ");
+
+
+    TCanvas *c10 = new TCanvas("c10","CATS Y at DC2 vs TS DC2", 800,600);
+    plot_cons_vs_drift->SetTitle("CATS Y at DC2 vs TS DC2");
+    plot_cons_vs_drift->GetXaxis()->SetTitle("TS DC2 (ns)");
+    plot_cons_vs_drift->GetYaxis()->SetTitle("CATS Y at DC2 (mm)");
+    plot_cons_vs_drift->Draw("COLZ");
+    c10->Update();
+
+
+
+    TCanvas *c13 = new TCanvas("c13", "raw dist. vs drift_time", 1200,900);
+    c13->Divide(2,2);
+    c13->cd(1);
+    hNEw3->SetTitle("TS DC3 sub vs CATS1 X at DC3 left");
+    hNEw3->GetXaxis()->SetTitle("TS DC3 sub (ns)");
+    hNEw3->GetYaxis()->SetTitle("CATS1 X at DC3 (mm)");
+    hNEw3->Draw("COLZ");
+    TProfile *p3 = hNEw3->ProfileX();
+    p3->SetLineColor(kRed);
+    p3->SetLineWidth(2);
+    p3->Draw("E1 same");
+
+    c13->cd(2);
+    hNEw4->SetTitle("TS DC4 sub vs CATS1 X at DC4 right");
+    hNEw4->GetXaxis()->SetTitle("TS DC4 sub (ns)");
+    hNEw4->GetYaxis()->SetTitle("CATS1 X at DC4 (mm)");
+    hNEw4->Draw("COLZ");  
+    TProfile *p4 = hNEw4->ProfileX();
+    p4->SetLineColor(kRed);
+    p4->SetLineWidth(2);
+    p4->Draw("E1 same");
+    c13->cd(3);
+    hNEw1->SetTitle("TS DC1 sub vs CATS1 Y at DC1 bottom");
+    hNEw1->GetXaxis()->SetTitle("TS DC1 sub (ns)");
+    hNEw1->GetYaxis()->SetTitle("CATS1 Y at DC1 (mm)");
+    hNEw1->Draw("COLZ");
+    TProfile *p1 = hNEw1->ProfileX();
+    p1->SetLineColor(kRed);
+    p1->SetLineWidth(2);
+    p1->Draw("E1 same");   
+    c13->cd(4);
+    hNEw2->SetTitle("TS DC2 sub vs CATS1 Y at DC2 top");
+    hNEw2->GetXaxis()->SetTitle("TS DC2 sub (ns)");
+    hNEw2->GetYaxis()->SetTitle("CATS1 Y at DC2 (mm)");
+    hNEw2->Draw("COLZ");
+    TProfile *p2 = hNEw2->ProfileX();
+    p2->SetLineColor(kRed); 
+    p2->SetLineWidth(2);
+    p2->Draw("E1 same");
+    c13->Update();  
+
+
+    hNEw3_gated = (TH2F*)hNEw3->Clone("hNEw3_gated");hNEw3_gated -> Reset("ICES");
+    hNEw4_gated = (TH2F*)hNEw4->Clone("hNEw4_gated");hNEw4_gated -> Reset("ICES");
+    hNEw1_gated = (TH2F*)hNEw1->Clone("hNEw1_gated");hNEw1_gated -> Reset("ICES");
+    hNEw2_gated = (TH2F*)hNEw2->Clone("hNEw2_gated");hNEw2_gated -> Reset("ICES");
+
+    for(int i=1; i<=hNEw3->GetNbinsX(); i++){
+      for(int j=1; j<=hNEw3->GetNbinsY(); j++){
+        if(cut_dc3->IsInside(hNEw3->GetXaxis()->GetBinCenter(i), hNEw3->GetYaxis()->GetBinCenter(j))){
+          hNEw3_gated->SetBinContent(i,j, hNEw3->GetBinContent(i,j));
+        }
+      }
+    }
+    for(int i=1; i<=hNEw4->GetNbinsX(); i++){
+      for(int j=1; j<=hNEw4->GetNbinsY(); j++){
+        if(cut_dc4->IsInside(hNEw4->GetXaxis()->GetBinCenter(i), hNEw4->GetYaxis()->GetBinCenter(j))){
+          hNEw4_gated->SetBinContent(i,j, hNEw4->GetBinContent(i,j));
+        }
+      }
+    }
+    for(int i=1; i<=hNEw1->GetNbinsX(); i++){
+      for(int j=1; j<=hNEw1->GetNbinsY(); j++){
+        if(cut_dc1->IsInside(hNEw1->GetXaxis()->GetBinCenter(i), hNEw1->GetYaxis()->GetBinCenter(j))){
+          hNEw1_gated->SetBinContent(i,j, hNEw1->GetBinContent(i,j));
+        }
+      }
+    }
+    for(int i=1; i<=hNEw2->GetNbinsX(); i++){
+      for(int j=1; j<=hNEw2->GetNbinsY(); j++){
+        if(cut_dc2->IsInside(hNEw2->GetXaxis()->GetBinCenter(i), hNEw2->GetYaxis()->GetBinCenter(j))){
+          hNEw2_gated->SetBinContent(i,j, hNEw2->GetBinContent(i,j));
+        }
+      }
+    }
+
+    TF1* line1 = new TF1("line1","[0]*x+[1]", -200, 0);
+    TCanvas *c14 = new TCanvas("c14", "gated dist. vs drift_time", 1200,900);
+    c14->Divide(2,2);
+    c14->cd(1);
+    hNEw3_gated->SetTitle("gated TS DC3 sub vs CATS1 X at DC3 left");
+    hNEw3_gated->GetXaxis()->SetTitle("TS DC3 sub (ns)");
+    hNEw3_gated->GetYaxis()->SetTitle("CATS1 X at DC3 (mm)");
+
+    TProfile *p3g = hNEw3_gated->ProfileX();
+    p3g->SetLineColor(kRed);
+    p3g->SetLineWidth(2);
+    p3g->Fit("line1","R");
+    hNEw3_gated->Draw("COLZ");
+    p3g->Draw("same");
+
+    c14->cd(2);
+    hNEw4_gated->SetTitle("gated TS DC4 sub vs CATS1 X at DC4 right");
+    hNEw4_gated->GetXaxis()->SetTitle("TS DC4 sub (ns)");
+    hNEw4_gated->GetYaxis()->SetTitle("CATS1 X at DC4 (mm)");
+    TProfile *p4g = hNEw4_gated->ProfileX();
+    p4g->SetLineColor(kRed);
+    p4g->SetLineWidth(2);
+    p4g->Fit("line1","R");
+    hNEw4_gated->Draw("COLZ");  
+    p4g->Draw("same");
+    c14->cd(3);
+    hNEw1_gated->SetTitle("gated TS DC1 sub vs CATS1 Y at DC1 bottom");
+    hNEw1_gated->GetXaxis()->SetTitle("TS DC1 sub (ns)");
+    hNEw1_gated->GetYaxis()->SetTitle("CATS1 Y at DC1 (mm)");
+    TProfile *p1g = hNEw1_gated->ProfileX();
+    p1g->SetLineColor(kRed);
+    p1g->SetLineWidth(2);
+    p1g->Fit("line1","R");
+    hNEw1_gated->Draw("COLZ");
+
+    p1g->Draw("same");   
+    c14->cd(4);
+    hNEw2_gated->SetTitle("gated TS DC2 sub vs CATS1 Y at DC2 top");
+    hNEw2_gated->GetXaxis()->SetTitle("TS DC2 sub (ns)");
+    hNEw2_gated->GetYaxis()->SetTitle("CATS1 Y at DC2 (mm)");
+    TProfile *p2g = hNEw2_gated->ProfileX();
+    p2g->SetLineColor(kRed); 
+    p2g->SetLineWidth(2);
+    p2g->Fit("line1","R");
+    hNEw2_gated->Draw("COLZ");
+
+    p2g->Draw("same");
+    c14->Update();
+
+    TCanvas *c15 = new TCanvas("c15", "DC spot", 800,600);
+    dc_spot->SetTitle("DC spot");
+    dc_spot->GetXaxis()->SetTitle("X Position (mm)");
+    dc_spot->GetYaxis()->SetTitle("Y Position (mm)");
+    dc_spot->Draw("COLZ");
+    c15->Update();
+
+    // outputTree->Write();
 
 
 }

@@ -1,0 +1,9 @@
+module "NPExogam" {
+  requires cplusplus
+  module "ExogamData.h" { header "ExogamData.h" export * }
+  module "ExogamPhysics.h" { header "ExogamPhysics.h" export * }
+  module "ExogamSpectra.h" { header "ExogamSpectra.h" export * }
+  link "libNPExogam.so"
+  export *
+}
+

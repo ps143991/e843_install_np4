@@ -231,6 +231,7 @@ void CatsDetector::TreatFrame(void* commonframe) {
 
 ////////////////////////////////////////////////////////////////////////////////
 void CatsDetector::BuildPhysicalEvent() {
+
   MapX.clear();
   MapY.clear();
 

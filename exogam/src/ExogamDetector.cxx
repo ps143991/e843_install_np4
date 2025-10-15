@@ -28,7 +28,18 @@ ExogamDetector::ExogamDetector() {
   m_RawData = new exogam::ExogamData();
   m_CalData = new exogam::ExogamData();
   m_PhysicsData = new exogam::ExogamPhysics();
+  m_SimGeo = new exogam::ExogamSimulatedGeometry();
   m_Cal.InitCalibration();
+
+
+  string simgeofile = "./exogam/src/ThetaPhiXYZ.txt";
+  std::cout << "Loading Sim Geo file: " << simgeofile << std::endl;
+  m_SimGeo->LoadTextFile(simgeofile.c_str());
+  //m_SimGeo->PrintAngleData(1.000);
+  //m_SimGeo->PrintAngleData(4.000);
+  //m_SimGeo->PrintXYZData(1.000);
+  //m_SimGeo->PrintXYZData(4.000);
+
 
   // Thresholds, raw
   m_EXO_E_RAW_Threshold = 0;
@@ -130,6 +141,7 @@ void ExogamDetector::ReadAnalysisConfig() {
 
   string DataBuffer, whatToDo;
   string LineBuffer;
+  bool FoundPhotonCS = false;
   while (!AnalysisConfigFile.eof()) {
     // Pick-up next line
     getline(AnalysisConfigFile, LineBuffer);
@@ -215,30 +227,34 @@ void ExogamDetector::ReadAnalysisConfig() {
 
       } else if (whatToDo == "PhotonCS") {
         // Photon cross-section path
+        FoundPhotonCS = true;
         AnalysisConfigFile >> DataBuffer;
         string CSFilename = DataBuffer;
+        std::cout << whatToDo << " " << CSFilename << std::endl;
 
         ifstream CSFile;
         CSFile.open(CSFilename.c_str());
         if (!CSFile.is_open()) {
-          std::cout << " No CS file found " << CSFilename << std::endl;
-          std::cout << " Loading CoherentGe.xcom from exogam plugin "
-                    << std::endl;
-          CSFilename = "./CoherentGe.xcom";
-          return;
+          std::string msg  = "PhotonCS file " + CSFilename + " not found. "
+                           + "Using in-built gamma-ray cross sections";
+          nptool::message("yellow", "exogam",
+                          "exogam::ExogamDetector::ReadAnalysisConfig()",
+                          msg);
+          FoundPhotonCS = false;
         }
-
-        while (CSFile.good()) {
-          double gammaE, CrossSection;
-          getline(CSFile, LineBuffer);
-          istringstream ss(LineBuffer);
-          ss >> gammaE >> CrossSection;  // E in MeV, converted to keV,
-                                         // CrossSection in cm2/g
-          gammaE *= 1000.;               // Convertion to keV
-          CrossSection *= 100.;
-          Map_PhotonCS[gammaE] = CrossSection;
+        else {
+          Map_PhotonCS.clear();
+          while (CSFile.good()) {
+            double gammaE, CrossSection;
+            getline(CSFile, LineBuffer);
+            istringstream ss(LineBuffer);
+            ss >> gammaE >> CrossSection;  // E in MeV, converted to keV,
+                                           // CrossSection in cm2/g
+            gammaE *= 1000.;               // Convertion to keV
+            CrossSection *= 100.;
+            Map_PhotonCS[gammaE] = CrossSection;
+          }
         }
-
       } else if (whatToDo == "MAP_EXO") {
         // Mapping raw crystal onto <flange, crystal in flange>
         unsigned int CrystalNb;
@@ -283,6 +299,7 @@ void ExogamDetector::ReadAnalysisConfig() {
       }
     }
   }
+  if(!FoundPhotonCS){Map_PhotonCS = GetDefaultPhotonCS();}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -482,6 +499,7 @@ void ExogamDetector::BuildPhysicalEvent() {
 
     // Fill physics data structure
     m_PhysicsData->Exo_E.push_back(m_CalData->GetExoE(i));
+    // cout<<"Filling Exo_E: "<<m_CalData->GetExoE(i)<<endl;
     m_PhysicsData->Exo_EHG.push_back(m_CalData->GetExoEHG(i));
     m_PhysicsData->Exo_Outer1.push_back(m_CalData->GetExoOuter1(i));
     m_PhysicsData->Exo_Outer2.push_back(m_CalData->GetExoOuter2(i));
@@ -554,6 +572,8 @@ void ExogamDetector::BuildPhysicalEvent() {
     for (auto itvec = (*it).second.begin(); itvec != (*it).second.end();
          itvec++) {
       E_AddBack += m_CalData->GetExoE(*itvec);
+      // cout<<"E_AddBack: "<<E_AddBack<<endl;
+      // cout<<"E: "<<m_CalData->GetExoE(*itvec)<<endl;
       if (E_Max < m_CalData->GetExoE(*itvec)) {
         E_Max = m_CalData->GetExoE(*itvec);
         Id_Max = *itvec;
@@ -577,6 +597,20 @@ void ExogamDetector::BuildPhysicalEvent() {
 
     if (flange_nbr > 0 && flange_nbr < 17) {
       if (MaxOuterId > -1) {
+//        m_PhysicsData->Exo_Theta.push_back(
+//			  m_SimGeo->GetTheta(flange_nbr, 
+//				             crystal_nbr, 
+//					     MaxOuterId, 
+//					     E_AddBack)
+//			);
+//
+//        m_PhysicsData->Exo_Phi.push_back(
+//			  m_SimGeo->GetPhi(flange_nbr, 
+//				           crystal_nbr, 
+//					   MaxOuterId, 
+//					   E_AddBack)
+//			);
+
         Exogam_struc = Ask_For_Angles((int)flange_nbr,
                                       (double)ComputeMeanFreePath(E_AddBack));
         double Theta_seg =
@@ -608,30 +642,31 @@ void ExogamDetector::PreTreat() {
   for (unsigned int i = 0; i < m_EXO_Mult; ++i) {
     ResetPreTreatVariable();
 
-    if (m_RawData->GetExoE(i) > m_EXO_E_RAW_Threshold) EXO_E = fEXO_E(i);
+    if (m_RawData->GetExoE(i) > m_EXO_E_RAW_Threshold) EXO_E = 1000*fEXO_E(i);    // PS: converted to keV 
+    // cout<<"EXOE: "<<EXO_E<<endl;
 
     if (m_RawData->GetExoEHG(i) > m_EXO_EHG_RAW_Threshold)
-      EXO_EHG = fEXO_EHG(i);
+      EXO_EHG = 1000*fEXO_EHG(i);                                                 // PS: converted to keV
 
     if (m_RawData->GetExoTDC(i) > m_EXO_TDC_RAW_Threshold) EXO_TDC = fEXO_T(i);
 
     if (m_RawData->GetExoOuter1(i) < m_EXO_OuterUp_RAW_Threshold)
-      EXO_Outer1 = fEXO_Outer(i, 0);
+      EXO_Outer1 = 1000*fEXO_Outer(i, 0);
     else
       EXO_Outer1 = 0;
 
     if (m_RawData->GetExoOuter2(i) < m_EXO_OuterUp_RAW_Threshold)
-      EXO_Outer2 = fEXO_Outer(i, 1);
+      EXO_Outer2 = 1000*fEXO_Outer(i, 1);
     else
       EXO_Outer2 = 0;
 
     if (m_RawData->GetExoOuter3(i) < m_EXO_OuterUp_RAW_Threshold)
-      EXO_Outer3 = fEXO_Outer(i, 2);
+      EXO_Outer3 = 1000*fEXO_Outer(i, 2);
     else
       EXO_Outer3 = 0;
 
     if (m_RawData->GetExoOuter4(i) < m_EXO_OuterUp_RAW_Threshold)
-      EXO_Outer4 = fEXO_Outer(i, 3);
+      EXO_Outer4 = 1000*fEXO_Outer(i, 3);
     else
       EXO_Outer4 = 0;
 
@@ -659,13 +694,6 @@ void ExogamDetector::ResetPreTreatVariable() {
 //////////////////////////////////////////////////////////////////////////////
 double ExogamDetector::GetDoppler(double Energy, unsigned int Flange,
                                   unsigned int Crystal, unsigned int Outer) {
-  // MAKE SURE THAT ANY LOOPS ARE USING THE SIZE OF ADDBACK!
-  if (ComputeMeanFreePath(Energy) != -1000) {
-    std::cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "
-              << ComputeMeanFreePath(Energy) << std::endl;
-  }
-
-  // Exogam_struc     = Ask_For_Angles((int) Flange, 20.);
   Exogam_struc =
       Ask_For_Angles((int)Flange, (double)ComputeMeanFreePath(Energy));
   double Theta_seg = Exogam_struc.Theta_Crystal_Seg[Crystal][Outer];
@@ -675,27 +703,73 @@ double ExogamDetector::GetDoppler(double Energy, unsigned int Flange,
 
 ////////////////////////////////////////////////////////////////////////////////
 double ExogamDetector::ComputeMeanFreePath(double Energy) {
-  auto b = Map_PhotonCS.lower_bound(Energy);
-  auto a = b;
+  // Take gamma energy in keV, return mean free path in mm
 
-  if (b != Map_PhotonCS.begin())
-    a = prev(b);
-  else
-    return -1000;
-
-  if (b == Map_PhotonCS.begin()) {
-    a = b;
-    b++;
-  } else if (b == Map_PhotonCS.end()) {
-    b--;
-    a = prev(b);
+  // In case the map is (somehow?) empty, load default values now
+  if(Map_PhotonCS.empty()){
+    std::cout << "Map_PhotonCS failed, loading built-in values..." << std::endl;
+    Map_PhotonCS=GetDefaultPhotonCS();
   }
 
-  double coeff = (Energy - a->first) / (b->first - a->first);
+  // Find closest map key above energy
+  auto upper = Map_PhotonCS.lower_bound(Energy);
 
-  double PhotonCrossSection =
-      a->second + coeff * (b->second - a->second);  // mm2/g
-  return 1. / (GeDensity * PhotonCrossSection);
+  // If out of range, return -1000
+  if (upper->first == Map_PhotonCS.begin()->first 
+       || upper->first == Map_PhotonCS.end()->first){
+    return -1000;
+  }
+
+  // Find closest map key below energy
+  auto lower = upper;
+  --lower;
+
+  // Position of Energy between upper and lower
+  double ratio = (Energy - lower->first) / (upper->first - lower->first);
+
+  // Linear interpolation of cross section, [mm2/g]
+  double sigma = lower->second + ratio * (upper->second - lower->second);
+
+  // Return mean free path
+  return 1.0 / (GeDensity * sigma); // mean free path
+}
+
+////////////////////////////////////////////////////////////////////////////////
+std::map<double, double> ExogamDetector::GetDefaultPhotonCS() {
+  // Total attenuation (with coherent scattering) in Ge, from NIST XCOM
+  // https://physics.nist.gov/cgi-bin/Xcom/xcom3_1
+  // Here, values are in units of [keV], [mm2/g]
+  return {{1.500e+01, 9.1480e+03},
+          {2.000e+01, 4.2220e+03},
+          {3.000e+01, 1.3850e+03},
+          {4.000e+01, 6.2060e+02},
+          {5.000e+01, 3.3350e+02},
+          {6.000e+01, 2.0230e+02},
+          {8.000e+01, 9.5010e+01},
+          {1.000e+02, 5.5500e+01},
+          {1.500e+02, 2.4910e+01},
+          {2.000e+02, 1.6610e+01},
+          {3.000e+02, 1.1310e+01},
+          {4.000e+02, 9.3270e+00},
+          {5.000e+02, 8.2120e+00},
+          {6.000e+02, 7.4520e+00},
+          {8.000e+02, 6.4260e+00},
+          {1.000e+03, 5.7270e+00},
+          {1.022e+03, 5.6620e+00},
+          {1.250e+03, 5.1010e+00},
+          {1.500e+03, 4.6570e+00},
+          {2.000e+03, 4.0860e+00},
+          {2.044e+03, 4.0490e+00},
+          {3.000e+03, 3.5240e+00},
+          {4.000e+03, 3.2750e+00},
+          {5.000e+03, 3.1580e+00},
+          {6.000e+03, 3.1070e+00},
+          {7.000e+03, 3.0950e+00},
+          {8.000e+03, 3.1040e+00},
+          {9.000e+03, 3.1260e+00},
+          {1.000e+04, 3.1560e+00},
+          {1.100e+04, 3.1900e+00},
+          {1.200e+04, 3.2260e+00}};
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -722,6 +796,77 @@ double ExogamDetector::GetDopplerSimple(double E, double Angle) {
     return EDC;
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+double ExogamDetector::GetDoppler_SimBoost(double energy, 
+		                            unsigned int flange, 
+		                            unsigned int crystal, 
+					    unsigned int segment) {
+
+
+  // Safety check
+  if (flange >= 16 || crystal >= 4 || segment >= 4) {
+    nptool::message("red","exogam","ExogamDetector::GetDoppler_SimBoost",
+		    "Invalid Flange/Crystal/Segment received");
+    return energy;
+  }
+
+
+  // Get position X, Y, Z from SimGeo
+  double pos_x = m_SimGeo->GetX(flange, crystal, segment, energy);
+  double pos_y = m_SimGeo->GetY(flange, crystal, segment, energy);
+  double pos_z = m_SimGeo->GetZ(flange, crystal, segment, energy);
+
+  // Construct hit position vector
+  TVector3 GammaHitPosition(pos_x, pos_y, pos_z);
+
+  // Construct gamma DIRECTION vector
+  TVector3 GammaDirection = GammaHitPosition - m_SimGeo->TargetPosition;
+  GammaDirection = GammaDirection.Unit();
+
+  // Lorentz vector to hold Px, Py, Pz, energy
+  TLorentzVector GammaLorentz;
+  GammaLorentz.SetPx(energy * GammaDirection.X());
+  GammaLorentz.SetPy(energy * GammaDirection.Y());
+  GammaLorentz.SetPz(energy * GammaDirection.Z());
+  GammaLorentz.SetE(energy);
+
+  // Boost Lorentz vector by beta
+  GammaLorentz.Boost(GetBeta()*m_SimGeo->BeamDirection.Unit());
+
+  return GammaLorentz.Energy();
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+double ExogamDetector::GetDoppler_Sim100mm(double energy, 
+		                            unsigned int flange, 
+		                            unsigned int crystal, 
+					    unsigned int segment) {
+
+
+  // Safety check
+  if (flange >= 16 || crystal >= 4 || segment >= 4) {
+    nptool::message("red","exogam","ExogamDetector::GetDoppler_Sim100mm",
+		    "Invalid Flange/Crystal/Segment received");
+    return energy;
+  }
+
+  // Retrieve theta and phi angles for this segment
+  double theta = m_SimGeo->GetTheta(flange, crystal, segment, energy);
+  double phi   = m_SimGeo->GetPhi(flange, crystal, segment, energy);
+
+  // Convert to radians
+  double theta_rad = theta * M_PI / 180.0;
+  double phi_rad   = phi   * M_PI / 180.0;
+
+
+  double EDC = energy * ((1. - GetBeta() * TMath::Cos(theta_rad)) / (TMath::Sqrt(1. - GetBeta() * GetBeta())));
+
+  return EDC;
+
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////
 //	tranform an integer to a string
@@ -868,10 +1013,6 @@ void ExogamDetector::SetCloverInactive(int flange) {
 
 ////////////////////////////////////////////////////////////////////////////////
 void ExogamDetector::SetCrystalActive(int rawcrystal) {
-  cout << "Activating crystal " << rawcrystal << " (flange "
-       << MapCrystalFlangeClover[rawcrystal].first << ", crys "
-       << MapCrystalFlangeClover[rawcrystal].second << ")" << endl;
-
   if (!IsCrystalActive[rawcrystal]) {
     IsCrystalActive[rawcrystal] = true;
     IsFlangeCrystalActive[MapCrystalFlangeClover[rawcrystal].first]

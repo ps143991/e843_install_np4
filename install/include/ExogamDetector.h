@@ -22,6 +22,8 @@
 #include "ExogamData.h"
 #include "ExogamPhysics.h"
 #include "Geometry_Clover_Exogam.h"
+//#include "Geometry_Exogam_100mmOffset.h"
+#include "ExogamSimulatedGeometry.h"
 #include "Math/Vector3D.h"
 #include "NPCalibrationManager.h"
 #include "NPVDetector.h"
@@ -51,6 +53,7 @@ public: // Data member
   exogam::ExogamData*        m_RawData;
   exogam::ExogamData*        m_CalData;
   exogam::ExogamPhysics*     m_PhysicsData;
+  exogam::ExogamSimulatedGeometry*     m_SimGeo;
   nptool::CalibrationManager m_Cal;
   std::shared_ptr<exogam::ExogamSpectra> m_Spectra;
 
@@ -149,15 +152,17 @@ public:
   ExogamData* GetPreTreatedData() const { return m_CalData; } //!
   void        ReadAnalysisConfig(); //!
 
-  double       ComputeMeanFreePath(double GammaEnergy); //!
+  double ComputeMeanFreePath(double Energy); //!
+  std::map<double, double> GetDefaultPhotonCS(); //!
   unsigned int GetFlangeNbr(unsigned int crystal_nbr); //!
-  int          GetMaxOuter(unsigned int EventId); //!
+  int    GetMaxOuter(unsigned int EventId); //!
   double GetDoppler(double Energy, unsigned int Flange, unsigned int Crystal,
                     unsigned int Outer); //!
   double GetDopplerSimple(double E, double Angle); //!
+  double GetDoppler_Sim100mm(double energy, unsigned int flange, unsigned int crystal, unsigned int segment); //!
+  double GetDoppler_SimBoost(double energy, unsigned int flange, unsigned int crystal, unsigned int segment); //!
 
   void SetBeta(double beta){m_beta = beta;};
-  
   double GetBeta(){return m_beta;};
 
 private: // Variables for analysis
@@ -182,13 +187,12 @@ private: // Variables for analysis
   double                   GeDensity = 0.005323; //! g/mm3
   std::map<double, double> Map_PhotonCS; //!
   double                   m_beta = -1000.; //!
-					 //
+
   Clover_struc Exogam_struc; //!
 
   std::map<unsigned int, std::pair<unsigned int, unsigned int>>
       MapCrystalFlangeClover; //! Map key is raw crystal nbr, pair associated is
                               //! flange nbr and crystal nbr in the flange
-			      //
 
 private: // Variables for checks and alarms
   unsigned int count_GammaHit;

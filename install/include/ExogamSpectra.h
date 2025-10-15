@@ -21,6 +21,7 @@
 #include "TFolder.h"
 #include "TH1.h"
 #include "TH2.h"
+#include "TROOT.h"
 // std
 #include <map>
 #include <memory>
@@ -64,7 +65,8 @@ namespace exogam {
    public:
     bool haveRaw = false;
     bool havePhy = false;
-
+    bool diagcanvas = false;
+  
   };
 
 } // namespace exogam

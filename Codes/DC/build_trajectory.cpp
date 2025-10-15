@@ -38,6 +38,10 @@ TCutG *cut_left;
 TCutG *cut_right;
 TCutG *cut_up;
 TCutG *cut_down;
+TCutG *cut_cats1_right;
+TCutG *cut_cats1_left;
+TCutG *cut_cats1_top;
+TCutG *cut_cats1_down;
 
 void loadFILES() {
   tree = new TChain("PhysicsTree");
@@ -48,12 +52,20 @@ void loadCUTS(){
   TFile *cut_R = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/cut_right.root","READ");
   TFile *cut_U = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/cut_up.root","READ");
   TFile *cut_D = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/cut_down.root","READ");
+  TFile *cats1_right  = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/cut_cats1_right.root","READ");
+  TFile *cats1_left  = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/cut_cats1_left.root","READ");
+  TFile *cats1_top = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/cut_cats1_top.root","READ");
+  TFile *cats1_down = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/cut_cats1_down.root","READ");
 
   // Load your cuts here if needed
   cut_left = (TCutG*)cut_L->FindObjectAny("cut_theau");
   cut_right = (TCutG*)cut_R->FindObjectAny("cut_theau2");
   cut_up = (TCutG*)cut_U->FindObjectAny("cut_up");
   cut_down = (TCutG*)cut_D->FindObjectAny("cut_down");
+  cut_cats1_right = (TCutG*)cats1_right->FindObjectAny("cut_cats1_right");
+  cut_cats1_left = (TCutG*)cats1_left->FindObjectAny("CUTG");
+  cut_cats1_top = (TCutG*)cats1_top->FindObjectAny("cut_cats1_top");
+  cut_cats1_down = (TCutG*)cats1_down->FindObjectAny("cut_cats1_down");
 }
 
 void build_trajectory(){
@@ -138,6 +150,11 @@ void build_trajectory(){
 
     TH2F* Trajectory_XZ = new TH2F("Trajectory_XZ", "Reconstruction of beam trajectory in detectors (X projection)", 381, -1700, 2100, 1000, -499, 500 );
     TH2F* Trajectory_YZ = new TH2F("Trajectory_YZ", "Reconstruction of beam trajectory in detectors (Y projection)", 381, -1700, 2100, 1000, -499, 500 );
+    TH2F* Trajectory_XZ_left_cut = new TH2F("Trajectory_XZ_left_cut", "Reconstruction of beam trajectory in detectors left cut (X projection)", 381, -1700, 2100, 1000, -499, 500 );
+    TH2F* Trajectory_YZ_left_cut = new TH2F("Trajectory_YZ_left_cut", "Reconstruction of beam trajectory in detectors left cut (Y projection)", 381, -1700, 2100, 1000, -499, 500 );
+    TH2F* Trajectory_XZ_right_cut = new TH2F("Trajectory_XZ_right_cut", "Reconstruction of beam trajectory in detectors right cut (X projection)", 381, -1700, 2100, 1000, -499, 500 );
+    TH2F* Trajectory_YZ_right_cut = new TH2F("Trajectory_YZ_right_cut", "Reconstruction of beam trajectory in detectors right cut (Y projection)", 381, -1700, 2100, 1000, -499, 500 );
+
     TH2F* h_Mask_1 = new TH2F("h_Mask_1", "Mask 1 Position", 1800, -30, 30, 1800, -30, 30);
     TH2F* h_Mask_2 = new TH2F("h_Mask_2", "Mask 2 Position", 1800, -30, 30, 1800, -30, 30);
     TH2F* hcats_1 = new TH2F("hcats_1", "CATS 1 Position", 1800, -30, 30, 1800, -30, 30);
@@ -151,18 +168,18 @@ void build_trajectory(){
         if(reader.GetCurrentEntry() % 1000000 == 0) {
             cout << "Processing entry: " << (static_cast<double>(reader.GetCurrentEntry()) / tree->GetEntries()) * 100.0 << "%" << endl;
         }
-        CATS1_X = -300.0;
-        CATS1_Y = -300.0;
-        CATS1_Z = -300.0;
-        CATS2_X = -300.0;
-        CATS2_Y = -300.0;
-        CATS2_Z = -300.0;
+        CATS1_X = -1000.0;
+        CATS1_Y = -1000.0;
+        CATS1_Z = -1000.0;
+        CATS2_X = -1000.0;
+        CATS2_Y = -1000.0;
+        CATS2_Z = -1000.0;
         ay = -1000.0;
         ax = -1000.0;
-        pos_mask_1_X = -300.0;
-        pos_mask_2_X = -300.0;
-        pos_mask_1_Y = -300.0;
-        pos_mask_2_Y = -300.0;
+        pos_mask_1_X = -1000.0;
+        pos_mask_2_X = -1000.0;
+        pos_mask_1_Y = -1000.0;
+        pos_mask_2_Y = -1000.0;
 
         if (*GATCONF_r == 32) {
             if(phy_cats_r->PositionOnTargetY > -200 && phy_cats_r->PositionOnTargetX > -200){
@@ -224,8 +241,6 @@ void build_trajectory(){
                     
                 }
 
-
-
                     if(cut_right->IsInside(CATS1_X + ( Target_Z - Position[0])/ax,CATS1_Y + (Target_Z - Position[0])/ay) ){
                         Hhcats_recons_PS->Fill(CATS1_X + ( Target_Z - Position[0])/ax,CATS1_Y + (Target_Z - Position[0])/ay);
                         Hhcats_recons_PS2->Fill(CATS1_X + ( Position_ZDD[0] - Position[0])/ax,CATS1_Y + (Position_ZDD[0] - Position[0])/ay);   //reconstruction of beam spot on DC1 plane
@@ -265,6 +280,24 @@ void build_trajectory(){
                     Trajectory_XZ->Fill(k, CATS1_X + (k - Position[0])/ax);
                     Trajectory_YZ->Fill(k, CATS1_Y + (k - Position[0])/ay);
                 }
+
+                if(cut_up->IsInside(CATS1_X + ( Target_Z - Position[0])/ax,CATS1_Y + (Target_Z - Position[0])/ay) ){
+                  if(cut_cats1_down->IsInside(CATS1_X,CATS1_Y)){
+                    for(int k= Position[0]; k<Position_ZDD[0]; k+=5){
+                        Trajectory_XZ_left_cut->Fill(k, CATS1_X + (k - Position[0])/ax);
+                        Trajectory_YZ_left_cut->Fill(k, CATS1_Y + (k - Position[0])/ay);
+                    }
+                  }
+                }
+                if(cut_down->IsInside(CATS1_X + ( Target_Z - Position[0])/ax,CATS1_Y + (Target_Z - Position[0])/ay) ){
+                  if(cut_cats1_top->IsInside(CATS1_X,CATS1_Y)){
+                    for(int k= Position[0]; k<Position_ZDD[0]; k+=5){
+                        Trajectory_XZ_right_cut->Fill(k, CATS1_X + (k - Position[0])/ax);
+                        Trajectory_YZ_right_cut->Fill(k, CATS1_Y + (k - Position[0])/ay);
+                    }
+                  }
+                }
+
 ///////////////////////////////////////////TRAJECTORIES//////////////////////////////////////////////////////////
 
 
@@ -428,7 +461,35 @@ void build_trajectory(){
 
     trajectory->Update();
 
-    cmask = new TCanvas("cmask", "Mask Positions", 1700, 950);
+    TCanvas *trajectory_left = new TCanvas("trajectory_left", "CATS Reconstructed Trajectory Till DC1 (left cut)", 1700, 950);
+    trajectory_left->Divide(1,2);
+    trajectory_left->cd(1);
+    Trajectory_XZ_left_cut->SetTitle("Reconstruction of beam trajectory in detectors left cut (X projection)");
+    Trajectory_XZ_left_cut->GetXaxis()->SetTitle("Z Position (mm)");
+    Trajectory_XZ_left_cut->GetYaxis()->SetTitle("X Position (mm)");
+    Trajectory_XZ_left_cut->Draw("COLZ");
+    trajectory_left->cd(2);
+    Trajectory_YZ_left_cut->SetTitle("Reconstruction of beam trajectory in detectors left cut (Y projection)");
+    Trajectory_YZ_left_cut->GetXaxis()->SetTitle("Z Position (mm)");
+    Trajectory_YZ_left_cut->GetYaxis()->SetTitle("Y Position (mm)");
+    Trajectory_YZ_left_cut->Draw("COLZ");
+    trajectory_left->Update();
+
+    TCanvas *trajectory_right = new TCanvas("trajectory_right", "CATS Reconstructed Trajectory Till DC1 (right cut)", 1700, 950);
+    trajectory_right->Divide(1,2);
+    trajectory_right->cd(1);
+    Trajectory_XZ_right_cut->SetTitle("Reconstruction of beam trajectory in detectors right cut (X projection)");
+    Trajectory_XZ_right_cut->GetXaxis()->SetTitle("Z Position (mm)");
+    Trajectory_XZ_right_cut->GetYaxis()->SetTitle("X Position (mm)");
+    Trajectory_XZ_right_cut->Draw("COLZ");
+    trajectory_right->cd(2);
+    Trajectory_YZ_right_cut->SetTitle("Reconstruction of beam trajectory in detectors right cut (Y projection)");
+    Trajectory_YZ_right_cut->GetXaxis()->SetTitle("Z Position (mm)");
+    Trajectory_YZ_right_cut->GetYaxis()->SetTitle("Y Position (mm)");
+    Trajectory_YZ_right_cut->Draw("COLZ");
+    trajectory_right->Update();
+
+/*     cmask = new TCanvas("cmask", "Mask Positions", 1700, 950);
     cmask->Divide(2,1);
     cmask->cd(1);
     h_Mask_1->SetTitle("Mask 1 Position");
@@ -442,7 +503,7 @@ void build_trajectory(){
     h_Mask_2->GetYaxis()->SetTitle("Y Position (mm)");
     h_Mask_2->Draw("COLZ");
 
-    cmask->Update();
+    cmask->Update(); */
 
     ccats = new TCanvas("ccats", "CATS Positions", 1700, 950);
     ccats->Divide(2,1);
@@ -451,6 +512,10 @@ void build_trajectory(){
     hcats_1->GetXaxis()->SetTitle("X Position (mm)");
     hcats_1->GetYaxis()->SetTitle("Y Position (mm)");
     hcats_1->Draw("COLZ");
+    cut_cats1_right->Draw("same");
+    cut_cats1_left->Draw("same");
+    cut_cats1_down->Draw("same");
+    cut_cats1_top->Draw("same");
 
     ccats->cd(2);
     hcats_2->SetTitle("CATS 2 Position");

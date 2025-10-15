@@ -312,13 +312,13 @@ void dp_analysis(){
             }
             if(t3>1.0){                                                         //cut on MG_ELab
                 if(t8>300 && t8<400){                                           //cut on TAC_CATS_PL                
-                        if(abs(t6-387)<25){                                     //cut on TAC_MMG_CATS1
+                        // if(abs(t6-387)<25){                                     //cut on TAC_MMG_CATS1
                                 h25->Fill(t2_1);
                                 if(gamma_energy>0){
                                     h_exo->Fill(gamma_energy*1000);                 //FILLING EXO_Doppler
                                     h_gamma_ex -> Fill(t2_1, gamma_energy*1000);
                                 }
-                        }
+                        // }
                 }
             }
 
