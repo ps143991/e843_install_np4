@@ -10,7 +10,7 @@ void user_analysis::Analysis::Init() {
     zdd = std::dynamic_pointer_cast<zdd::ZddDetector>(app->GetDetector("zdd"));
     tac = std::dynamic_pointer_cast<tac::TacDetector>(app->GetDetector("tac"));
     gatconf = std::dynamic_pointer_cast<ebye::EbyEDetector>(app->GetDetector("ebye"));
-    must2 = std::dynamic_pointer_cast<must2::Must2Detector>(app->GetDetector("must2"));
+    // must2 = std::dynamic_pointer_cast<must2::Must2Detector>(app->GetDetector("must2"));
     cats = std::dynamic_pointer_cast<cats::CatsDetector>(app->GetDetector("cats"));
     // exogam = std::dynamic_pointer_cast<exogam::ExogamDetector>(app->GetDetector("exogam"));
 

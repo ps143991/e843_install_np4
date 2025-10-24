@@ -4,6 +4,36 @@ CalibrationFilePath
 
 %%%%ENERGY%%%%%
 
+   /home/sharmap/Workplace/np4/e843/calibration/Energy/Calibration/MUGAST_LISE23_run_19_X_MM1_E/Cal_Str_X_E_MM1.cal
+   /home/sharmap/Workplace/np4/e843/calibration/Energy/Calibration/MUGAST_LISE23_run_19_X_MM2_E/Cal_Str_X_E_MM2.cal
+   /home/sharmap/Workplace/np4/e843/calibration/Energy/Calibration/MUGAST_LISE23_run_19_X_MM3_E/Cal_Str_X_E_MM3.cal
+   /home/sharmap/Workplace/np4/e843/calibration/Energy/Calibration/MUGAST_LISE23_run_19_X_MM4_E/Cal_Str_X_E_MM4.cal
+   /home/sharmap/Workplace/np4/e843/calibration/Energy/Calibration/MUGAST_LISE23_run_19_Y_MM1_E/Cal_Str_Y_E_MM1.cal
+   /home/sharmap/Workplace/np4/e843/calibration/Energy/Calibration/MUGAST_LISE23_run_19_Y_MM2_E/Cal_Str_Y_E_MM2.cal
+   /home/sharmap/Workplace/np4/e843/calibration/Energy/Calibration/MUGAST_LISE23_run_19_Y_MM3_E/Cal_Str_Y_E_MM3.cal
+   /home/sharmap/Workplace/np4/e843/calibration/Energy/Calibration/MUGAST_LISE23_run_19_Y_MM4_E/Cal_Str_Y_E_MM4.cal
+
+%%%TIME%%%
+
+   /home/sharmap/Workplace/np4/e843/calibration/Time/Coeff/Cal_Str_X_T_MM1_r0012.cal
+   /home/sharmap/Workplace/np4/e843/calibration/Time/Coeff/Cal_Str_X_T_MM2_r0012.cal
+   /home/sharmap/Workplace/np4/e843/calibration/Time/Coeff/Cal_Str_X_T_MM3_r0015.cal
+   /home/sharmap/Workplace/np4/e843/calibration/Time/Coeff/Cal_Str_X_T_MM4_r0017.cal
+   /home/sharmap/Workplace/np4/e843/calibration/Time/Coeff/Cal_Str_Y_T_MM1_r0013.cal
+   /home/sharmap/Workplace/np4/e843/calibration/Time/Coeff/Cal_Str_Y_T_MM2_r0013.cal
+   /home/sharmap/Workplace/np4/e843/calibration/Time/Coeff/Cal_Str_Y_T_MM3_r0016.cal
+   /home/sharmap/Workplace/np4/e843/calibration/Time/Coeff/Cal_Str_Y_T_MM4_r0018.cal
+
+%%%CsI%%%
+
+   /home/sharmap/Workplace/np4/e843/calibration/CsI/calib/CsI_MM2.txt
+   /home/sharmap/Workplace/np4/e843/calibration/CsI/calib/CsI_MM3.txt
+   /home/sharmap/Workplace/np4/e843/calibration/CsI/calib/CsI_MM4.txt
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%MUST2%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%ENERGY%%%%%
+
  /home/sharmap/Workplace/np4/e843/calibration/Mugast_cal_run573/Cal_Str_X_E_MG1.cal
  /home/sharmap/Workplace/np4/e843/calibration/Mugast_cal_run573/Cal_Str_X_E_MG2.cal
  /home/sharmap/Workplace/np4/e843/calibration/Mugast_cal_run573/Cal_Str_X_E_MG3.cal

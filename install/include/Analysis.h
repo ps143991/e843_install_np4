@@ -54,7 +54,7 @@ namespace user_analysis {
     // std::shared_ptr<exogam::ExogamDetector> exogam;
     std::shared_ptr<ebye::EbyEDetector> gatconf;
     std::shared_ptr<cats::CatsDetector> cats;
-    std::shared_ptr<must2::Must2Detector> must2;
+    // std::shared_ptr<must2::Must2Detector> must2;
     Reaction* reaction1 = nullptr;
     Reaction* reaction2 = nullptr;
     private:

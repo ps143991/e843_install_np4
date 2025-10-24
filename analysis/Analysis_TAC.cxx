@@ -14,44 +14,49 @@ void user_analysis::Analysis_TAC::Init() {
 
 ////////////////////////////////////////////////////////////////////////////////
 void user_analysis::Analysis_TAC::TreatEvent() {
+    // cout<<"new event started **********************************************"<<endl;
     Clear();
     TreatTAC();
     BeamSpot_PL();
 }
 
 void user_analysis::Analysis_TAC::BeamSpot_PL() {
+    // cout<<"function BeamSpot_PL running"<<endl;
     for(unsigned int i = 0; i < tac->m_PhysicsData->TAC_Time.size(); i++){
-        if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_1") == 0) {
-            TAC_PL_1 += (tac->m_PhysicsData->TAC_Time[i]);
-            Double_t per_bin_value = (26541 - 19617)/20;                  // for 20 cm
-            Double_t posX= ((TAC_PL_1 - 19617)/per_bin_value) - 10;       // to center about 0.
-            if(abs(posX)<10) {Spot_Plastic_1 = posX;}
-            else Spot_Plastic_1 = -10;
+        if((tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_1") == 0) && (tac->m_PhysicsData->TAC_Time[i]>0)) {
+            TAC_PL_1.push_back(tac->m_PhysicsData->TAC_Time[i]);
+            if(abs(((tac->m_PhysicsData->TAC_Time[i] - 19617)/per_bin_value1) - 10)<=10) {
+                Spot_Plastic_1.push_back(((tac->m_PhysicsData->TAC_Time[i] - 19617)/per_bin_value1) - 10);
+            }
+            else Spot_Plastic_1.push_back(-10);
         }
-        else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_2") == 0) {
-            TAC_PL_2 += (tac->m_PhysicsData->TAC_Time[i]);
-            Double_t per_bin_value = (26322 - 19836)/20;                  // for 20 cm
-            Double_t posX= ((TAC_PL_2 - 19836)/per_bin_value) - 10;       // to center about 0.
-            if(abs(posX)<10) {Spot_Plastic_2 = posX;}
-            else Spot_Plastic_2 = -10;
+        else if((tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_2") == 0) && (tac->m_PhysicsData->TAC_Time[i]>0)) {
+            TAC_PL_2.push_back(tac->m_PhysicsData->TAC_Time[i]);
+            if(abs(((tac->m_PhysicsData->TAC_Time[i] - 19836)/per_bin_value2) - 10)<10) {
+                Spot_Plastic_2.push_back(((tac->m_PhysicsData->TAC_Time[i] - 19836)/per_bin_value2) - 10);
+            }
+            else Spot_Plastic_2.push_back(-10);
         }
-        else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_3") == 0) {
-            // TAC_PL_3.push_back(tac->m_PhysicsData->TAC_Time[i]); 
-            TAC_PL_3 += (tac->m_PhysicsData->TAC_Time[i]); 
-            Double_t per_bin_value = (26052 - 20106)/20;                  // for 20 cm
-            Double_t posX= ((TAC_PL_3 - 20106)/per_bin_value) - 10;       // to center about 0.
-            if(abs(posX)<10) {Spot_Plastic_3 = posX;}
-            else Spot_Plastic_3 = -10;
+        else if((tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_3") == 0) && (tac->m_PhysicsData->TAC_Time[i]>0)) {
+            TAC_PL_3.push_back(tac->m_PhysicsData->TAC_Time[i]); 
+            if(abs(((tac->m_PhysicsData->TAC_Time[i] - 20106)/per_bin_value3) - 10)<10) {
+                Spot_Plastic_3.push_back(((tac->m_PhysicsData->TAC_Time[i] - 20106)/per_bin_value3) - 10);
+            }
+            else Spot_Plastic_3.push_back(-10);
         }
-        else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_4") == 0) {
-            TAC_PL_4 += (tac->m_PhysicsData->TAC_Time[i]);
-            Double_t per_bin_value = (26301 - 19857)/20;                  // for 20 cm
-            Double_t posX= ((TAC_PL_4 - 19857)/per_bin_value) - 10;       // to center about 0.
-            if(abs(posX)<10) {Spot_Plastic_4 = posX;}
-            else Spot_Plastic_4 = -10;
+        else if((tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_4") == 0) && (tac->m_PhysicsData->TAC_Time[i]>0)) {
+            TAC_PL_4.push_back(tac->m_PhysicsData->TAC_Time[i]);
+            if(abs(((tac->m_PhysicsData->TAC_Time[i] - 19857)/per_bin_value4) - 10)<10) {
+                Spot_Plastic_4.push_back(((tac->m_PhysicsData->TAC_Time[i] - 19857)/per_bin_value4) - 10);
+            }
+            else Spot_Plastic_4.push_back(-10);
         }
     }
+        // cout<<"TAC values are: "<<TAC_PL_1.size()<<" , "<<TAC_PL_2.size()<<" , "<<TAC_PL_3.size()<<" , "<<TAC_PL_4.size()<<endl;
+
 }
+
+
 
 void user_analysis::Analysis_TAC::TreatTAC(){
         // cout<<"function Treattac running"<<endl;
@@ -63,41 +68,49 @@ void user_analysis::Analysis_TAC::TreatTAC(){
         // cout<<"size is: "<<tac->m_PhysicsData->TAC_Time.size()<<endl;
         if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_CATS_PL") == 0)
         {
-            TAC_CATS_PL += (tac->m_PhysicsData->TAC_Time[i]*0.01276894);
+            // TAC_CATS_PL += (tac->m_PhysicsData->TAC_Time[i]*0.01276894);
+            TAC_CATS_PL.push_back(tac->m_PhysicsData->TAC_Time[i]*0.01276894);
             TAC_CATS_PL_TS.push_back(tac->m_PhysicsData->TAC_TS[i]);
         }
         else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_CATS2_CATS1") == 0)
         {
-            TAC_CATS2_CATS1 += (tac->m_PhysicsData->TAC_Time[i]*0.00635);
+            // TAC_CATS2_CATS1 += (tac->m_PhysicsData->TAC_Time[i]*0.00635);
+            TAC_CATS2_CATS1.push_back(tac->m_PhysicsData->TAC_Time[i]*0.00635);
             TAC_CATS2_CATS1_TS.push_back(tac->m_PhysicsData->TAC_TS[i]);
         }
         else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_MMG_CATS1") == 0)
         {
-            TAC_MMG_CATS1 += (tac->m_PhysicsData->TAC_Time[i]*0.01327);
+            // TAC_MMG_CATS1 += (tac->m_PhysicsData->TAC_Time[i]*0.01327);
+            TAC_MMG_CATS1.push_back(tac->m_PhysicsData->TAC_Time[i]*0.01327);
             TAC_MMG_CATS1_TS.push_back(tac->m_PhysicsData->TAC_TS[i]);
         }
         else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_MMG_CATS2") == 0)
         {
-            TAC_MMG_CATS2 += (tac->m_PhysicsData->TAC_Time[i]*0.01369);
+            // TAC_MMG_CATS2 += (tac->m_PhysicsData->TAC_Time[i]*0.01369);
+            TAC_MMG_CATS2.push_back(tac->m_PhysicsData->TAC_Time[i]*0.01369);
             TAC_MMG_CATS2_TS.push_back(tac->m_PhysicsData->TAC_TS[i]);
         }
         else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_MMG_EXOGAM") == 0)
         {
-            TAC_MMG_EXOGAM += (tac->m_PhysicsData->TAC_Time[i]*0.01346);
+            // TAC_MMG_EXOGAM += (tac->m_PhysicsData->TAC_Time[i]*0.01346);
+            TAC_MMG_EXOGAM.push_back(tac->m_PhysicsData->TAC_Time[i]*0.01346);
             TAC_MMG_EXOGAM_TS.push_back(tac->m_PhysicsData->TAC_TS[i]);
         }
         else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_CATS_EXOGAM") == 0)
         {
-            TAC_CATS_EXOGAM += (tac->m_PhysicsData->TAC_Time[i]*0.01281);
+            // TAC_CATS_EXOGAM += (tac->m_PhysicsData->TAC_Time[i]*0.01281);
+            TAC_CATS_EXOGAM.push_back(tac->m_PhysicsData->TAC_Time[i]*0.01281);
             TAC_CATS_EXOGAM_TS.push_back(tac->m_PhysicsData->TAC_TS[i]);
         }
         else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_CATS_HF") == 0)
         {
-            TAC_CATS_HF += (tac->m_PhysicsData->TAC_Time[i]*0.0014);
+            // TAC_CATS_HF += (tac->m_PhysicsData->TAC_Time[i]*0.0014);
+            TAC_CATS_HF.push_back(tac->m_PhysicsData->TAC_Time[i]*0.0014);
             TAC_CATS_HF_TS.push_back(tac->m_PhysicsData->TAC_TS[i]);
         }
         else if (tac->m_PhysicsData->TAC_Name[i].compare("TAC_D4_CATS1") == 0) {
-            TAC_D4_CATS1 += (tac->m_PhysicsData->TAC_Time[i]/**0.02554*/);
+            // TAC_D4_CATS1 += (tac->m_PhysicsData->TAC_Time[i]/**0.02554*/);
+            TAC_D4_CATS1.push_back(tac->m_PhysicsData->TAC_Time[i]);
             TAC_D4_CATS1_TS.push_back(tac->m_PhysicsData->TAC_TS[i]);
            //TAC_D4_CATS1nc = tac->m_PhysicsData->TAC_Time[i];
            // if (TAC_D4_CATS1nc > 0) TAC_TOF = true;
@@ -190,13 +203,15 @@ void user_analysis::Analysis_TAC::TreatTAC(){
         } */
         else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_DD6_DD4") == 0)
         {
-            TAC_DD6_DD4 += (tac->m_PhysicsData->TAC_Time[i]*0.00749);
+            // TAC_DD6_DD4 += (tac->m_PhysicsData->TAC_Time[i]*0.00749);
+            TAC_DD6_DD4.push_back(tac->m_PhysicsData->TAC_Time[i]*0.00749);
             TAC_DD6_DD4_TS.push_back(tac->m_PhysicsData->TAC_TS[i]);
 
         }
         else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_CATSD6_1_DD4") == 0)
         {
-            TAC_CATSD6_1_DD4 += (tac->m_PhysicsData->TAC_Time[i]*0.00691);
+            // TAC_CATSD6_1_DD4 += (tac->m_PhysicsData->TAC_Time[i]*0.00691);
+            TAC_CATSD6_1_DD4.push_back(tac->m_PhysicsData->TAC_Time[i]*0.00691);
             TAC_CATSD6_1_DD4_TS.push_back(tac->m_PhysicsData->TAC_TS[i]);
         }
     }
@@ -247,45 +262,65 @@ void user_analysis::Analysis_TAC::SetDataOutput(std::shared_ptr<nptool::VDataOut
 
 ////////////////////////////////////////////////////////////////////////////////
 void user_analysis::Analysis_TAC::Clear() {
-    TAC_CATS_PL = 0.0;
+    // TAC_CATS_PL = 0.0;
     TAC_CATS_PL_TS.clear();
-    TAC_CATS2_CATS1 = 0.0;
+    // TAC_CATS2_CATS1 = 0.0;
     TAC_CATS2_CATS1_TS.clear();
-    TAC_MMG_CATS1 = 0.0;
+    // TAC_MMG_CATS1 = 0.0;
     TAC_MMG_CATS1_TS.clear();
-    TAC_MMG_CATS2 = 0.0;
+    // TAC_MMG_CATS2 = 0.0;
     TAC_MMG_CATS2_TS.clear();
-    TAC_MMG_EXOGAM = 0.0;
+    // TAC_MMG_EXOGAM = 0.0;
     TAC_MMG_EXOGAM_TS.clear();
-    TAC_CATS_EXOGAM = 0.0;
+    // TAC_CATS_EXOGAM = 0.0;
     TAC_CATS_EXOGAM_TS.clear();
-    TAC_CATS_HF = 0.0;
+    // TAC_CATS_HF = 0.0;
     TAC_CATS_HF_TS.clear();
-    TAC_PL_1 = 0.0;
+    // TAC_PL_1 = 0.0;
     TAC_PL_1_TS.clear();
-    TAC_PL_2 = 0.0;
+    // TAC_PL_2 = 0.0;
     TAC_PL_2_TS.clear();
-    TAC_PL_3 = 0.0;
+    // TAC_PL_3 = 0.0;
     // TAC_PL_3.clear();
     TAC_PL_3_TS.clear();
-    TAC_PL_4 = 0.0;
+    // TAC_PL_4 = 0.0;
     TAC_PL_4_TS.clear();
-    TAC_PL_5 = 0.0;
+    // TAC_PL_5 = 0.0;
     TAC_PL_5_TS.clear();
-    TAC_D4_CATS1 = 0.0;
+    // TAC_D4_CATS1 = 0.0;
     TAC_D4_CATS1_TS.clear();
-    TAC_DD6_DD4 = 0.0;
+    // TAC_DD6_DD4 = 0.0;
     TAC_DD6_DD4_TS.clear();
-    TAC_CATSD6_1_DD4 = 0.0;
+    // TAC_CATSD6_1_DD4 = 0.0;
     TAC_CATSD6_1_DD4_TS.clear();
-    TAC_D4_CATS1nc= -1000;
+    // TAC_D4_CATS1nc= -1000;
+    TAC_CATS_PL.clear();
+    TAC_CATS2_CATS1.clear();
+    TAC_MMG_CATS1.clear();
+    TAC_MMG_CATS2.clear();
+    TAC_MMG_EXOGAM.clear();
+    TAC_CATS_EXOGAM.clear();
+    TAC_CATS_HF.clear();
+    TAC_PL_1.clear();   
+    TAC_PL_2.clear();
+    TAC_PL_3.clear();
+    TAC_PL_4.clear();
+    TAC_PL_5.clear();
+    TAC_D4_CATS1.clear();
+    TAC_DD6_DD4.clear();
+    TAC_CATSD6_1_DD4.clear();   
 
 
-    Spot_Plastic_1 = 0;
-    Spot_Plastic_2 = 0;
+
+    // Spot_Plastic_1 = 0;
+    // Spot_Plastic_2 = 0;
     // cout<<"value set to 0: "<<endl;
-    Spot_Plastic_3 = 0;
-    Spot_Plastic_4 = 0;
+    // Spot_Plastic_3 = 0;
+    // Spot_Plastic_4 = 0;
+    Spot_Plastic_1.clear();
+    Spot_Plastic_2.clear();
+    Spot_Plastic_3.clear();
+    Spot_Plastic_4.clear();
 
 }
 

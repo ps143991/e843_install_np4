@@ -320,8 +320,8 @@ void dp_analysis(){
                                 }
                         // }
                 }
-            }
 
+            }
             if(t3>1.0){                                                         //cut on MG_ELab
                 if(t8>300 && t8<400){                                           //cut on TAC_CATS_PL                
                     if(cutg1->IsInside(beamX, beamY)){                          //cut on Beam spot

@@ -27,6 +27,7 @@ using namespace cats;
 #include "TGraph.h"
 #include "TAxis.h"
 #include "TCutG.h"
+#include "TVector3.h"
 
 TChain* tree = NULL;
 TChain* tree2 = NULL;
@@ -45,7 +46,8 @@ TCutG *cut_cats1_down;
 
 void loadFILES() {
   tree = new TChain("PhysicsTree");
-  tree->Add("/home/sharmap/Workplace/np4/e843/data/analysed/558.root");
+//   tree->Add("/home/sharmap/Workplace/np4/e843/data/analysed/525_further_shift1.root");
+    tree->Add("/home/sharmap/Workplace/np4/e843/data/analysed/552_1A.root");
 }
 void loadCUTS(){
   TFile *cut_L = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/cut_left.root","READ");
@@ -113,6 +115,10 @@ void build_trajectory(){
     Double_t CATS2_X;
     Double_t CATS2_Y;
     Double_t CATS2_Z;
+    Double_t theta = -50;
+    Double_t theta_x = -50;
+    Double_t theta_y = -50;
+
 
     Double_t TS_sub1, TS_sub2;
     outputTree->Branch("TS_DC1_sub", &TS_sub1, "TS_DC1_sub/D");
@@ -160,6 +166,10 @@ void build_trajectory(){
     TH2F* hcats_1 = new TH2F("hcats_1", "CATS 1 Position", 1800, -30, 30, 1800, -30, 30);
     TH2F* hcats_2 = new TH2F("hcats_2", "CATS 2 Position", 1800, -30, 30, 1800, -30, 30);
 
+    TH1F *h_theta = new TH1F("h_theta", "Beam angle w.r.t z axis", 200, -5, 5);
+
+    TH1F *h_theta_x = new TH1F("h_theta_x", "Beam angle in X projection w.r.t z axis", 200, -5, 5);
+    TH1F *h_theta_y = new TH1F("h_theta_y", "Beam angle in Y projection w.r.t z axis", 200, -5, 5);
     
 
     ///////////////////////////////////////////////////////      code     ////////////////////////////////////////////////////////
@@ -168,6 +178,9 @@ void build_trajectory(){
         if(reader.GetCurrentEntry() % 1000000 == 0) {
             cout << "Processing entry: " << (static_cast<double>(reader.GetCurrentEntry()) / tree->GetEntries()) * 100.0 << "%" << endl;
         }
+        theta = -50;
+        theta_x = -50;
+        theta_y = -50;
         CATS1_X = -1000.0;
         CATS1_Y = -1000.0;
         CATS1_Z = -1000.0;
@@ -181,7 +194,7 @@ void build_trajectory(){
         pos_mask_1_Y = -1000.0;
         pos_mask_2_Y = -1000.0;
 
-        if (*GATCONF_r == 32) {
+        if (*GATCONF_r == 2) {
             if(phy_cats_r->PositionOnTargetY > -200 && phy_cats_r->PositionOnTargetX > -200){
 
 
@@ -280,6 +293,14 @@ void build_trajectory(){
                     Trajectory_XZ->Fill(k, CATS1_X + (k - Position[0])/ax);
                     Trajectory_YZ->Fill(k, CATS1_Y + (k - Position[0])/ay);
                 }
+                TVector3 beam_dir(CATS2_X - CATS1_X, CATS2_Y - CATS1_Y, CATS2_Z - CATS1_Z);
+                //beam angle with respect to z axis in degrees
+                theta = beam_dir.Theta()*TMath::RadToDeg();
+                // theta = beam_dir.Theta() - TMath::Pi()/2; //angle
+                h_theta->Fill(theta);
+                theta_x = std::atan2(CATS2_X - CATS1_X, CATS2_Z - CATS1_Z)*TMath::RadToDeg();   h_theta_x->Fill(theta_x);
+                theta_y = std::atan2(CATS2_Y - CATS1_Y, CATS2_Z - CATS1_Z)*TMath::RadToDeg();   h_theta_y->Fill(theta_y);
+
 
                 if(cut_up->IsInside(CATS1_X + ( Target_Z - Position[0])/ax,CATS1_Y + (Target_Z - Position[0])/ay) ){
                   if(cut_cats1_down->IsInside(CATS1_X,CATS1_Y)){
@@ -504,6 +525,22 @@ void build_trajectory(){
     h_Mask_2->Draw("COLZ");
 
     cmask->Update(); */
+
+
+    TCanvas *theta_canvas = new TCanvas("theta_canvas", "Beam Angle Distribution", 800, 800);
+    h_theta->SetTitle("Beam Angle Distribution w.r.t Z axis; Angle (degrees); Counts");
+    h_theta->Draw();
+
+    TCanvas *theta_canvas_xy = new TCanvas("theta_canvas_xy", "Beam Angle Distribution in X and Y projections", 1600, 800);
+    theta_canvas_xy->Divide(2,1);
+    theta_canvas_xy->cd(1);
+    h_theta_x->SetTitle("Beam Angle Distribution in X projection w.r.t Z axis; Angle (degrees); Counts");
+    h_theta_x->Draw();
+    theta_canvas_xy->cd(2);
+    h_theta_y->SetTitle("Beam Angle Distribution in Y projection w.r.t Z axis; Angle (degrees); Counts");
+    h_theta_y->Draw();
+    theta_canvas_xy->Update();
+
 
     ccats = new TCanvas("ccats", "CATS Positions", 1700, 950);
     ccats->Divide(2,1);

@@ -27,6 +27,8 @@ using namespace std;
 #include "TH1.h"
 #include "TGraph.h"
 #include "TAxis.h"
+#include "TEllipse.h"
+
 
 TChain* tree = NULL;
 TCanvas* c1 = NULL;
@@ -38,17 +40,72 @@ TCanvas* c6 = NULL;
 TCanvas* c7 = NULL;
 
 
+struct Circle {
+  double x, y;   // center
+  double r;      // radius
+};
+struct CircleGroup {
+  std::vector<Circle> cs;
+  // Draw all (as circles)
+  void Draw(int lineColor=kBlue, int lineWidth=2, int fillStyle=0) const {
+    for (auto& c: cs){
+      auto *e = new TEllipse(c.x, c.y, c.r, c.r);
+      e->SetFillStyle(fillStyle);
+      e->SetLineColor(lineColor);
+      e->SetLineWidth(lineWidth);
+      e->Draw("same");
+    }
+  }
+
+};
+
+void target_mask(){
+//   TCanvas *c = new TCanvas("c","Grouped circles", 700, 700);
+
+    gPad->cd();
+//   c->DrawFrame(-20, -20, 20, 20, "Grouped circles;X;Y");
+
+  // Build a group: 1 big circle with 3 inner circles
+  CircleGroup G;
+  G.cs.push_back({-2.4,-2.1,13}); // outer
+  G.cs.push_back({-3.6,8.8,0.2});   // top left
+  G.cs.push_back({-2.4,-2.1,0.2});  // central
+  G.cs.push_back({-1.5,-10.1,0.2}); // bottop right
+  G.cs.push_back({-7.37, -2.6471, 0.2}); // left middle
+  G.cs.push_back({2.57, -1.5528, 0.2});  // right middle
+  G.cs.push_back({-12.34, -3.194, 0.2}); // far left
+  G.cs.push_back({7.54, -1.006, 0.2});   // far right
+  G.cs.push_back({-2.947, 2.87, 0.2});    // top middle
+  G.cs.push_back({-2.071, -5.082, 0.2});   // bottom middle
+  G.cs.push_back({0.63114, 0.10651, 0.2});    // identifier hole
+//   G.cs.push_back({ 0, 0, 7});
+//   G.cs.push_back({-3, 2, 2});
+//   G.cs.push_back({ 4,-1, 1.2});
+
+  // Draw original
+  G.Draw(kBlack, 2);
+
+//   c->Update();
+}
+
+
 void loadFILES() {
   tree = new TChain("PhysicsTree");
-  tree->Add("../../data/analysed/523_beam_spot.root");
+  tree->Add("../../data/analysed/525.root");
+}
+void loadMask(){
+    TFile *maskfile = new TFile("./target_mask.cpp","READ");
+    // CatsMask* DC_mask = (CatsMask*)maskfile->Get("DC_mask");
+    // nptool::DetectorManager::getInstance()->GetDetector<CatsPhysics>("Cats")->SetMask(DC_mask);
 }
 
 
 
-void build_DC(){
+void build_CATS(){
     std::cout << "Init dummy application to use the detectors" << std::endl;
     auto app = nptool::Application::InitApplication("");
     loadFILES();
+    loadMask();
     cout<<"Total Entries: "<<tree->GetEntries()<<endl;
     TTreeReader reader(tree);
     TTreeReaderValue<ZddPhysics> phy_zdd_r(reader, "zdd");
@@ -108,8 +165,8 @@ void build_DC(){
 
 
 
-    Double_t Position[3] = {-1587.1, -1090.6, 1260.4}; //CATS1 z pos, CATS2 z pos, DC z pos
-    Double_t Position_ZDD[4] = {1140.9, 1385.9, 1560.9, 2060.9}; // Positions of DC1, DC2, IC1, and Plastics
+    Double_t Position[3] = {-1587.1, -1090.1, 1260.9}; //CATS1 z pos, CATS2 z pos, DC z pos
+    Double_t Position_ZDD[4] = {1260.9+10, 1260.9+30, 1560.9, 2060.9}; // Positions of DC1 (1 cm more), DC2 (3 cm more ), IC1, and Plastics
     Double_t Target_Z = 0;
     Double_t x_cats_consDC1 = 0;
     Double_t y_cats_consDC1 = 0;
@@ -130,7 +187,7 @@ void build_DC(){
         }
         // if (entry_count > max_entries) break;
 
-        if (*GATCONF_r == 1 || *GATCONF_r == 2 ||*GATCONF_r == 16 ||*GATCONF_r == 32) {
+        if (*GATCONF_r == 4) {
             if(phy_cats_r->PositionOnTargetY > -200 && phy_cats_r->PositionOnTargetX > -200){
               
               if(phy_zdd_r->PL_E.size()>0){
@@ -184,30 +241,9 @@ void build_DC(){
                     h4->Fill(TS_sub4);
                 }
 
-                if(TS_sub1>(-154) && TS_sub2>(-160)){
-                    h1s->Fill(TS_sub1+153);                                     //drift time spectra
-                    h2s->Fill(-TS_sub2-158);                                    //drift time spectra
-
-                    h1s_opposite->Fill(-TS_sub1-153);                           //adjusted time spectra for reference
-                    h2s_opposite->Fill(TS_sub2+158);
-
-                    Double_t TS12 = TS_sub1 - TS_sub2 - 5;
-                    Double_t TS21 = TS_sub2 - TS_sub1 + 5;
-
-                    hadded12->Fill(TS12);                                         //added the adjusted drift time spectra
-                    hadded21->Fill(TS21);                                       
-                    h_y_cats_cons->Fill(y_cats_consDC1, TS21);                       //drawing cats cons vs drift time y
-                    h_x_cats_cons->Fill(x_cats_consDC1, TS21);                       //drawing cats cons vs drift time x
-                    h_cats1xcats1y->Fill(CATS1_X, CATS1_Y);                         //CATS1 X:Y
-                    h_cats2xcats2y->Fill(CATS2_X, CATS2_Y);                         //CATS2 X:Y
-
-                    h_cats1xcats2x->Fill(CATS1_X,CATS2_X);
-                    h_cats1ycats2y->Fill(CATS1_Y,CATS2_Y);
-                    
-                    h_target->Fill(target_cons_X,target_cons_y);
-                    h_DC1->Fill(x_cats_consDC1,y_cats_consDC1);
-                    h_DC2->Fill(x_cats_consDC2,y_cats_consDC2);
-                }
+                h_target->Fill(target_cons_X,target_cons_y);
+                h_DC1->Fill(x_cats_consDC1,y_cats_consDC1);
+                h_DC2->Fill(x_cats_consDC2,y_cats_consDC2);
 
                 outputTree->Fill();
                 // cout<<"************************************************"<<endl;
@@ -317,6 +353,10 @@ void build_DC(){
     c7->Divide(2,2);
     c7->cd(1);
     h_target->Draw("colz");
+    h_target->Rebin2D(3,3);
+    target_mask();
+    c7->cd(2);
+    // target_mask();
     c7->cd(3);
     h_DC1->Draw("colz");
     c7->cd(4);

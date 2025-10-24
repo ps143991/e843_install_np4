@@ -8,7 +8,10 @@
  * (4) ...
  * 
  * Find the resolution of the drift chambers...
- *                                                                           *
+ *                                               
+ * I leave the v4 of this script with a good enough spot except that the x=0 and y=0 lines
+ * are empty as of now... that will now be made better in the 5th version of the
+ * script                                                                   *
  *****************************************************************************/
 
 
@@ -342,7 +345,11 @@ void build_DC_4(){
     // if(max_entries >= tot_entries) {max_entries = tot_entries;}
     long long event_counter = 0;
 
-    while(reader.Next() && event_counter < 3000000) {
+    while(reader.Next() /* && event_counter < 3000000 */) {
+      // if(event_counter<3000000){continue;}
+      // if(event_counter>6000000){break;}
+      event_counter++;
+
         if(reader.GetCurrentEntry() % 1000000 == 0) {
             cout << "Processing entry: " << (static_cast<double>(reader.GetCurrentEntry()) / tree->GetEntries()) * 100.0 << "%" << endl;
         }
@@ -392,26 +399,26 @@ void build_DC_4(){
                 
                 unsigned long long cats2_ts = (unsigned long long)(*GATCONFTS_r);
                 // cout<<"DC_TS1_r: "<<DC_TS1_r.GetSize()<<" DC_TS2_r: "<<DC_TS2_r.GetSize()<<" DC_TS3_r: "<<DC_TS3_r.GetSize()<<" DC_TS4_r: "<<DC_TS4_r.GetSize()<<endl;
-                if(DC_TS1_r.GetSize()==1){
-                    unsigned long long dc_1_ts  = (unsigned long long)(DC_TS1_r[0]);
+                if(DC_TS1_r.GetSize()>1){
+                    unsigned long long dc_1_ts  = (unsigned long long)(DC_TS1_r[1]);
                     TS_sub1 = static_cast<Long64_t>(cats2_ts) - static_cast<Long64_t>(dc_1_ts);
                     h1->Fill(TS_sub1);
                     TS_sub1_adj = TS_sub1 - cutoffs[0];
                 }
-                if(DC_TS2_r.GetSize()==1){
-                    unsigned long long dc_2_ts  = (unsigned long long)(DC_TS2_r[0]);
+                if(DC_TS2_r.GetSize()>1){
+                    unsigned long long dc_2_ts  = (unsigned long long)(DC_TS2_r[1]);
                     TS_sub2 =  static_cast<Long64_t>(cats2_ts) - static_cast<Long64_t>(dc_2_ts);
                     h2->Fill(TS_sub2);
                     TS_sub2_adj = TS_sub2 - cutoffs[1];
                 }
-                if(DC_TS3_r.GetSize()==1){
-                    unsigned long long dc_3_ts  = (unsigned long long)(DC_TS3_r[0]);
+                if(DC_TS3_r.GetSize()>1){
+                    unsigned long long dc_3_ts  = (unsigned long long)(DC_TS3_r[1]);
                     TS_sub3 = static_cast<Long64_t>(cats2_ts) - static_cast<Long64_t>(dc_3_ts);
                     h3->Fill(TS_sub3);
                     TS_sub3_adj = TS_sub3 - cutoffs[2];
                 }
-                if(DC_TS4_r.GetSize()==1){
-                    unsigned long long dc_4_ts  = (unsigned long long)(DC_TS4_r[0]);
+                if(DC_TS4_r.GetSize()>1){
+                    unsigned long long dc_4_ts  = (unsigned long long)(DC_TS4_r[1]);
                     TS_sub4 =  static_cast<Long64_t>(cats2_ts) - static_cast<Long64_t>(dc_4_ts);
                     h4->Fill(TS_sub4);
                     TS_sub4_adj = TS_sub4 - cutoffs[3];
@@ -487,7 +494,7 @@ void build_DC_4(){
               }
             }
         }
-        event_counter++;
+        
     }
 
   

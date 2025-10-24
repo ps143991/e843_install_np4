@@ -129,6 +129,7 @@ void TacDetector::BuildPhysicalEvent() {
 
 void TacDetector::PreTreat() {
   ClearPreTreatedData();
+  SortTAC.clear();
 
   m_TAC_Mult = m_RawData->GetTAC_Mult();
   for (unsigned int i = 0; i < m_TAC_Mult; ++i) {
