@@ -93,6 +93,9 @@ TH1F* h22 = NULL;
 TH1F* h23 = NULL;
 TH1F* h24 = NULL;
 TH1F* h25 = NULL;
+TH2F* h_ex_vs_thet = NULL;
+TH2F* h_gamma_theta = NULL;
+TH2F* h_gamma_gamma = NULL;
 
 TH1F* h_exo = NULL;
 TH2F* h_gamma_ex = NULL;
@@ -140,6 +143,249 @@ void loadFILES() {
 
 
 }
+
+    const double x1 = 579.0, x2 = 609.0;
+
+    std::vector<std::pair<double,double>> holes = { {{579,609}} };
+
+    Double_t bkgFunc(Double_t *x, Double_t *p){
+    // Exclude bins in hole ranges
+    for (auto &r : holes)
+        if (x[0] >= r.first && x[0] <= r.second) {
+        TF1::RejectPoint();
+        return 0;
+        }
+    // Example: quadratic background
+    return p[0] /* + p[1]*x[0] + p[2]*x[0]*x[0] */;
+    }
+
+        //cloning one projection on a separate canvas for checking
+
+    void projections(){
+
+
+    TCanvas *projections1 = new TCanvas("projections", "projections", 900,900);
+    projections1->Divide(2,2);
+    TCanvas *projections2 = new TCanvas("projections2", "projections2", 900,900);
+    projections2->Divide(2,2);
+    TCanvas *projections3 = new TCanvas("projections3", "projections3", 900,900);
+    projections3->Divide(2,2);
+    TCanvas *projections4 = new TCanvas("projections4", "projections4", 900,900);
+    projections4->Divide(2,2);
+    TCanvas *projections5 = new TCanvas("projections5", "projections5", 900,900);
+    projections5->Divide(2,2);
+    TCanvas *projections6 = new TCanvas("projections6", "projections6", 900,900);
+    projections6->Divide(2,2);  
+    TCanvas *projections7 = new TCanvas("projections7", "projections7", 900,900);
+    projections7->Divide(2,2);
+    TCanvas *projections8 = new TCanvas("projections8", "projections8", 900,900);
+    projections8->Divide(2,2);
+    TCanvas *projections9 = new TCanvas("projections9", "projections9", 900,900);
+    projections9->Divide(2,2);
+    TCanvas *projections10 = new TCanvas("projections10", "projections10", 900,900);
+    projections10->Divide(2,2);
+
+    for(int ii = 0; ii<8; ii++){
+        for(int jj=0; jj<5; jj++){
+            int index = ii*5 + jj;
+            cout<<"Index: "<<index<<"... ";
+            if(index < 4){
+                projections1->cd(ii*5 + jj +1);}
+            else if (index < 8){
+                projections2->cd((index-4)+1);}
+                else if (index < 12){
+                    projections3->cd((index-8)+1);}
+                else if (index <16){
+                    projections4->cd((index-12)+1);}
+                else if(index <20){
+                    projections5->cd((index-16)+1);}
+                else if(index <24){
+                    projections6->cd((index-20)+1);}
+                else if(index <28){
+                    projections7->cd((index-24)+1);}
+                else if(index <32){
+                    projections8->cd((index-28)+1);}
+                else if(index <36){
+                    projections9->cd((index-32)+1);}
+                else if(index <40){
+                    projections10->cd((index-36)+1);}
+
+            int bin_start = 91 + (ii*5 + jj);
+            int bin_end = bin_start + 9;
+            TString hist_name = Form("h_bin_%d_%d", bin_start, bin_end);
+            cout<<"Creating projection for bins: "<<bin_start<<" to "<<bin_end<<" energy range: ";
+            h_gamma_ex->ProjectionY(hist_name, bin_start, bin_end);
+            TH1D *h_bin = (TH1D*)gDirectory->Get(hist_name);
+            double ex_low = -1.0 + (ii*5 + jj)*0.1;
+            double ex_high = ex_low + 1.0;
+            cout<<"["<<ex_low<<", "<<ex_high<<"] MeV"<<endl;
+            h_bin->SetTitle(Form("Projection Y for EXO Doppler for MG_Exnocor bin %.1f to %.1f MeV", ex_low, ex_high));
+            h_bin->GetXaxis()->SetTitle("EXO Doppler Energy (keV)");
+            h_bin->GetYaxis()->SetTitle("Counts");
+            h_bin->Draw();
+        }
+    }
+    }
+
+
+    void fit_background_excluding_peaks() {
+    TCanvas *projections_check1 = new TCanvas("projections_check1", "projections_check1", 800,600);
+    projections_check1->Divide(2,2);
+    projections_check1->cd(1);
+    TH1D *hff = (TH1D*)gDirectory->Get("h_bin_91_100");
+    hff->GetXaxis()->SetRangeUser(470,750);
+    double Nobs = hff->Integral(145,152);
+    double NobsErr = sqrt(Nobs);
+    cout<<"Nobs: "<<Nobs<<endl;
+    cout<<"NobsErr: "<<NobsErr<<endl;
+    TF1 *fbkg = new TF1("fbkg", bkgFunc, 470, 750, 1);
+    fbkg->SetParameters(0, 0, 0);  // seeds
+    auto fr = hff->Fit(fbkg, "RL");             // "R" respects function range; RejectPoint excludes holes
+    double B = fbkg->Integral(145,152);
+    double Berr = fbkg->GetParError(0)*(152-145); // error propagation assuming linearity
+    double S = Nobs - B;
+    double Serr = sqrt(NobsErr*NobsErr + Berr*Berr);
+    hff->Draw("E");
+    fbkg->SetLineColor(kRed);
+    fbkg->Draw("same");
+    cout<<"Total counts: "<<S<<" +/- "<<Serr<<endl;
+
+    projections_check1->cd(2);
+    TH1D *hgg = (TH1D*)gDirectory->Get("h_bin_92_101");
+    hgg->GetXaxis()->SetRangeUser(470,750);
+    Nobs = hgg->Integral(145,152);
+    NobsErr = sqrt(Nobs);
+    cout<<"Nobs: "<<Nobs<<endl;
+    cout<<"NobsErr: "<<NobsErr<<endl;
+    TF1 *fbkg2 = new TF1("fbkg2", bkgFunc, 470, 750, 1);
+    fbkg2->SetParameters(0, 0, 0);  // seeds
+    auto fr2 = hgg->Fit(fbkg2, "RL");             // "R" respects function range; RejectPoint excludes holes
+    B = fbkg2->Integral(145,152);
+    Berr = fbkg2->GetParError(0)*(152-145); // error propagation assuming linearity
+    S = Nobs - B;
+    Serr = sqrt(NobsErr*NobsErr + Berr*Berr);
+    hgg->Draw("E");
+    fbkg2->SetLineColor(kRed);
+    fbkg2->Draw("same");
+    cout<<"Total counts: "<<S<<" +/- "<<Serr<<endl; 
+
+    projections_check1->cd(3);
+    TH1D *hhh = (TH1D*)gDirectory->Get("h_bin_93_102");
+    hhh->GetXaxis()->SetRangeUser(470,750);
+    Nobs = hhh->Integral(145,152);
+    NobsErr = sqrt(Nobs);
+    cout<<"Nobs: "<<Nobs<<endl;
+    cout<<"NobsErr: "<<NobsErr<<endl;
+    TF1 *fbkg3 = new TF1("fbkg3", bkgFunc, 470, 750, 1);
+    fbkg3->SetParameters(0, 0, 0);  // seeds
+    auto fr3 = hhh->Fit(fbkg3, "RL");             // "R" respects function range; RejectPoint excludes holes
+    B = fbkg3->Integral(145,152);
+    Berr = fbkg3->GetParError(0)*(152-145); // error propagation assuming linearity
+    S = Nobs - B;   
+    Serr = sqrt(NobsErr*NobsErr + Berr*Berr);
+    hhh->Draw("E");
+    fbkg3->SetLineColor(kRed);
+    fbkg3->Draw("same");
+    cout<<"Total counts: "<<S<<" +/- "<<Serr<<endl;
+
+    projections_check1->cd(4);
+    TH1D *hii = (TH1D*)gDirectory->Get("h_bin_94_103");
+    hii->GetXaxis()->SetRangeUser(470,750);
+    Nobs = hii->Integral(145,152);
+    NobsErr = sqrt(Nobs);
+    cout<<"Nobs: "<<Nobs<<endl;
+    cout<<"NobsErr: "<<NobsErr<<endl;
+    TF1 *fbkg4 = new TF1("fbkg4", bkgFunc, 470, 750, 1);
+    fbkg4->SetParameters(0, 0, 0);  // seeds
+    auto fr4 = hii->Fit(fbkg4, "RL");             // "R" respects function range; RejectPoint excludes holes    
+    B = fbkg4->Integral(145,152);
+    Berr = fbkg4->GetParError(0)*(152-145); // error propagation assuming linearity
+    S = Nobs - B;
+    Serr = sqrt(NobsErr*NobsErr + Berr*Berr);
+    hii->Draw("E");
+    fbkg4->SetLineColor(kRed);
+    fbkg4->Draw("same");
+    cout<<"Total counts: "<<S<<" +/- "<<Serr<<endl; 
+
+    TCanvas *projections_check2 = new TCanvas("projections_check2", "projections_check2", 800,600);
+    projections_check2->Divide(2,2);
+    projections_check2->cd(1);
+    TH1D *hjj = (TH1D*)gDirectory->Get("h_bin_95_104");
+    hjj->GetXaxis()->SetRangeUser(470,750);
+    Nobs = hjj->Integral(145,152);
+    NobsErr = sqrt(Nobs);
+    cout<<"Nobs: "<<Nobs<<endl;
+    cout<<"NobsErr: "<<NobsErr<<endl;
+    TF1 *fbkg5 = new TF1("fbkg5", bkgFunc, 470, 750, 1);
+    fbkg5->SetParameters(0, 0, 0);  // seeds
+    auto fr5 = hjj->Fit(fbkg5, "RL");             // "R" respects function range; RejectPoint excludes holes
+    B = fbkg5->Integral(145,152);
+    Berr = fbkg5->GetParError(0)*(152-145); // error propagation assuming linearity
+    S = Nobs - B;
+    Serr = sqrt(NobsErr*NobsErr + Berr*Berr);
+    hjj->Draw("E");
+    fbkg5->SetLineColor(kRed);
+    fbkg5->Draw("same");
+    cout<<"Total counts: "<<S<<" +/- "<<Serr<<endl; 
+
+    projections_check2->cd(2);
+    TH1D *hkk = (TH1D*)gDirectory->Get("h_bin_96_105");
+    hkk->GetXaxis()->SetRangeUser(470,750);
+    Nobs = hkk->Integral(145,152);
+    NobsErr = sqrt(Nobs);
+    cout<<"Nobs: "<<Nobs<<endl;
+    cout<<"NobsErr: "<<NobsErr<<endl;   
+    TF1 *fbkg6 = new TF1("fbkg6", bkgFunc, 470, 750, 1);
+    fbkg6->SetParameters(0, 0, 0);  // seeds
+    auto fr6 = hkk->Fit(fbkg6, "RL");             //
+    B = fbkg6->Integral(145,152);
+    Berr = fbkg6->GetParError(0)*(152-145); // error propagation assuming linearity
+    S = Nobs - B;
+    Serr = sqrt(NobsErr*NobsErr + Berr*Berr);
+    hkk->Draw("E");
+    fbkg6->SetLineColor(kRed);
+    fbkg6->Draw("same");
+    cout<<"Total counts: "<<S<<" +/- "<<Serr<<endl;
+
+    projections_check2->cd(3);
+    TH1D *hll = (TH1D*)gDirectory->Get("h_bin_97_106");
+    hll->GetXaxis()->SetRangeUser(470,750);
+    Nobs = hll->Integral(145,152);
+    NobsErr = sqrt(Nobs);
+    cout<<"Nobs: "<<Nobs<<endl;
+    cout<<"NobsErr: "<<NobsErr<<endl;
+    TF1 *fbkg7 = new TF1("fbkg7", bkgFunc, 470, 750, 1);
+    fbkg7->SetParameters(0, 0, 0);  // seeds
+    auto fr7 = hll->Fit(fbkg7, "RL");             //
+    B = fbkg7->Integral(145,152);
+    Berr = fbkg7->GetParError(0)*(152-145); // error propagation assuming linearity
+    S = Nobs - B;
+    Serr = sqrt(NobsErr*NobsErr + Berr*Berr);
+    hll->Draw("E");
+    fbkg7->SetLineColor(kRed);
+    fbkg7->Draw("same");
+    cout<<"Total counts: "<<S<<" +/- "<<Serr<<endl;
+
+    projections_check2->cd(4);
+    TH1D *hmm = (TH1D*)gDirectory->Get("h_bin_98_107");
+    hmm->GetXaxis()->SetRangeUser(470,750   );
+    Nobs = hmm->Integral(145,152);
+    NobsErr = sqrt(Nobs);
+    cout<<"Nobs: "<<Nobs<<endl;
+    cout<<"NobsErr: "<<NobsErr<<endl;
+    TF1 *fbkg8 = new TF1("fbkg8", bkgFunc, 470, 750, 1);
+    fbkg8->SetParameters(0, 0, 0);  // seeds
+    auto fr8 = hmm->Fit(fbkg8, "RL");             //
+    B = fbkg8->Integral(145,152);
+    Berr = fbkg8->GetParError(0)*(152-145); // error propagation assuming linearity
+    S = Nobs - B;
+    Serr = sqrt(NobsErr*NobsErr + Berr*Berr);
+    hmm->Draw("E");
+    fbkg8->SetLineColor(kRed);
+    fbkg8->Draw("same");
+    cout<<"Total counts: "<<S<<" +/- "<<Serr<<endl;
+
+    }
 
 
 
@@ -191,7 +437,8 @@ void dp_analysis_2(){
     TTreeReaderArray<double> exo_doppler(reader, "EXO_Doppler_dp");
     TTreeReaderArray<double> theta(reader,"MG_ThetaLab");
 
-    TTreeReaderArray<double> beam_energy(reader, "OriginalBeamEnergync");
+    TTreeReaderArray<double> beam_energy(reader, "OriginalBeamEnergy");
+
 
     
 
@@ -223,7 +470,9 @@ void dp_analysis_2(){
     hic_sum_V_tac_cpl = new TH2F("hic_sum_V_tac_cpl", "IC_Sum_vs_TAC_CATS_PL", 500,340,360, 1000, 5000, 10000);
     hic_sum_V_tac_d4_cats1 = new TH2F("hic_sum_V_tac_d4_cats1", "IC_Sum_vs_TAC_D4_CATS1", 5000,290,340, 1000, 5000, 10000);
     hBeamE = new TH1F("hBeamE", "Beam_Energy", 200, 800, 1200);
-
+    h_ex_vs_thet = new TH2F("h_ex_vs_thet", "MG_Exnocor_vs_ThetaLab", 80, 100, 180, 1200, -10, 20);
+    h_gamma_theta = new TH2F("h_gamma_theta", "EXO_Doppler_vs_ThetaLab", 80, 100, 180, 8000, 0, 4000);
+    h_gamma_gamma = new TH2F("h_gamma_gamma", "EXO_Doppler1_vs_EXO_Doppler2", 1000, 0, 4000, 1000, 0, 4000);
 
 
 
@@ -237,6 +486,8 @@ void dp_analysis_2(){
         Double_t t7[5];
         Double_t tCPl;
         Double_t gamma_energy;
+
+        Double_t gamma_energy2;
         Double_t tME;
         Double_t tCE;
         Double_t thet;
@@ -256,9 +507,6 @@ void dp_analysis_2(){
                 t3 = mg_lab[0];
                 h3->Fill(t3);
             }
-
-
-
 
             const TVector3& v = *BeamImpact;
             double beamX = v.X();
@@ -299,6 +547,13 @@ void dp_analysis_2(){
 
             gamma_energy = exo_doppler.GetSize()>0 ? exo_doppler[0] : 0;
 
+            //more size gamma_energy for gamma-gamma coincidence
+            gamma_energy2 = exo_doppler.GetSize()>1 ? exo_doppler[1] : 0;
+
+            if(gamma_energy>0 && gamma_energy2>0){
+                h_gamma_gamma->Fill(gamma_energy*1000, gamma_energy2*1000);
+            }
+
             beamE = beam_energy.GetSize()>0 ? beam_energy[0] : 0;
             // if(cut_dE_tof_cpl->IsInside(tCPl, (t7[0]+t7[1]+t7[2]+t7[3]+t7[4]))){
             //     hic_sum_V_tac_cpl->Fill(tCPl,(t7[0]+t7[1]+t7[2]+t7[3]+t7[4]));
@@ -309,6 +564,7 @@ void dp_analysis_2(){
 
 
             h14->Fill(t7[2]);   //filling IC3 energy
+
 
 
             // if(beamE>900){
@@ -349,17 +605,20 @@ void dp_analysis_2(){
                                 // if(abs(tCE - 440)<20){                         //cut on TAC_CATS_EXOGAM
                                     // if(t7[2]>0){                                     //cut on IC3 energy
                                         // if(thet>110 && thet<120){    
-                                            if(cutg1->IsInside(beamX, beamY)){                  //cut on Beam spot
+                                            // if(cutg1->IsInside(beamX, beamY)){                  //cut on Beam spot
                                                 // if(cut_dE_tof_cpl->IsInside(tCPl, (t7[0]+t7[1]+t7[2]+t7[3]+t7[4]))){  //cut on TAC_CATS_PL vs IC sum
                                                 //     if(cut_dE_tof_d4cats1->IsInside(tdc, (t7[0]+t7[1]+t7[2]+t7[3]+t7[4]))){ //cut on TAC_D4_CATS1 vs IC sum  
                                                         h25->Fill(t2_1);                                
+                                                        h_ex_vs_thet->Fill(thet, t2_1);
                                                         if(gamma_energy>0){
                                                             h_exo->Fill(gamma_energy*1000);                 //FILLING EXO_Doppler
                                                             h_gamma_ex -> Fill(t2_1, gamma_energy*1000);
+                                                            h_gamma_theta->Fill(thet, gamma_energy*1000);
+                                                            // h_gamma_gamma->Fill(gamma_energy*1000, gamma_energy2*1000);
                                                         }
                                                     // }
                                                 // }
-                                            }
+                                            // }
                                         // }
                                     // }
                                 // }
@@ -509,8 +768,35 @@ void dp_analysis_2(){
 
 
     c15 = new TCanvas("c15", "EXO Doppler vs excitation", 800, 600); 
-    h_gamma_ex->Rebin2D(4,4);
+    h_gamma_ex->Rebin2D(4,8);
     h_gamma_ex->Draw("COLZ");
+
+    //scanning MG_Exnocor bins of 2MeV each starting from (-2.0 MeV - 0.0 MeV) to (1.8 MeV - 3.8 MeV) which translates to bin numbers [81-100] to [119-138]
+
+
+
+    TCanvas *theta_ex = new TCanvas("theta_ex", "theta_ex", 800,600);
+    theta_ex->Divide(2,1);
+    theta_ex->cd(1);
+    h_ex_vs_thet->Draw("COLZ");
+    theta_ex->cd(2);
+    h_gamma_theta->Draw("COLZ");
+    TCanvas *gamma_gamma = new TCanvas("gamma_gamma", "gamma_gamma", 800,600);
+    gamma_gamma->Divide(2,1);
+    gamma_gamma->cd(1);
+
+    h_gamma_gamma->Draw("COLZ");
+
+    projections();
+    fit_background_excluding_peaks();
+
+    // projections->cd(1);
+    // h_gamma_ex->ProjectionY("h_bin_100_119",100,119);
+    // TH1D *h_bin_100_119 = (TH1D*)gDirectory->Get("h_bin_100_119");
+    // h_bin_100_119->SetTitle("Projection Y for EXO Doppler for MG_Exnocor bin -0.1 to 1.9 MeV");
+    // h_bin_100_119->GetXaxis()->SetTitle("EXO Doppler Energy (keV)");
+    // h_bin_100_119->GetYaxis()->SetTitle("Counts");
+    // h_bin_100_119->Draw();
 
     // TCanvas *cdetof = new TCanvas("cdetof", "cdetof", 800,600);
     // cdetof->Divide(2,1);

@@ -268,8 +268,7 @@ void Analysis::TreatMugast(){
         MG_DetM++;
         thetalab_tmp = 0;
         philab_tmp =0;
-        Energy = 0;
-        Energycor = 0;
+        Enrgycor = 0;
         Energy= MG->DSSD_E[countMugast];
         if (TAC_TOF == true) {
         //    first method from experiment
@@ -277,7 +276,8 @@ void Analysis::TreatMugast(){
        reaction->GetNucleus1()->SetTimeOfFlight(TOF);
 
        // TOF= TAC_D4_CATS1nc*Channel_Calib+Time_0_Ref;
-       // velocity = TOF/D4_CATS1_L/1e7;
+       // velocity = TOF/D4ergy = 0;
+        Ene_CATS1_L/1e7;
         // reaction->GetNucleus1()->SetTimeOfFlight(velocity);
          reaction->SetBeamEnergy(reaction->GetNucleus1()->GetEnergy());
          reaction->initializePrecomputeVariable();
@@ -379,8 +379,8 @@ void Analysis::TreatMugast2(){
               //   std::cout << "EnerMGtof3 " << reaction->GetBeamEnergy() << std::endl;
               // Part 1 : Impact Angle
              //  std::cout << "OriginalBeamEnergy2 -3 " << OriginalBeamEnergy2 << std::endl;
-              HitDirectionMG2 = MG -> GetPositionOfInteraction(countMugast) - BeamImpact ;
-              thetalab_tmp2 = HitDirectionMG2.Angle(BeamDirection);
+              HitDirectionMG2 = MG -> GetPositionOfInteraction(countMugast) - BeamImpact;
+              thetalab_tmp2 = HitDirectionMG2.Angle(BeamDirection); 
               ThetaMGSurface2= HitDirectionMG2.Angle(MG -> GetTelescopeNormal(countMugast) );
               ThetaNormalTargetMG2 = HitDirectionMG2.Angle( TVector3(0,0,1) ) ;
 

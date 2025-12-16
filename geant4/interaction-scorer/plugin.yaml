@@ -1,0 +1,14 @@
+Package:
+ name: interaction-scorer  
+ type: scorer
+ groups: geant4-simulation
+ url: https://gitlab.in2p3.fr/nptool/g4-scorer/interaction-scorer
+ version: 0.1
+ author: Valerian Girard-Alcindor, Adrien Matta
+ mail: girard-alcindor@ijclab.in2p3.fr
+ description: geant4 scorer to record energy deposited in silicon detectors
+ dependencies: geant4
+
+Plugin: 
+ token: g4-interaction-scorer
+ library: NPG4InteractionScorer

@@ -1,0 +1,4 @@
+[ libInteractionCoordinates.so ]
+# List of selected classes
+class InteractionCoordinates
+header InteractionCoordinates.h

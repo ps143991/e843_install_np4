@@ -26,45 +26,10 @@ void zdd::ZddData::Clear() {
   fZDD_IC_N.clear();
   fZDD_IC_TS.clear();
 
-  fZDD_IC_1_E.clear();
-    fZDD_IC_2_E.clear();
-    fZDD_IC_3_E.clear();
-    fZDD_IC_4_E.clear();
-    fZDD_IC_5_E.clear();
-    fZDD_IC_9_E.clear();
-    fZDD_IC_1_TS.clear();
-    fZDD_IC_2_TS.clear();
-    fZDD_IC_3_TS.clear();
-    fZDD_IC_4_TS.clear();
-    fZDD_IC_5_TS.clear();
-    fZDD_IC_9_TS.clear();
-
   fZDD_PL_E.clear();
   fZDD_PL_N.clear();
   fZDD_PL_TS.clear();
   central_PlR_TS.clear();
-
-  fZDD_PL_1_E.clear();
-    fZDD_PL_2_E.clear();
-    fZDD_PL_3_E.clear();
-    fZDD_PL_4_E.clear();
-    fZDD_PL_5_E.clear();
-    fZDD_PL_6_E.clear();
-    fZDD_PL_7_E.clear();
-    fZDD_PL_8_E.clear();
-    fZDD_PL_9_E.clear();
-    fZDD_PL_10_E.clear();
-
-    fZDD_PL_1_TS.clear();
-    fZDD_PL_2_TS.clear();
-    fZDD_PL_3_TS.clear();
-    fZDD_PL_4_TS.clear();
-    fZDD_PL_5_TS.clear();
-    fZDD_PL_6_TS.clear();
-    fZDD_PL_7_TS.clear();
-    fZDD_PL_8_TS.clear();
-    fZDD_PL_9_TS.clear();
-    fZDD_PL_10_TS.clear();
 
   //DCs clear
   fZDD_DC_1_E.clear();
@@ -83,16 +48,6 @@ void zdd::ZddData::Clear() {
   fZDD_EXO_N.clear();
   fZDD_EXO_TS.clear();
   fZDD_EXO_Time.clear();
-
-  fZDD_EXO_1_E.clear();
-    fZDD_EXO_2_E.clear();
-    fZDD_EXO_3_E.clear();
-    fZDD_EXO_4_E.clear();
-
-    fZDD_EXO_1_TS.clear();
-    fZDD_EXO_2_TS.clear();
-    fZDD_EXO_3_TS.clear();
-    fZDD_EXO_4_TS.clear();
 }
 
 /*void zdd::ZddData::SetZDDDC(const unsigned int& DetNumb, const unsigned int& Energy, const unsigned long long& TimeStamp) {

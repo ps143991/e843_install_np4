@@ -10,14 +10,19 @@ void user_analysis::Analysis::Init() {
     zdd = std::dynamic_pointer_cast<zdd::ZddDetector>(app->GetDetector("zdd"));
     tac = std::dynamic_pointer_cast<tac::TacDetector>(app->GetDetector("tac"));
     gatconf = std::dynamic_pointer_cast<ebye::EbyEDetector>(app->GetDetector("ebye"));
-    // must2 = std::dynamic_pointer_cast<must2::Must2Detector>(app->GetDetector("must2"));
+    must2 = std::dynamic_pointer_cast<must2::Must2Detector>(app->GetDetector("must2"));
     cats = std::dynamic_pointer_cast<cats::CatsDetector>(app->GetDetector("cats"));
     // exogam = std::dynamic_pointer_cast<exogam::ExogamDetector>(app->GetDetector("exogam"));
+    mugast = std::dynamic_pointer_cast<mugast::MugastDetector>(app->GetDetector("mugast"));
+
+    //red color output message: hello world
+
+    cout<<"\033[1;31m works fine till here "<<endl;
 
 
     
      // Settings
-    TargetThickness = 0.53*micrometer;
+    
     // ------------ DEUTERON Energy Loss ------------   //FIXME: not defined properly... giving error
     /* d_Si = EnergyLoss("./energy_loss/deuteron_Si.G4table", "G4Table", 100); // Energy loss in Silicon (MUST2)
     d_Al = EnergyLoss("./energy_loss/deuteron_Al.G4table", "G4Table", 100); // Energy loss in Aluminium (MUST2)
@@ -41,47 +46,87 @@ void user_analysis::Analysis::Init() {
     al_thickness[3] = 0.660;
     al_thickness[4] = 0.542;
 
-    /*   // ----------- Get kinematics line -----------   //FIXME: not defined properly... giving error
-    // 36S(p,d)35S@1800MeV
-    S36pdReaction.GetKinematicLine3()->SaveAs("reaction/36Spd_kinematics_GS.root");
-
-    // 34Si(p,d)33Si@1700MeV
-    Si34pdReaction.GetKinematicLine3()->SaveAs("reaction/34Sipd_kinematics_GS.root");
-    // Set the excitation energy for the Si34pd reaction to 4 MeV
-    Si34pdReaction.SetExcitation4(4);
-    // Save the kinematic line for the modified Si34pd reaction
-    Si34pdReaction.GetKinematicLine3()->SaveAs("reaction/34Sipd_kinematics_4MeV.root");
-
-    // 34Si(p,t)32Si@1700MeV
-    Si34ptReaction.GetKinematicLine3()->SaveAs("reaction/34Sipt_kinematics_GS.root"); */
 
     double ReactionBeta = 0.315;
+
+    reaction_dp = new nptool::Reaction("68Ni(d,p)69Ni@1122MeV");
+    cout<<reaction_dp->GetBeamEnergy();
+    reaction_dp->Print();
+
+    OriginalBeamEnergy = reaction_dp->GetBeamEnergy();
+    string Path = "./energy_loss/";
+    string TargetMaterial_dp = "CD2";
+    string TargetMaterial_pd = "CH2";
+
+    cout<<" TargetMaterial_dp " <<  TargetMaterial_dp << "\n";
+    TargetThickness = 5*micrometer;
+    string TargetInfo = TargetMaterial_dp + " " + to_string(TargetThickness/micrometer) + " micrometer";
+    nptool::message("blue","","",TargetInfo,true);
+
+    string beam = ChangeNameToG4Standard(reaction_dp->GetNucleus1()->GetName(), false);
+    string heavy = ChangeNameToG4Standard(reaction_dp->GetNucleus4()->GetName(), false);
+    string light = ChangeNameToG4Standard(reaction_dp->GetNucleus3()->GetName(), false);
+
+    Beam_Target = nptool::EnergyLoss("./energy_loss/Ni68_CD2.G4table", "G4Table", 100);
+    LightTarget = nptool::EnergyLoss(Path+light + "_" + TargetMaterial_dp + ".G4table", "G4Table", 100);
+    HeavyMylar = nptool::EnergyLoss(Path+beam + "_Mylar.G4table", "G4Table", 100);
+    LightAl = nptool::EnergyLoss(Path+light + "_Al.G4table", "G4Table", 100);
+    // LightSi = nptool::EnergyLoss(light + "_Si.G4table", "G4Table", 100);
+
+    // ReadConfigTS();
+
+
 }
 ////////////////////////////////////////////////////////////////////////////////
 
-/* bool user_analysis::Analysis::UnallocateBeforeBuild(){
+void user_analysis::Analysis::TreatGATCONF(){
    GATCONFMASTER=*(gatconf->GenericRawBranch["GATCONF"]);
-   // if (GATCONFMASTER==1){
-   if ( GATCONFMASTER==0 || GATCONFMASTER==1 || GATCONFMASTER==2 || GATCONFMASTER==16 || GATCONFMASTER==32){
-    theAuthority = true;
-   // if (GATCONFMASTER==1 || GATCONFMASTER==2 || GATCONFMASTER==16 || GATCONFMASTER==32){
+   if (GATCONFMASTER==1 /* || GATCONFMASTER==2 || GATCONFMASTER==16 || GATCONFMASTER==32 */){
+    decider = true;
+        // cout<<"decider "<<decider<<endl;
 
-   // if(GATCONFMASTER.size()==1){
-       // if(GATCONFMASTER[0]==1 || GATCONFMASTER[0]==2 || GATCONFMASTER[0]==16 || GATCONFMASTER[0]==32){
-           return true;
-       // }
+    GATCONFMASTERTS=*(gatconf->GenericRawBranchTS["GATCONFTS"]);
+    // if (GATCONFMASTERTS) cout<< "GATCONFMASTERTS: " << GATCONFMASTERTS << endl;
    }
-   else return false;
-
-} */
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////
 void user_analysis::Analysis::TreatEvent() {
     Clear();
-    TreatCATS();
-    TreatMust2();
+    TreatGATCONF();
 
+    if(decider){
+    TreatCATS();
+      if(bCATS){
+        // cout<<"bcats is true in analysis "<<endl;
+        TreatTOF();
+        TreatMugast();
+        if (dc_found) {TreatDC();}
+      }
+    }
+}
+
+void user_analysis::Analysis::TreatTOF(){
+  
+  
+  for(unsigned int i = 0; i < tac->m_PhysicsData->TAC_Time.size(); i++){
+    if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_CATS_PL") == 0)
+        {
+            // TAC_CATS_PL += (tac->m_PhysicsData->TAC_Time[i]*0.01276894);
+            TAC_CATS_PL.push_back(tac->m_PhysicsData->TAC_Time[i]*0.01276894);
+            // cout<<"works well"<<endl;
+        }
+        else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_MMG_CATS1") == 0)
+        {
+            // TAC_MMG_CATS1 += (tac->m_PhysicsData->TAC_Time[i]*0.01327);
+            TAC_MMG_CATS1.push_back(tac->m_PhysicsData->TAC_Time[i]*0.01327);
+        }
+        else if (tac->m_PhysicsData->TAC_Name[i].compare("TAC_D4_CATS1") == 0) {
+                TAC_D4_CATS1nc .push_back( tac->m_PhysicsData->TAC_Time[i]);
+                if (tac->m_PhysicsData->TAC_Time[i] > 0) TAC_TOF = true;
+      }
+  }
 }
 
 
@@ -89,12 +134,8 @@ void user_analysis::Analysis::TreatEvent() {
 
 void user_analysis::Analysis::TreatCATS(){
 
-
-    // std::cout << " cats posY " << cats->m_PhysicsData->PositionOnTargetY  << "\n";
-    
-    
-
     if(cats->m_PhysicsData->PositionOnTargetX > -1000 && cats->m_PhysicsData->PositionOnTargetY > -1000){
+      // cout<<"CATS position on target valid"<<endl;
 
         CATS1_XX=0;
         CATS2_XX=0;
@@ -104,7 +145,7 @@ void user_analysis::Analysis::TreatCATS(){
         CATS1_YY =  cats->m_PhysicsData->PositionY[0];
         CATS2_XX =  cats->m_PhysicsData->PositionX[1];
         CATS2_YY =  cats->m_PhysicsData->PositionY[1];
-    	BeamImpact = TVector3(-(cats->m_PhysicsData->PositionOnTargetX),-(cats->m_PhysicsData->PositionOnTargetY),0);
+    	  BeamImpact = TVector3(-(cats->m_PhysicsData->PositionOnTargetX),(cats->m_PhysicsData->PositionOnTargetY),0);
         //BeamImpact = TVector3(-(cats->m_PhysicsData->PositionOnTargetX)+1.7,-(cats->m_PhysicsData->PositionOnTargetY)+2.3,0); ///correctone cats3   ====>>>>> OZGE was using this: PS April 23, 2025
         //BeamImpact = TVector3(-(cats->m_PhysicsData->PositionOnTargetX)+1.5,-(cats->m_PhysicsData->PositionOnTargetY)+3,0); ///correctone cats9
         //BeamImpact = TVector3((cats->m_PhysicsData->PositionOnTargetX)-1.835,(cats->m_PhysicsData->PositionOnTargetY)-1.51,0); ///new one cast2
@@ -115,14 +156,135 @@ void user_analysis::Analysis::TreatCATS(){
         //BeamImpact = TVector3(-(cats->m_PhysicsData->PositionOnTargetX)+1.5,(cats->m_PhysicsData->PositionOnTargetY)-3,0); ///new one cats8 target centered
         //BeamImpact = TVector3(-(cats->m_PhysicsData->PositionOnTargetX)-0.5,(cats->m_PhysicsData->PositionOnTargetY)-1.3,0);//cats7
         BeamDirection = TVector3(CATS1_XX - CATS2_XX, CATS1_YY - CATS2_YY, -(cats->m_PhysicsData->PositionZ[0] - cats->m_PhysicsData->PositionZ[1]));
-        
-
+                
+        bCATS = true;
+        // cout<<"bcats returned true"<<endl; countPS_bcats++; cout<<"count ps_bcats: "<<countPS_bcats<<" "<<endl;
         // std::cout << " BeamImpact " << BeamImpact.X() << "  " << BeamImpact.Y() <<  "	"<< BeamImpact.Z() << "\n";
         //  std::cout << " BeamDirection " << BeamDirection.X() << "  " << BeamDirection.Y() <<  "	"<< BeamDirection.Z() << std::endl;
-        bCATS = true; /* cout<<"bcats returned true"<<endl; countPS_bcats++; cout<<"count ps_bcats: "<<countPS_bcats<<" "<<endl;*/
-    }
-    else {bCATS = false; /*cout<<"bcats returned false"<<endl;*/}
+        // cout<<"works well till here cats"<<endl;
+      }
+    else {
+      // cout<<"CATS position on target not valid"<<endl;
+      bCATS = false; /*cout<<"bcats returned false"<<endl;*/}
 }
+
+////////////////////////////////////////////////////////////////////////////////
+void user_analysis::Analysis::TreatDC(){
+  
+}
+  // 
+
+
+
+void user_analysis::Analysis::TreatMugast(){      //From TreatMugast in 10March, not treatmugast2
+
+  double  Channel_Calib = 0.02554;    // Time Calibration Coefficient 
+  double D4_CATS1_L = 2150;
+  double Time_0_Ref = 27594;
+
+  if(mugast->m_PhysicsData->DSSD_E.size()==1){
+    for(unsigned int countMugast = 0; countMugast < mugast->m_PhysicsData->DSSD_E.size(); countMugast++){
+          // if(countMugast>1)cout<<"more than 2 mugast hit!"<<endl;
+        // cout<<"time is: "<<mugast->m_PhysicsData->DSSD_T[countMugast]<<" ";
+        // cout<< "GATCONFMASTERTS: " << GATCONFMASTERTS << endl;
+
+        MG_DetNum.push_back( mugast->m_PhysicsData->TelescopeNumber[countMugast]);
+        MG_DetM++;
+        thetalab_tmp = 0;
+        philab_tmp =0;
+        Energycor = 0;
+        Energy = 0;
+        Energy= mugast->m_PhysicsData->DSSD_E[countMugast];
+
+
+
+
+        // Calculate TOF
+        if (TAC_TOF==true){
+          // cout<<"Debug PS: true or not? "<< TAC_TOF << endl;
+          TOF = (Time_0_Ref - TAC_D4_CATS1nc[0]) * Channel_Calib / D4_CATS1_L / 1e7;  // experiment
+          reaction_dp->GetNucleus1()->SetTimeOfFlight(TOF);
+
+              // cout<<"Debug PS: TOF "<< TOF << endl;
+          
+          reaction_dp->SetBeamEnergy(reaction_dp->GetNucleus1()->GetEnergy());
+          OriginalBeamEnergy = reaction_dp->GetBeamEnergy();
+          if(OriginalBeamEnergy>800){
+            OriginalBeamEnergy = HeavyMylar.Slow(OriginalBeamEnergy, 1.5*micrometer, 0);
+            OriginalBeamEnergy = Beam_Target.Slow(OriginalBeamEnergy, TargetThickness * 0.5, 0);
+
+            reaction_dp->SetBeamEnergy(OriginalBeamEnergy);
+
+            HitDirectionMG = mugast->GetPositionOfInteraction(countMugast) - BeamImpact;
+                // cout<<"DEBUG PS: Beam Impact is: "<<BeamImpact.X()<<" "<<BeamImpact.Y()<<" "<<BeamImpact.Z()<<endl;
+
+                // cout<<"DEBUG PS: Interaction Position is: "<<mugast->GetPositionOfInteraction(countMugast).X()<<" "<<mugast->GetPositionOfInteraction(countMugast).Y()<<" "<<mugast->GetPositionOfInteraction(countMugast).Z()<<endl;
+                // cout<<"DEBUG PS: Hit Direction is: "<<HitDirectionMG.X()<<" "<<HitDirectionMG.Y()<<" "<<HitDirectionMG.Z()<<endl;
+
+
+
+            thetalab_tmp = HitDirectionMG.Angle(BeamDirection);
+            // cout<<"Theta MG calc from TOF: "<< thetalab_tmp << endl;
+            philab_tmp = HitDirectionMG.Phi();
+
+            MG_X.push_back(mugast->GetPositionOfInteraction(countMugast).X());
+            MG_Y.push_back(mugast->GetPositionOfInteraction(countMugast).Y());
+            MG_Z.push_back(mugast->GetPositionOfInteraction(countMugast).Z());
+
+
+
+            ThetaMGSurface = HitDirectionMG.Angle(mugast->GetTelescopeNormal(countMugast));
+            ThetaNormalTargetMG = HitDirectionMG.Angle(TVector3(0,0,1));
+
+            Energycor = Energy;
+            MG_ELabraw.push_back(Energy);
+
+            MG_PhiLab.push_back(HitDirectionMG.Phi()/M_PI*180.);
+            MG_ThetaLab.push_back(thetalab_tmp / M_PI * 180.);
+
+            // TLorentzVector PHeavy_dp = reaction_dp->LorentzAfterReaction(Energy, thetalab_tmp);
+            // Beta_dp.push_back(PHeavy_dp.Beta());
+
+
+            Energycor = LightAl.EvaluateInitialEnergy(Energy, 0.4*micrometer, ThetaMGSurface);
+            // cout<<"Energy after Al corr: "<<Energycor<<endl;
+            
+            ELoss_Al.push_back(Energy - Energycor);
+
+            // Target Correction
+            double elab_tmp = Energycor;
+            Energycor = LightTarget.EvaluateInitialEnergy(Energycor, TargetThickness * 0.5, ThetaNormalTargetMG);
+            // cout<<"Energy after Target corr: "<<Energycor<<endl;
+
+            MG_ELab.push_back(Energycor);
+            ELoss_Target.push_back(elab_tmp - Energycor);
+            ELoss.push_back(Energy - Energycor);
+
+            // Part 3 : Excitation Energy Calculation
+
+            MG_Ex.push_back(reaction_dp->ReconstructRelativistic(Energycor, thetalab_tmp)); //charlies method
+            MG_Ex_lin.push_back((reaction_dp->ReconstructRelativistic(Energy, thetalab_tmp))-(0.01992656*MG_ThetaLab[countMugast]-2.63549658)); //charlies method without correction
+            
+                //      // Part 4 : Theta CM Calculation
+            MG_ThetaCM.push_back(reaction_dp->EnergyLabToThetaCM(MG_ELab[countMugast], MG_ThetaLab[countMugast])/deg);
+
+            if(MG_ELab[0]>1.0 && abs(TAC_MMG_CATS1[0]-387)>25 && TAC_CATS_PL[0]>300){
+                Ex_f.push_back(MG_Ex[countMugast]);
+                dc_found = true;
+            }
+
+            // cout<<"Raw Energy MG: "<<Energy<<" Corrected Energy MG: "<<Energycor<<" Theta Lab MG: "<<MG_ThetaLab[countMugast]<<" Ex. true: "<<MG_Ex[countMugast]<<" Ex. corrected: "<<MG_Ex_lin[countMugast]<<endl;
+
+          }
+        // cout<<"***********************************************************************************************"<<endl;
+
+        }
+    }
+    // cout<<endl;
+  }
+}
+
+
 
 
 
@@ -283,6 +445,7 @@ void user_analysis::Analysis::SetDataOutput(std::shared_ptr<nptool::VDataOutput>
   Tree->Branch("ThetaRecoil", &thetaRecoil); // Angle of the recoil
   Tree->Branch("PhiRecoil", &phiRecoil); // Phi of the recoil
   Tree->Branch("BetaRecoil", &betaRecoil); // Beta of the recoil
+  Tree->Branch("Ex_f", &Ex_f); // Excitation energy with filter conditions
 
   Tree->Branch("gf",&gf,"gf/I");
 //   Tree->Branch("GATCONF",&GATCONFMASTER);
@@ -293,23 +456,23 @@ void user_analysis::Analysis::SetDataOutput(std::shared_ptr<nptool::VDataOutput>
   Tree->Branch("BeamDirection0",&BeamDirection0);
   Tree->Branch("BeamImpact0",&BeamImpact0);
   Tree->Branch("MG_DetM",&MG_DetM,"MG_DetM/s");
+  Tree->Branch("MG_DetNum",&MG_DetNum,"MG_DetNum/s");
   Tree->Branch("MG_Ex",&MG_Ex);
-  Tree->Branch("MG_Ex2",&MG_Ex2);
-  Tree->Branch("MG_Extof",&MG_Ex);
-  Tree->Branch("MG_Exnocor",&MG_Exnocor);
-  Tree->Branch("MG_Ex0nocor",&MG_Ex0nocor);
+  // Tree->Branch("MG_Ex2",&MG_Ex2);
+  // Tree->Branch("MG_Extof",&MG_Ex);
+  Tree->Branch("MG_Ex_lin",&MG_Ex_lin);
   Tree->Branch("MG_ELab",&MG_ELab);
-  Tree->Branch("MG_ELab2",&MG_ELab2);
+  // Tree->Branch("MG_ELab2",&MG_ELab2);
   Tree->Branch("MG_ELabraw",&MG_ELabraw);
   Tree->Branch("ELoss_Al",&ELoss_Al);
   Tree->Branch("ELoss",&ELoss);
   Tree->Branch("ELoss_Target",&ELoss_Target);
-  Tree->Branch("MG_ThetaLab2",&MG_ThetaLab2);
+  // Tree->Branch("MG_ThetaLab2",&MG_ThetaLab2);
   Tree->Branch("MG_PhiLab",&MG_PhiLab);
-  Tree->Branch("MG_Phi0",&MG_Phi0);
+  // Tree->Branch("MG_Phi0",&MG_Phi0);
   Tree->Branch("MG_ThetaCM",&MG_ThetaCM);
   Tree->Branch("MG_ThetaLab",&MG_ThetaLab);
-  Tree->Branch("MG_ThetaCM2",&MG_ThetaCM2);
+  // Tree->Branch("MG_ThetaCM2",&MG_ThetaCM2);
   Tree->Branch("MG_X",&MG_X);
   Tree->Branch("MG_Y",&MG_Y);
   Tree->Branch("MG_Z",&MG_Z);
@@ -340,27 +503,36 @@ void user_analysis::Analysis::SetDataOutput(std::shared_ptr<nptool::VDataOutput>
 
 ////////////////////////////////////////////////////////////////////////////////
 void user_analysis::Analysis::Clear() {
+  dc_found = false;
 
-  MG_DetM= 0;
+    
+  Ex_f.clear();
+    TAC_CATS_PL.clear();
+    TAC_MMG_CATS1.clear();
+    TAC_D4_CATS1nc.clear();
+    TAC_TOF = false;
+    decider = false;
+    bCATS = false;
+    MG_DetM= 0;
+    MG_DetNum.clear();
     MG_Ex.clear();
-    MG_Ex2.clear();
-    MG_Extof.clear();
-    MG_Ex0tof.clear();
-    MG_Exnocor.clear();
-    MG_Ex0nocor.clear();
+    // MG_Ex2.clear();
+    // MG_Extof.clear();
+    // MG_Ex0tof.clear();
+    MG_Ex_lin.clear();
     MG_ELab.clear();
-    MG_ELab2.clear();
+    // MG_ELab2.clear();
     MG_ELabraw.clear();
     ELoss_Al.clear();
     ELoss_Target.clear();
     ELoss.clear();
     MG_ThetaLab.clear();
     MG_PhiLab.clear();
-    MG_Phi0.clear();
+    // MG_Phi0.clear();
 
-    MG_ThetaLab2.clear();
+    // MG_ThetaLab2.clear();
     MG_ThetaCM.clear();
-    MG_ThetaCM2.clear();
+    // MG_ThetaCM2.clear();
     MG_X.clear();
     MG_Y.clear();
     MG_Z.clear();

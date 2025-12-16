@@ -72,7 +72,7 @@ Mugast
 
 EnergyCalibrationParameters
  TelescopeNumber= 5
-  XThreshold= 8600
+ XThreshold= 8600
  YThreshold= 7800
  AlphaFitType= NoSatellite
  

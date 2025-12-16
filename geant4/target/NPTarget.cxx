@@ -7,9 +7,10 @@ using namespace CLHEP;
 
 // npgeant4
 // For Geant4 Simulation
-#ifdef Geant4_FOUND
+// #ifdef Geant4_FOUND
+// #endif
+
 #include "NPTarget.h"
-#endif
 
 // std
 #include <dlfcn.h>
@@ -84,16 +85,23 @@ void Target::ReadConfiguration(nptool::InputParser parser) {
   for (auto starget : starget_blocks) {
     cout << "////       TARGET      ////" << endl;
     cout << "//// Solid Target found " << endl;
-    vector<string> token = {"thickness", "radius", "material", "angle", "x", "y", "z"};
+    vector<string> token = {"thickness", "radius", "angle", "x", "y", "z"};
     if (starget->HasTokenList(token)) {
       m_TargetThickness = starget->GetDouble("thickness", "micrometer");
       m_TargetAngle = starget->GetDouble("angle", "deg");
       m_TargetRadius = starget->GetDouble("radius", "mm");
-      m_TargetMaterial = starget->GetString("material");
       m_TargetX = starget->GetDouble("x", "mm");
       m_TargetY = starget->GetDouble("y", "mm");
       m_TargetZ = starget->GetDouble("z", "mm");
       m_TargetType = true;
+      auto subblock = starget->GetSubBlock("material");
+      if (subblock.size() > 0) {
+        std::cout << " material: " << std::endl;
+        std::cout << " ";
+        m_TargetMaterial = subblock[0]->GetString("name");
+        std::cout << " ";
+        m_TargetDensity = subblock[0]->GetDouble("density", "g/cm3");
+      }
     }
     else {
       cout << "ERROR: Target token list incomplete, check your input file" << endl;

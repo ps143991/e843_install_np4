@@ -1,0 +1,61 @@
+1 -> curl -s https://gitlab.in2p3.fr/nptool/remote-package/-/raw/main/""remote_package.list> Env (/home/.local/nptool/default) + /remote_package.list
+Package = default/mugast
+Build = default/mugast/build
+Sources = default/mugast/sources
+cmake_generator = Unix Makefiles    //current
+make_bin = "make "
+cmake = "cmake -Dnptool=1"
+remote = default/remote_package.list
+remote_list = open "remote" file
+remote_list >> name >> url
+if mugast already existed command = curl -s "url" > /tmp/nptool_package         -> no else condition but reads the whole file and checks if the package exists PS:11
+
+    ===============> this implies that i need to add the package in the remote_package.list file
+
+    command = curl -s + url > /tmp/nptool_package
+    execute command PS: 16
+
+/*Package:
+ name: zdd
+ type: detector
+ groups: recoil detection
+ url: https://gitlab.in2p3.fr/valerian.girard-alcindor/zdd
+ version: 0.1
+ author: Valerian Girard-Alcindor
+ mail: girard-alcindor@ijclab.in2p3.fr
+ description: zdd 
+ dependencies: root
+
+Plugin: 
+  token: zdd
+  library: NPZdd
+ 
+PluginCitation:
+ type: Detector
+ citation: 
+ url: 
+
+PluginCitation:
+ type: Analysis
+ citation: something else
+ url: www.another-link.org*/        =========> the content of the plugin file should be this: PS:41
+
+
+installs dependencies -> PS:44
+url = gets "url" in this .yaml plugin file
+
+command = git clone + url + " " + Sources
+=====> expands to -> git clone https://gitlab.in2p3.fr/valerian.girard-alcindor/zdd default/zdd/sources     ->PS:48
+
+command = cmake -S default/zdd/sources -B default/zdd/build -DCMAKE_INSTALL_PREFIX=default
+execute command PS:51
+
+command = make -C default/zdd/build
+execute command         PS:54
+
+command = make install -C build
+
+reads "plugin" from plugin
+token, library
+
+command echo zdd zdd NPZdd.so >> default/plugin_lib.list        =========>Adds to the plugin_lib.list

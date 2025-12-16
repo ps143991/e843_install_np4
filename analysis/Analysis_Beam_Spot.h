@@ -131,6 +131,11 @@ namespace user_analysis {
         Double_t x_value[5];
 
 
+   private:     //for GATCONF selection
+    void TreatGATCONF();
+    bool decider = false;
+
+
 
     private:                                         // functions declaration
         void Further_Analysis();

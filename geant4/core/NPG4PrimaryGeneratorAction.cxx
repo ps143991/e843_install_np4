@@ -43,6 +43,8 @@ void PrimaryGeneratorAction::ReadConfiguration(std::string file) {
       app->LoadPlugin(token, true);
       auto primary =
           std::dynamic_pointer_cast<nptool::geant4::VPrimaryGenerator>(app->ConstructPrimaryGenerator(token));
+          std::cout << ">>>>>>>>>> DEBUG : " << 0 << std::endl;
+          std::cout << token << std::endl;
       if (primary) {
         primary->ReadConfiguration(parser);
         m_primary.push_back(primary);

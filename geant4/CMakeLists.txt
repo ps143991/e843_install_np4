@@ -48,7 +48,7 @@ else()
 endif()
 
 
-set (duplicate_include_dir ${CMAKE_CURRENT_SOURCE_DIR}/core ${CMAKE_CURRENT_SOURCE_DIR}/beam ${CMAKE_CURRENT_SOURCE_DIR}/isotropic-source ${CMAKE_CURRENT_SOURCE_DIR}/base-physics ${CMAKE_CURRENT_SOURCE_DIR}/target PARENT_SCOPE)
+set (duplicate_include_dir ${CMAKE_CURRENT_SOURCE_DIR}/core ${CMAKE_CURRENT_SOURCE_DIR}/beam ${CMAKE_CURRENT_SOURCE_DIR}/isotropic-source ${CMAKE_CURRENT_SOURCE_DIR}/base-physics ${CMAKE_CURRENT_SOURCE_DIR}/target ${CMAKE_CURRENT_SOURCE_DIR}/interaction-scorer PARENT_SCOPE)
 include_directories(BEFORE core)
 include_directories(AFTER $ENV{NPTOOL_HOME}/$ENV{NPTOOL_ENV}/include)
 include_directories(AFTER $ENV{NPTOOL}/include)
@@ -58,4 +58,5 @@ add_subdirectory(isotropic-source)
 add_subdirectory(beam)
 add_subdirectory(base-physics)
 add_subdirectory(target)
+add_subdirectory(interaction-scorer)
 

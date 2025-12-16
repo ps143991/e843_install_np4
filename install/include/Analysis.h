@@ -8,9 +8,9 @@
 #include "ExogamDetector.h"
 #include "CatsDetector.h"
 #include "EbyEDetector.h"
-#include "NPReaction.h"
 #include "NPEnergyLoss.h"
-
+#include "NPReaction.h"
+#include "MugastDetector.h"
 #include "NPRootOutput.h"
 #include "TH2.h"
 #include "Math/Vector3D.h"
@@ -45,24 +45,34 @@ namespace user_analysis {
     void TreatEXO();
     void TreatMust2();
     //void TreatMust2();
+    void TreatMugast();
+    void TreatTOF();
+    void TreatDC();
+            // Double_t Spot_DC_X;
+        std::vector<double> TAC_D4_CATS1nc;
+        std::vector<double> TAC_MMG_CATS1;
+        std::vector<double> TAC_CATS_PL;
+        bool TAC_TOF = false;
 
 
    private:
     //  std::shared_ptr<my_detector::MyDetector> mydetector;
     std::shared_ptr<zdd::ZddDetector> zdd;
     std::shared_ptr<tac::TacDetector> tac;
+    std::shared_ptr<mugast::MugastDetector> mugast;
     // std::shared_ptr<exogam::ExogamDetector> exogam;
     std::shared_ptr<ebye::EbyEDetector> gatconf;
     std::shared_ptr<cats::CatsDetector> cats;
-    // std::shared_ptr<must2::Must2Detector> must2;
-    Reaction* reaction1 = nullptr;
-    Reaction* reaction2 = nullptr;
+    std::shared_ptr<must2::Must2Detector> must2;
+
     private:
     bool bCATS;
     int gf;
     double TOF;
     
     double velocity;
+
+    bool dc_found;
 
     Double_t CATS1_XX;
     Double_t CATS2_XX;
@@ -71,12 +81,15 @@ namespace user_analysis {
 
 
 
-
+    void TreatGATCONF();
+    bool decider = false;
     double OriginalBeamEnergy ; // AMEV
     double OriginalBeamEnergync ; // AMEV
     unsigned int GATCONFMASTER;
     //TTreeReaderValue<vector<unsigned int>>* GATCONFMASTER_;
-    vector<unsigned long long> GATCONFMASTERTS;
+    // vector<unsigned long long> GATCONFMASTERTS;
+    unsigned long long GATCONFMASTERTS;
+
     //TTreeReaderValue<vector<unsigned long long>>* GATCONFMASTERTS_;
 
     TVector3 HitDirectionMG;
@@ -86,7 +99,9 @@ namespace user_analysis {
     TVector3 BeamImpact0;
     // Mugast info
     unsigned short MG_DetM;
+    std::vector<unsigned short> MG_DetNum;
     std::vector<double> MG_Ex;
+    std::vector<double> Ex_f;
     std::vector<double> MG_Extof;
     std::vector<double> MG_ELab;
     std::vector<double> MG_ELabraw;
@@ -106,8 +121,13 @@ namespace user_analysis {
     std::vector<double> MG_Ex0;
     std::vector<double> MG_Ex0tof;
     std::vector<double> MG_ThetaCM0;
-    std::vector<double> MG_Ex0nocor;
-    std::vector<double> MG_Exnocor;
+    std::vector<double> MG_Ex_lin;
+
+
+    double thetalab_tmp;
+    double philab_tmp;
+    double Energycor;
+    double Energy;
 
     // MUST2 info
     unsigned short M2_TelescopeM;
@@ -130,13 +150,15 @@ namespace user_analysis {
     std::vector<double> MG_Ex2;
     double OriginalBeamEnergy2 ; // AMEV
     double ThetaNormalTargetMG2;
+    double ThetaNormalTargetMG;
+    double ThetaMGSurface;
     double ThetaMGSurface2;
     double Energy2;
     TVector3 HitDirectionMG2;
     std::vector<double> MG_ThetaLab2;
     std::vector<double> MG_ELab2;
     std::vector<double> MG_ThetaCM2;
-
+    
     ///
     std::vector<double> EXO_Doppler_dp;
     std::vector<double> EXO_Doppler_pt;
@@ -150,11 +172,11 @@ namespace user_analysis {
 
 /*     // ----------- Energy Loss Tables ------------ //PS: not defined properly... giving error
                                                       //FIXME: until reaction Si34ptReaction is defined
-    EnergyLoss d_Si;
-    EnergyLoss d_Al;
-    EnergyLoss d_CH2;
-    EnergyLoss si_CH2;
-    EnergyLoss s_CH2; */
+    nptool::EnergyLoss d_Si;
+    nptool::EnergyLoss d_Al;
+    nptool::EnergyLoss d_CH2;
+    nptool::EnergyLoss si_CH2;
+    nptool::EnergyLoss s_CH2; */
 
     // ----------- Reaction list ------------
 /*     Reaction S36pdReaction;
@@ -169,6 +191,23 @@ namespace user_analysis {
     double BeamEnergy;
     double TargetThickness;
 
+    nptool::Reaction* reaction_dp;
+
+    // nptool::Reaction *reaction_pd = NULL;
+
+
+    EnergyLoss Beam_Target;
+    // nptool::EnergyLoss Heavy_Target;
+    nptool::EnergyLoss LightTarget;
+    nptool::EnergyLoss LightAl;
+    nptool::EnergyLoss HeavyMylar;
+    // nptool::EnergyLoss ProtonSi;
+    // std::vector<nptool::EnergyLoss> Heavy_IC_Gas;
+    // std::vector<nptool::EnergyLoss> Heavy_IC_Windows;
+    // std::vector<nptool::EnergyLoss> Heavy_IC_Mylar;
+    // std::vector<nptool::EnergyLoss> Heavy_DC_Gas;
+    // std::map<TString, nptool::EnergyLoss> LightAlmg;
+    // nptool::EnergyLoss LightSi;
     // ------------ New branches ------------
 
     // depend on the reaction reconstruction

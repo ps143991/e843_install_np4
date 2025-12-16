@@ -1,8 +1,14 @@
-#include "NPG4Session.h"
+// geant4
+#include "G4RunManagerFactory.hh"
 #include "G4VUserPrimaryGeneratorAction.hh"
+
+// nptool geant4 plugin
+#include "NPG4PrimaryGeneratorAction.h"
+#include "NPG4Session.h"
+
+// nptool
 #include "NPApplication.h"
 #include "NPFunction.h"
-#include "NPG4PrimaryGeneratorAction.h"
 
 using namespace nptool::geant4;
 // Static pointer to the current application
@@ -35,10 +41,11 @@ Session::Session() {
   m_DetectorConstruction = nullptr;
 
   // Run Manager
-  m_RunManager = new G4RunManager();
+  m_RunManager = G4RunManagerFactory::CreateRunManager(G4RunManagerType::SerialOnly);
 }
 ////////////////////////////////////////////////////////////////////////////////
-void Session::Start() {
+void Session::Start(std::shared_ptr<nptool::VDataOutput> output) {
+  m_output = output;
   // avoid multiple start
   if (already_started)
     return;
@@ -47,22 +54,48 @@ void Session::Start() {
 
   // get the application
   auto app = nptool::Application::GetApplication();
+  /////////////////////////////////////////////////////////////////////////////
+  // UI
+  /////////////////////////////////////////////////////////////////////////////
+  char** argv;
+  int argc = app->GetArgcArgv(argv);
+  if (!app->HasFlag("--batch"))
+    m_UI = new G4UIExecutive(argc, argv);
 
+  ////////////////////////////////////////////////////////////////////////////
   // Detector Construction interface to app
+  ////////////////////////////////////////////////////////////////////////////
   m_DetectorConstruction = new DetectorConstruction;
   m_RunManager->SetUserInitialization(m_DetectorConstruction);
 
+  ////////////////////////////////////////////////////////////////////////////
   // Physics List
+  ////////////////////////////////////////////////////////////////////////////
   std::string physics_list = "base-physics-list";
   if (app->HasFlag("--physics-list")) {
     physics_list = app->GetArg("--physics-list");
   }
 
-  m_PhysicsList = (std::dynamic_pointer_cast<nptool::geant4::VPhysicsList>(app->ConstructPhysicsProcess(physics_list)));
-
+  m_PhysicsList = std::dynamic_pointer_cast<nptool::geant4::VPhysicsList>(app->ConstructPhysicsProcess(physics_list));
   m_RunManager->SetUserInitialization(m_PhysicsList.get());
 
+  ////////////////////////////////////////////////////////////////////////////
+  // Run Action
+  ////////////////////////////////////////////////////////////////////////////
+  m_RunAction = new nptool::geant4::RunAction();
+  m_RunManager->SetUserAction(m_RunAction);
+  
+  ////////////////////////////////////////////////////////////////////////////
+  // Event Action
+  ////////////////////////////////////////////////////////////////////////////
+  m_EventAction = new nptool::geant4::EventAction(m_output);
+  m_EventAction->SetDetector(m_DetectorConstruction);
+  m_RunManager->SetUserAction(m_EventAction);
+
+  ////////////////////////////////////////////////////////////////////////////
   // Primary Generator
+  ////////////////////////////////////////////////////////////////////////////
+
   m_PrimaryGenerator = new nptool::geant4::PrimaryGeneratorAction();
   if (app->HasFlag("--event-generator")) {
     auto event_files = app->GetVectorArg("--event-generator");
@@ -74,23 +107,16 @@ void Session::Start() {
     for (auto file : event_files)
       m_PrimaryGenerator->ReadConfiguration(file);
   }
-
   m_RunManager->SetUserAction(m_PrimaryGenerator);
 
   // Initialisation
   m_RunManager->Initialize();
+
   m_PhysicsList->AddFastProcessManager();
 
   // UI
   G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
-  // UI manager want argc and argv for some reason
-  char** argv;
-  int argc = app->GetArgcArgv(argv);
-  m_UI = new G4UIExecutive(argc, argv);
-
-  // VIS
-  m_VisManager = NULL;
   if (!app->HasFlag("--batch")) {
     UImanager->ApplyCommand("/control/execute macro/geant4/verbose.mac");
     UImanager->ApplyCommand("/control/execute macro/geant4/aliases.mac");
@@ -105,23 +131,24 @@ void Session::Start() {
   else { // if batch mode do not accumulate any track
     UImanager->ApplyCommand("/vis/scene/endOfEventAction accumulate 0");
   }
+
   // Execute user macro
   if (app->HasFlag("--macro")) {
     auto macro = app->GetArg("--macro");
     UImanager->ApplyCommand("/control/execute " + macro);
   }
+
   // Start the session
-  if (!app->HasFlag("--batch"))
+  if (m_UI) {
     m_UI->SessionStart();
+    delete m_UI;
+  }
+  /*
+      if (m_VisManager)
+        delete m_VisManager;
+      if (m_RunManager)
+        delete m_RunManager;
+        */
 }
 ////////////////////////////////////////////////////////////////////////////////
-Session::~Session() {
-  // delete the ui after job is done
-  /*if (m_UI)
-    delete m_UI;
-  if (m_VisManager)
-    delete m_VisManager;
-  if (m_RunManager)
-    delete m_RunManager;
-    */
-}
+Session::~Session() {}

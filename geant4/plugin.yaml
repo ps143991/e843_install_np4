@@ -22,5 +22,11 @@ Plugin:
  library: NPG4BasePhysicsList
 Plugin: 
  token: target
+ library: NPTarget
+Plugin: 
+ token: target-geant4
  library: NPG4Target
+Plugin: 
+ token: interaction-scorer
+ library: NPG4InteractionScorer
 

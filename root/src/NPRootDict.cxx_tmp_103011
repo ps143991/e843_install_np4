@@ -1,0 +1,272 @@
+// Do NOT change. Changes will be lost next time file is generated
+
+#define R__DICTIONARY_FILENAME NPRootDict
+#define R__NO_DEPRECATION
+
+/*******************************************************************/
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+#define G__DICTIONARY
+#include "ROOT/RConfig.hxx"
+#include "TClass.h"
+#include "TDictAttributeMap.h"
+#include "TInterpreter.h"
+#include "TROOT.h"
+#include "TBuffer.h"
+#include "TMemberInspector.h"
+#include "TInterpreter.h"
+#include "TVirtualMutex.h"
+#include "TError.h"
+
+#ifndef G__ROOT
+#define G__ROOT
+#endif
+
+#include "RtypesImp.h"
+#include "TIsAProxy.h"
+#include "TFileMergeInfo.h"
+#include <algorithm>
+#include "TCollectionProxyInfo.h"
+/*******************************************************************/
+
+#include "TDataMember.h"
+
+// Header files passed as explicit arguments
+#include "NPRootHTMLUserInterface.h"
+#include "NPRootAsciiFile.h"
+#include "NPRootTreeServer.h"
+#include "NPRootTreeClient.h"
+
+// Header files passed via #pragma extra_include
+
+// The generated code does not explicitly qualify STL entities
+namespace std {} using namespace std;
+
+namespace ROOT {
+   static void *new_nptoolcLcLRootAsciiFile(void *p = nullptr);
+   static void *newArray_nptoolcLcLRootAsciiFile(Long_t size, void *p);
+   static void delete_nptoolcLcLRootAsciiFile(void *p);
+   static void deleteArray_nptoolcLcLRootAsciiFile(void *p);
+   static void destruct_nptoolcLcLRootAsciiFile(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::nptool::RootAsciiFile*)
+   {
+      ::nptool::RootAsciiFile *ptr = nullptr;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TInstrumentedIsAProxy< ::nptool::RootAsciiFile >(nullptr);
+      static ::ROOT::TGenericClassInfo 
+         instance("nptool::RootAsciiFile", ::nptool::RootAsciiFile::Class_Version(), "NPRootAsciiFile.h", 37,
+                  typeid(::nptool::RootAsciiFile), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &::nptool::RootAsciiFile::Dictionary, isa_proxy, 4,
+                  sizeof(::nptool::RootAsciiFile) );
+      instance.SetNew(&new_nptoolcLcLRootAsciiFile);
+      instance.SetNewArray(&newArray_nptoolcLcLRootAsciiFile);
+      instance.SetDelete(&delete_nptoolcLcLRootAsciiFile);
+      instance.SetDeleteArray(&deleteArray_nptoolcLcLRootAsciiFile);
+      instance.SetDestructor(&destruct_nptoolcLcLRootAsciiFile);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::nptool::RootAsciiFile*)
+   {
+      return GenerateInitInstanceLocal(static_cast<::nptool::RootAsciiFile*>(nullptr));
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal(static_cast<const ::nptool::RootAsciiFile*>(nullptr)); R__UseDummy(_R__UNIQUE_DICT_(Init));
+} // end of namespace ROOT
+
+namespace ROOT {
+   static TClass *nptoolcLcLrootcLcLRootTreeServer_Dictionary();
+   static void nptoolcLcLrootcLcLRootTreeServer_TClassManip(TClass*);
+   static void *new_nptoolcLcLrootcLcLRootTreeServer(void *p = nullptr);
+   static void *newArray_nptoolcLcLrootcLcLRootTreeServer(Long_t size, void *p);
+   static void delete_nptoolcLcLrootcLcLRootTreeServer(void *p);
+   static void deleteArray_nptoolcLcLrootcLcLRootTreeServer(void *p);
+   static void destruct_nptoolcLcLrootcLcLRootTreeServer(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::nptool::root::RootTreeServer*)
+   {
+      ::nptool::root::RootTreeServer *ptr = nullptr;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::nptool::root::RootTreeServer));
+      static ::ROOT::TGenericClassInfo 
+         instance("nptool::root::RootTreeServer", "NPRootTreeServer.h", 13,
+                  typeid(::nptool::root::RootTreeServer), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &nptoolcLcLrootcLcLRootTreeServer_Dictionary, isa_proxy, 4,
+                  sizeof(::nptool::root::RootTreeServer) );
+      instance.SetNew(&new_nptoolcLcLrootcLcLRootTreeServer);
+      instance.SetNewArray(&newArray_nptoolcLcLrootcLcLRootTreeServer);
+      instance.SetDelete(&delete_nptoolcLcLrootcLcLRootTreeServer);
+      instance.SetDeleteArray(&deleteArray_nptoolcLcLrootcLcLRootTreeServer);
+      instance.SetDestructor(&destruct_nptoolcLcLrootcLcLRootTreeServer);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::nptool::root::RootTreeServer*)
+   {
+      return GenerateInitInstanceLocal(static_cast<::nptool::root::RootTreeServer*>(nullptr));
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal(static_cast<const ::nptool::root::RootTreeServer*>(nullptr)); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *nptoolcLcLrootcLcLRootTreeServer_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal(static_cast<const ::nptool::root::RootTreeServer*>(nullptr))->GetClass();
+      nptoolcLcLrootcLcLRootTreeServer_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void nptoolcLcLrootcLcLRootTreeServer_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace ROOT {
+   static TClass *nptoolcLcLrootcLcLRootTreeClient_Dictionary();
+   static void nptoolcLcLrootcLcLRootTreeClient_TClassManip(TClass*);
+   static void delete_nptoolcLcLrootcLcLRootTreeClient(void *p);
+   static void deleteArray_nptoolcLcLrootcLcLRootTreeClient(void *p);
+   static void destruct_nptoolcLcLrootcLcLRootTreeClient(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::nptool::root::RootTreeClient*)
+   {
+      ::nptool::root::RootTreeClient *ptr = nullptr;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::nptool::root::RootTreeClient));
+      static ::ROOT::TGenericClassInfo 
+         instance("nptool::root::RootTreeClient", "NPRootTreeClient.h", 13,
+                  typeid(::nptool::root::RootTreeClient), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &nptoolcLcLrootcLcLRootTreeClient_Dictionary, isa_proxy, 4,
+                  sizeof(::nptool::root::RootTreeClient) );
+      instance.SetDelete(&delete_nptoolcLcLrootcLcLRootTreeClient);
+      instance.SetDeleteArray(&deleteArray_nptoolcLcLrootcLcLRootTreeClient);
+      instance.SetDestructor(&destruct_nptoolcLcLrootcLcLRootTreeClient);
+      return &instance;
+   }
+   TGenericClassInfo *GenerateInitInstance(const ::nptool::root::RootTreeClient*)
+   {
+      return GenerateInitInstanceLocal(static_cast<::nptool::root::RootTreeClient*>(nullptr));
+   }
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_DICT_(Init) = GenerateInitInstanceLocal(static_cast<const ::nptool::root::RootTreeClient*>(nullptr)); R__UseDummy(_R__UNIQUE_DICT_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *nptoolcLcLrootcLcLRootTreeClient_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal(static_cast<const ::nptool::root::RootTreeClient*>(nullptr))->GetClass();
+      nptoolcLcLrootcLcLRootTreeClient_TClassManip(theClass);
+   return theClass;
+   }
+
+   static void nptoolcLcLrootcLcLRootTreeClient_TClassManip(TClass* ){
+   }
+
+} // end of namespace ROOT
+
+namespace nptool {
+//______________________________________________________________________________
+atomic_TClass_ptr RootAsciiFile::fgIsA(nullptr);  // static to hold class pointer
+
+//______________________________________________________________________________
+const char *RootAsciiFile::Class_Name()
+{
+   return "nptool::RootAsciiFile";
+}
+
+//______________________________________________________________________________
+const char *RootAsciiFile::ImplFileName()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::nptool::RootAsciiFile*)nullptr)->GetImplFileName();
+}
+
+//______________________________________________________________________________
+int RootAsciiFile::ImplFileLine()
+{
+   return ::ROOT::GenerateInitInstanceLocal((const ::nptool::RootAsciiFile*)nullptr)->GetImplFileLine();
+}
+
+//______________________________________________________________________________
+TClass *RootAsciiFile::Dictionary()
+{
+   fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::nptool::RootAsciiFile*)nullptr)->GetClass();
+   return fgIsA;
+}
+
+//______________________________________________________________________________
+TClass *RootAsciiFile::Class()
+{
+   if (!fgIsA.load()) { R__LOCKGUARD(gInterpreterMutex); fgIsA = ::ROOT::GenerateInitInstanceLocal((const ::nptool::RootAsciiFile*)nullptr)->GetClass(); }
+   return fgIsA;
+}
+
+} // namespace nptool
+namespace nptool {
+//______________________________________________________________________________
+void RootAsciiFile::Streamer(TBuffer &R__b)
+{
+   // Stream an object of class nptool::RootAsciiFile.
+
+   if (R__b.IsReading()) {
+      R__b.ReadClassBuffer(nptool::RootAsciiFile::Class(),this);
+   } else {
+      R__b.WriteClassBuffer(nptool::RootAsciiFile::Class(),this);
+   }
+}
+
+} // namespace nptool
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_nptoolcLcLRootAsciiFile(void *p) {
+      return  p ? new(p) ::nptool::RootAsciiFile : new ::nptool::RootAsciiFile;
+   }
+   static void *newArray_nptoolcLcLRootAsciiFile(Long_t nElements, void *p) {
+      return p ? new(p) ::nptool::RootAsciiFile[nElements] : new ::nptool::RootAsciiFile[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_nptoolcLcLRootAsciiFile(void *p) {
+      delete (static_cast<::nptool::RootAsciiFile*>(p));
+   }
+   static void deleteArray_nptoolcLcLRootAsciiFile(void *p) {
+      delete [] (static_cast<::nptool::RootAsciiFile*>(p));
+   }
+   static void destruct_nptoolcLcLRootAsciiFile(void *p) {
+      typedef ::nptool::RootAsciiFile current_t;
+      (static_cast<current_t*>(p))->~current_t();
+   }
+} // end of namespace ROOT for class ::nptool::RootAsciiFile
+
+namespace ROOT {
+   // Wrappers around operator new
+   static void *new_nptoolcLcLrootcLcLRootTreeServer(void *p) {
+      return  p ? ::new(static_cast<::ROOT::Internal::TOperatorNewHelper*>(p)) ::nptool::root::RootTreeServer : new ::nptool::root::RootTreeServer;
+   }
+   static void *newArray_nptoolcLcLrootcLcLRootTreeServer(Long_t nElements, void *p) {
+      return p ? ::new(static_cast<::ROOT::Internal::TOperatorNewHelper*>(p)) ::nptool::root::RootTreeServer[nElements] : new ::nptool::root::RootTreeServer[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_nptoolcLcLrootcLcLRootTreeServer(void *p) {
+      delete (static_cast<::nptool::root::RootTreeServer*>(p));
+   }
+   static void deleteArray_nptoolcLcLrootcLcLRootTreeServer(void *p) {
+      delete [] (static_cast<::nptool::root::RootTreeServer*>(p));
+   }
+   static void destruct_nptoolcLcLrootcLcLRootTreeServer(void *p) {
+      typedef ::nptool::root::RootTreeServer current_t;
+      (static_cast<current_t*>(p))->~current_t();
+   }
+} // end of namespace ROOT for class ::nptool::root::RootTreeServer
+
+namespace ROOT {
+   // Wrapper around operator delete
+   static void delete_nptoolcLcLrootcLcLRootTreeClient(void *p) {
+      delete (static_cast<::nptool::root::RootTreeClient*>(p));
+   }
+   static void deleteArray_nptoolcLcLrootcLcLRootTreeClient(void *p) {
+      delete [] (static_cast<::nptool::root::RootTreeClient*>(p));
+   }
+   static void destruct_nptoolcLcLrootcLcLRootTreeClient(void *p) {
+      typedef ::nptool::root::RootTreeClient current_t;
+      (static_cast<current_t*>(p))->~current_t();
+   }
+} // end of namespace ROOT for class ::nptool::root::RootTreeClient
+

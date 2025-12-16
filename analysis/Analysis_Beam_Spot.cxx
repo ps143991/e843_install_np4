@@ -53,10 +53,26 @@ void user_analysis::Analysis_Beam_SPOT::Init() {
     entriesPS = 400000;
 }
 
+void user_analysis::Analysis_Beam_SPOT::TreatGATCONF(){
+   GATCONFMASTER=*(gatconf->GenericRawBranch["GATCONF"]);
+   // if (GATCONFMASTER==1){
+   if ( GATCONFMASTER==0 || GATCONFMASTER==1 || GATCONFMASTER==2 || GATCONFMASTER==16 || GATCONFMASTER==32){
+    decider = true;
+   // if (GATCONFMASTER==1 || GATCONFMASTER==2 || GATCONFMASTER==16 || GATCONFMASTER==32){
+
+   // if(GATCONFMASTER.size()==1){
+          //  decider = true;
+       // }
+   }
+
+}
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 void user_analysis::Analysis_Beam_SPOT::TreatEvent() {
 
+    
       
   GATCONFMASTER= *(gatconf->GenericPhysicsBranch["GATCONF"]);
     

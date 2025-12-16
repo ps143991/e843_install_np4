@@ -34,11 +34,6 @@ namespace nptool {
 
      public:
       G4VPhysicalVolume* ReadConfigurationFile();
-      void ReadAllSensitive(const G4Event*);
-      /* void ClearInteractionCoordinates() {
-         if (m_Detectors.size() > 0)
-           m_Detectors[0]->GetInterCoordPointer()->Clear();
-       };*/
 
      private:
       // Solid world

@@ -10,7 +10,7 @@ namespace nptool {
 
      public:
       BasePhysicsList();
-      ~BasePhysicsList() { delete emPhysicsList; };
+      ~BasePhysicsList(){};
 
       void ConstructParticle();
       void ConstructProcess();
@@ -18,6 +18,11 @@ namespace nptool {
      private: // Physics List
       G4VPhysicsConstructor* emPhysicsList;
       G4EmConfigurator* emConfig;
+
+      // Decay
+      G4VPhysicsConstructor* decay_List;
+      G4VPhysicsConstructor* radioactiveDecay_List;
+
     };
   } // namespace geant4
 } // namespace nptool

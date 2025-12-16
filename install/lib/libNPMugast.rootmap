@@ -1,0 +1,9 @@
+{ decls }
+namespace mugast {  }
+
+[ libNPMugast.so ]
+# List of selected classes
+class mugast::MugastData
+class mugast::MugastPhysics
+header MugastData.h
+header MugastPhysics.h

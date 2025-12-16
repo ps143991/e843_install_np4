@@ -1,0 +1,76 @@
+file A:
+ npmfm_6ms_tune/NPRaw_555_7.root
+ npmfm_6ms_tune/NPRaw_555_6.root
+ npmfm_6ms_tune/NPRaw_555_5.root
+ npmfm_6ms_tune/NPRaw_555_4.root
+ npmfm_6ms_tune/NPRaw_555_3.root
+ npmfm_6ms_tune/NPRaw_555_2.root
+ npmfm_6ms_tune/NPRaw_555_25.root
+ npmfm_6ms_tune/NPRaw_555_24.root
+ npmfm_6ms_tune/NPRaw_555_23.root
+ npmfm_6ms_tune/NPRaw_555_22.root
+ npmfm_6ms_tune/NPRaw_555_21.root
+ npmfm_6ms_tune/NPRaw_555_20.root
+ npmfm_6ms_tune/NPRaw_555_1.root	why didnt she take 555_8 AND 555_9
+
+file B: 
+ npmfm_6ms_tune/NPRaw_555_19.root
+ npmfm_6ms_tune/NPRaw_555_18.root
+ npmfm_6ms_tune/NPRaw_555_17.root
+ npmfm_6ms_tune/NPRaw_555_16.root
+ npmfm_6ms_tune/NPRaw_555_15.root
+ npmfm_6ms_tune/NPRaw_555_14.root
+ npmfm_6ms_tune/NPRaw_555_13.root
+ npmfm_6ms_tune/NPRaw_555_12.root
+ npmfm_6ms_tune/NPRaw_555_11.root
+ npmfm_6ms_tune/NPRaw_555_10.root
+ npmfm_6ms_tune/NPRaw_555_0.root
+ npmfm_6ms_tune/NPRaw_552_3.root
+ npmfm_6ms_tune/NPRaw_552_2.root
+
+file C:
+ npmfm_6ms_tune/NPRaw_552_1.root
+ npmfm_6ms_tune/NPRaw_552_0.root
+ npmfm_6ms_tune/NPRaw_551_2.root
+ npmfm_6ms_tune/NPRaw_551_1.root
+ npmfm_6ms_tune/NPRaw_551_0.root
+ npmfm_6ms_tune/NPRaw_547_0.root
+ npmfm_6ms_tune/NPRaw_545_8.root
+ npmfm_6ms_tune/NPRaw_545_7.root
+ npmfm_6ms_tune/NPRaw_545_6.root
+ npmfm_6ms_tune/NPRaw_545_5.root
+ npmfm_6ms_tune/NPRaw_545_4.root
+ npmfm_6ms_tune/NPRaw_545_3.root
+ npmfm_6ms_tune/NPRaw_545_2.root
+
+file D:
+ npmfm_6ms_tune/NPRaw_545_1.root
+ npmfm_6ms_tune/NPRaw_545_0.root
+ npmfm_6ms_tune/NPRaw_541_0.root
+ npmfm_6ms_tune/NPRaw_540_6.root
+ npmfm_6ms_tune/NPRaw_540_5.root
+ npmfm_6ms_tune/NPRaw_540_4.root
+ npmfm_6ms_tune/NPRaw_540_3.root
+ npmfm_6ms_tune/NPRaw_540_2.root
+ npmfm_6ms_tune/NPRaw_540_1.root
+ npmfm_6ms_tune/NPRaw_540_0.root
+ npmfm_6ms_tune/NPRaw_539_7.root
+ npmfm_6ms_tune/NPRaw_539_6.root
+ npmfm_6ms_tune/NPRaw_539_5.root
+
+file E:
+ npmfm_6ms_tune/NPRaw_539_4.root
+ npmfm_6ms_tune/NPRaw_539_3.root
+ npmfm_6ms_tune/NPRaw_539_2.root
+ npmfm_6ms_tune/NPRaw_539_1.root
+ npmfm_6ms_tune/NPRaw_539_0.root
+ npmfm_6ms_tune/NPRaw_538_4.root
+ npmfm_6ms_tune/NPRaw_538_3.root
+ npmfm_6ms_tune/NPRaw_538_2.root
+ npmfm_6ms_tune/NPRaw_538_1.root
+ npmfm_6ms_tune/NPRaw_538_0.root
+ npmfm_6ms_tune/NPRaw_537_3.root
+ npmfm_6ms_tune/NPRaw_537_2.root
+ npmfm_6ms_tune/NPRaw_537_1.root
+ npmfm_6ms_tune/NPRaw_537_0.root
+

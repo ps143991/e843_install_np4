@@ -32,6 +32,7 @@ namespace user_analysis {
     std::shared_ptr<tac::TacDetector> tac;
     std::shared_ptr<cats::CatsDetector> cats;
 
+
     void SetDataOutput(std::shared_ptr<nptool::VDataOutput>);
     void SetDataInput(std::shared_ptr<nptool::VDataInput>){};
     void End();
@@ -40,8 +41,16 @@ namespace user_analysis {
     bool theAuthority = false; // PS: couldn't think of a better name.. i regret this choice...
     void BeamSpot_PL(); 
 
+   private:     //for GATCONF selection
+    void TreatGATCONF();
+    bool decider = false;
+    std::shared_ptr<ebye::EbyEDetector> gatconf;
+    unsigned int GATCONFMASTER;
+
 
     private:                                        //Variables declaration
+    
+    
 
         Double_t per_bin_value1 = (26541 - 19617)/20;                  // for 20 cm
         Double_t per_bin_value2 = (26322 - 19836)/20;                  // for 20 cm
@@ -57,7 +66,8 @@ namespace user_analysis {
         std::vector<Double_t> Spot_Plastic_4;
         
         // Double_t Spot_DC_X;
-        double TAC_D4_CATS1nc;
+        std::vector<double> TAC_D4_CATS1nc;
+        bool TAC_TOF = false;
         // double TAC_CATS_PL;
         std::vector<double> TAC_CATS_PL;
         std::vector<unsigned long long> TAC_CATS_PL_TS;

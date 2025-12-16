@@ -74,7 +74,7 @@ void G4Target::InitializeTarget() {
 
     m_TargetBackingThickness = m_target->m_TargetBackingThickness;
 
-    m_TargetMaterial = GetMaterialFromLibrary(m_target->m_TargetMaterial);
+    m_TargetMaterial = GetMaterialFromLibrary(m_target->m_TargetMaterial, m_target->m_TargetDensity);
     if (m_TargetBackingThickness > 0)
       m_TargetBackingMaterial = GetMaterialFromLibrary(m_target->m_TargetBackingMaterial);
   }
@@ -109,8 +109,8 @@ void G4Target::InitializeTarget() {
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-G4Material* G4Target::GetMaterialFromLibrary(G4String MaterialName) {
-  return nptool::geant4::MaterialManager::GetMaterialManager()->GetMaterialFromLibrary(MaterialName, m_TargetDensity);
+G4Material* G4Target::GetMaterialFromLibrary(G4String MaterialName, double density) {
+  return nptool::geant4::MaterialManager::GetMaterialManager()->GetMaterialFromLibrary(MaterialName, density);
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -118,12 +118,9 @@ G4Material* G4Target::GetMaterialFromLibrary(G4String MaterialName) {
 // Called After DetecorConstruction::AddDetector Method
 // void G4Target::ConstructDetector(G4LogicalVolume* world) {
 void G4Target::ConstructDetector() {
-
-  // FIXME add dummy wall until use of input file is made
   auto g4session = nptool::geant4::Session::GetSession();
   auto world = g4session->GetWorldLogicalVolume();
 
-  // auto world = g4session->GetWorldLogicalVolume2();
   if (m_target->m_TargetType) { // case of standard target
     if (m_TargetThickness > 0) {
       m_TargetSolid = new G4Tubs("solidTarget", 0, m_TargetRadius, 0.5 * m_TargetThickness, 0 * deg, 360 * deg);
@@ -141,7 +138,7 @@ void G4Target::ConstructDetector() {
       new G4PVPlacement(rotation, G4ThreeVector(m_TargetX, m_TargetY, m_TargetZ), m_TargetLogic, "Target", world, false,
                         0);
 
-      G4VisAttributes* TargetVisAtt = new G4VisAttributes(G4Colour(0.4, 0.4, 0.4));
+      G4VisAttributes* TargetVisAtt = new G4VisAttributes(G4Colour(1, 0.4, 0.4));
       m_TargetLogic->SetVisAttributes(TargetVisAtt);
 
       if (m_TargetBackingThickness > 0) {

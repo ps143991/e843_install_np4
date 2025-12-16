@@ -50,6 +50,16 @@ Double_t CL11[8] = {0.313150148097596, 0.312038502420921, 0.348710307371965, 0.3
 Double_t CL12[8] = {0.258679834689587, 0.247608752975502, 0.281468000019132, 0.29264939741228, 0.349701713331915, 0.523752123418604, 0.567334214090896, 0.387038957801552};
 Double_t CL13[8] = {0.296005987226274, 0.298032351941048, 0.328357080284712, 0.354423011228094, 0.401300869986638, 0.59115775527918, 0.631591985885584, 0.395418800369715};
 
+Double_t total_energy[7]={121.8,244.7,344.3,778.9,964.1,1112.1,1408.0}; 
+
+
+/***********************************************************************************************************/
+//taken from efficiencyofexogam.ods -> sheet1 for time = 4098 seconds, distance = 14 cm, activity = 9920.0335
+///shifting it to gamma_efficiency_total.C
+/***********************************************************************************************************/
+
+
+
 
 Double_t total[8] = {5.01316507753849, 7.43409025606563, 7.74895150814504, 6.09878303400616, 5.80635368729799, 5.43603128199012, 4.88351957307112};
 
@@ -80,25 +90,48 @@ Double_t Fit1(Double_t *x, Double_t *par){
 
 void gamma_efficiency()
 {
-    fill_CL_all();
-    TGraph *gr_eff1 = new TGraph(8, Energy, CL_all[0]);
-    gr_eff1-> Draw("A*");
+    // fill_CL_all();
+    // TGraph *gr_eff1 = new TGraph(8, Energy, CL_all[0]);
+    // gr_eff1-> Draw("A*");
 
-    TF1 *eff_curve = new TF1("eff_curve",Fit1,100.,1500.,7); //option 7 for 7 parameterss
-    eff_curve->SetParameter(0,5.);
-    eff_curve->SetParameter(1,3.);
-    eff_curve->SetParameter(2,-1.);
-    eff_curve->SetParameter(3,7.);
-    eff_curve->SetParameter(4,6.);
-    eff_curve->SetParameter(5,-0.5);
-    eff_curve->SetParameter(6,1.);
-    gr_eff1->Fit("eff_curve","IER+");
-    gr_eff1->SetMarkerStyle(4);
-    gr_eff1->SetTitle("Efficiency Vs Energy(keV);Energy;Relative Efficiency");
+    // TF1 *eff_curve = new TF1("eff_curve",Fit1,100.,1500.,7); //option 7 for 7 parameterss
+    // eff_curve->SetParameter(0,5.);
+    // eff_curve->SetParameter(1,3.);
+    // eff_curve->SetParameter(2,-1.);
+    // eff_curve->SetParameter(3,7.);
+    // eff_curve->SetParameter(4,6.);
+    // eff_curve->SetParameter(5,-0.5);
+    // eff_curve->SetParameter(6,1.);
+    // gr_eff1->Fit("eff_curve","IER+");
+    // gr_eff1->SetMarkerStyle(4);
+    // gr_eff1->SetTitle("Efficiency Vs Energy(keV);Energy;Relative Efficiency");
+    // gStyle->SetOptFit(0111);  //showing the parameters on graph
+    // gr_eff1->Draw("AP");
+    // // TText *t = new TText(Form("Clover 2"));
+    // Double_t eff_at_unknown_enrg; Double_t energy = 1112.0;
+    // eff_at_unknown_enrg= eff_curve->Eval(energy);
+    // cout<<"your eff. is: "<<eff_at_unknown_enrg<<endl;
+
+
+    // total intrinsic efficiency fit
+    TGraph *gr_eff_tot = new TGraph(7, total_energy, total);
+
+    gr_eff_tot-> Draw("A*");
+    TF1 *eff_curve_tot = new TF1("eff_curve_tot",Fit1,100.,1500.,7); //option 7 for 7 parameterss
+    eff_curve_tot->SetParameter(0,5.);
+    eff_curve_tot->SetParameter(1,3.);
+    eff_curve_tot->SetParameter(2,-1.);
+    eff_curve_tot->SetParameter(3,7.);
+    eff_curve_tot->SetParameter(4,6.);
+    eff_curve_tot->SetParameter(5,-0.5);
+    eff_curve_tot->SetParameter(6,1.);
+    gr_eff_tot->Fit("eff_curve_tot","IER+");
+    gr_eff_tot->SetMarkerStyle(4);
+    gr_eff_tot->SetTitle("Total Efficiency Vs Energy(keV);Energy;Total Efficiency");
     gStyle->SetOptFit(0111);  //showing the parameters on graph
-    gr_eff1->Draw("AP");
-    TText *t = new TText(Form("Clover 2"));
-    Double_t eff_at_unknown_enrg; Double_t energy = 1112.0;
-    eff_at_unknown_enrg= eff_curve->Eval(energy);
-    cout<<"your eff. is: "<<eff_at_unknown_enrg<<endl;
+    gr_eff_tot->Draw("AP");
+    // TText *t = new TText(Form("Clover 2"));
+    Double_t eff_at_unknown_enrg_tot; Double_t energy_tot = 1112.0;
+    eff_at_unknown_enrg_tot= eff_curve_tot->Eval(energy_tot);
+    cout<<"your total eff. is: "<<eff_at_unknown_enrg_tot<<endl;
 }

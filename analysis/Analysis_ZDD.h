@@ -36,6 +36,14 @@ namespace user_analysis {
     void End();
     void Clear();
 
+   private:     //for GATCONF selection
+    void TreatGATCONF();
+    bool decider = false;
+    std::shared_ptr<ebye::EbyEDetector> gatconf;
+    unsigned int GATCONFMASTER;
+
+
+
    private:                                        //Variables declaration
 
           ////ZDD ///

@@ -112,7 +112,7 @@ public: // inherrited from nptool::VDetector
   void ClearEventData() { m_RawData->Clear(); };
 
   void Match_DC();
-  void Match_Exo();
+  void Treat_Exo();
   // Matching IC
   void Match_IC();
 
@@ -161,11 +161,12 @@ private:
 
   // std::map<unsigned int, std::pair<unsigned int, unsigned long long>>
   //   SortIC; //!
+
+  std::map<unsigned int,std::vector<std::pair<unsigned int, unsigned long long>>>
+    SortPL; //!
+  std::map<unsigned int,std::vector<std::pair<unsigned int, long long unsigned int>>> SortDC;
   int m_NumberOfDetectors; //!
-    std::map<unsigned int,std::vector<std::pair<unsigned int, unsigned long long>>> SortPL;//!
-    //std::map<unsigned int,std::vector<std::pair<unsigned int, long long unsigned int>>> SortIC2;
-    std::map<unsigned int,std::vector<std::pair<unsigned int, long long unsigned int>>> SortDC;//!
-    std::map<unsigned int,std::vector<std::pair<unsigned int, long long unsigned int>>> SortEXO;//!
+
   // Method related to the TSpectra classes, aimed at providing a framework for
   // online applications Instantiate the Spectra class and the histogramm
   // throught it

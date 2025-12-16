@@ -170,6 +170,9 @@ void CatsDetector::BuildRawEvent(const std::string& daq_name,
                                  void* commonframe) {
 #ifdef MFM_FOUND
   int type_key = ((MFMCommonFrame*)commonframe)->GetFrameType();
+  // cout<<"CATS: **** PS: DEBUG: In BuildRawEvent, type_key is: "<<type_key<<endl;
+  // cout<<"CATS: **** PS: DEBUG: MFM_EBY_EN_TS_FRAME_TYPE is: "<<MFM_EBY_EN_TS_FRAME_TYPE<<endl;
+
   if (type_key == MFM_EBY_EN_TS_FRAME_TYPE) {
     TreatFrame((MFMCommonFrame*)commonframe);
   }

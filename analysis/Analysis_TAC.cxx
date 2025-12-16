@@ -8,16 +8,24 @@ void user_analysis::Analysis_TAC::Init() {
   auto app = nptool::Application::GetApplication();
 
     tac = std::dynamic_pointer_cast<tac::TacDetector>(app->GetDetector("tac"));
+    gatconf = std::dynamic_pointer_cast<ebye::EbyEDetector>(app->GetDetector("ebye"));
 
 }
-
+void user_analysis::Analysis_TAC::TreatGATCONF(){
+   GATCONFMASTER=*(gatconf->GenericRawBranch["GATCONF"]);
+   if (GATCONFMASTER==1 /* || GATCONFMASTER==2 || GATCONFMASTER==16 || GATCONFMASTER==32 */){
+    decider = true;
+   }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 void user_analysis::Analysis_TAC::TreatEvent() {
-    // cout<<"new event started **********************************************"<<endl;
     Clear();
-    TreatTAC();
-    BeamSpot_PL();
+    TreatGATCONF();
+    if(decider){
+        TreatTAC();
+        BeamSpot_PL();
+    }
 }
 
 void user_analysis::Analysis_TAC::BeamSpot_PL() {
@@ -38,6 +46,7 @@ void user_analysis::Analysis_TAC::BeamSpot_PL() {
             else Spot_Plastic_2.push_back(-10);
         }
         else if((tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_3") == 0) && (tac->m_PhysicsData->TAC_Time[i]>0)) {
+            // cout<<"TAC_PL_3 value is: "<<tac->m_PhysicsData->TAC_Time[i]<<endl;
             TAC_PL_3.push_back(tac->m_PhysicsData->TAC_Time[i]); 
             if(abs(((tac->m_PhysicsData->TAC_Time[i] - 20106)/per_bin_value3) - 10)<10) {
                 Spot_Plastic_3.push_back(((tac->m_PhysicsData->TAC_Time[i] - 20106)/per_bin_value3) - 10);
@@ -112,8 +121,8 @@ void user_analysis::Analysis_TAC::TreatTAC(){
             // TAC_D4_CATS1 += (tac->m_PhysicsData->TAC_Time[i]/**0.02554*/);
             TAC_D4_CATS1.push_back(tac->m_PhysicsData->TAC_Time[i]);
             TAC_D4_CATS1_TS.push_back(tac->m_PhysicsData->TAC_TS[i]);
-           //TAC_D4_CATS1nc = tac->m_PhysicsData->TAC_Time[i];
-           // if (TAC_D4_CATS1nc > 0) TAC_TOF = true;
+           TAC_D4_CATS1nc .push_back( tac->m_PhysicsData->TAC_Time[i]);
+           if (tac->m_PhysicsData->TAC_Time[i] > 0) TAC_TOF = true;
         }
         // else if(tac->m_PhysicsData->TAC_Name[i].compare("TAC_PL_1") == 0)
         // {
@@ -294,6 +303,7 @@ void user_analysis::Analysis_TAC::Clear() {
     // TAC_CATSD6_1_DD4 = 0.0;
     TAC_CATSD6_1_DD4_TS.clear();
     // TAC_D4_CATS1nc= -1000;
+    TAC_D4_CATS1nc.clear();
     TAC_CATS_PL.clear();
     TAC_CATS2_CATS1.clear();
     TAC_MMG_CATS1.clear();

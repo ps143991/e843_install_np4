@@ -25,11 +25,19 @@ int main(int argc, char** argv) {
       else
         throw(nptool::Error("npgeant4", "--output flag provided with no arguments, at least one needed"));
     }
-    // app->InitializeDataOutputRaw(output);
+    else {
+      throw(nptool::Error("npgeant4", "--output flag is required"));
+    }
+    app->InitializeDataOutputRaw(output);
     ////////////////////////////////////////////////////////////////////////////
     // start a geant4 instance
     auto g4session = nptool::geant4::Session::GetSession();
-    g4session->Start();
+    g4session->Start(output);
+    g4session->Stop();
+    // sad and dirty
+    // allow tree to be written before geant4 do crazy stuff and trash the entire
+    // program!
+    delete output.get();
 
     // end of app
     app->Stop();

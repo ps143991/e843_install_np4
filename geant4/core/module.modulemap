@@ -1,0 +1,7 @@
+module "InteractionCoordinates" {
+  requires cplusplus
+  module "InteractionCoordinates.h" { header "InteractionCoordinates.h" export * }
+  link "libInteractionCoordinates.so"
+  export *
+}
+

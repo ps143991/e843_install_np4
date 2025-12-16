@@ -458,7 +458,7 @@ void Must2Detector::ReadAnalysisConfig() {
       else if (whatToDo == "CSI_E_RAW_THRESHOLD") {
         AnalysisConfigFile >> DataBuffer;
         m_CsI_E_RAW_Threshold = atof(DataBuffer.c_str());
-        cout << whatToDo << " " << m_CsI_E_Threshold << endl;
+        cout << whatToDo << " " << m_CsI_E_RAW_Threshold << endl;   //DEBUG PS: was different before
       }
 
       else if (whatToDo == "SI_X_E_THRESHOLD") {
@@ -577,6 +577,9 @@ void Must2Detector::BuildRawEvent(const std::string& daq_name,
                                   void*              commonframe) {
 #ifdef MFM_FOUND
   int type_key = ((MFMCommonFrame*)commonframe)->GetFrameType();
+  // cout<<"MUST2 DETECTOR PS: DEBUG: In BuildRawEvent, type_key is: "<<type_key<<endl;
+  // cout<<"MUST2 DETECTOR PS: DEBUG: MFM_EBY_EN_TS_FRAME_TYPE is: "<<MFM_EBY_EN_TS_FRAME_TYPE<<endl;
+
   if (type_key == MFM_EBY_EN_TS_FRAME_TYPE) {
     TreatFrame((MFMCommonFrame*)commonframe);
   }

@@ -1,9 +1,0 @@
-module "NPZdd" {
-  requires cplusplus
-  module "ZddData.h" { header "ZddData.h" export * }
-  module "ZddPhysics.h" { header "ZddPhysics.h" export * }
-  module "ZddSpectra.h" { header "ZddSpectra.h" export * }
-  link "libNPZdd.so"
-  export *
-}
-

@@ -16,14 +16,10 @@
 
 
 #include "NPApplication.h"
-using namespace nptool;
 #include "NPDetectorManager.h"
 #include "NPFunction.h"
 #include "ZddPhysics.h"
 #include "CatsPhysics.h"
-
-// #include "VDetector.h"
-// #include "NPRootPlugin.h"
 #include <TFile.h>
 #include <TTree.h>
 #include <TTreeReader.h>
@@ -36,19 +32,18 @@ using namespace nptool;
 #include <TProfile.h>
 #include <TCutG.h>
 #include <TGraph.h>
-
 #include <iostream>
-using namespace cats;
-using namespace zdd;
-using namespace std;
-// fit_erf_line.C
 #include "TF1.h"
 #include "TMath.h"
 #include "TH1.h"
 #include "TGraph.h"
 #include "TAxis.h"
 #include "TRandom3.h"
-
+#include "TLine.h"
+using namespace nptool;
+using namespace cats;
+using namespace zdd;
+using namespace std;
 
 TRandom3 rng(12345);
 inline double dither10ns_tri(TRandom3& r){                        //a trianugular dithering function to dither within +/- 5 ns
@@ -178,7 +173,9 @@ TCutG* cut_dc5;
 
 void loadFILES() {
   tree = new TChain("PhysicsTree");
-  tree->Add("/home/sharmap/Workplace/np4/e843/data/analysed/558.root");
+  tree->Add("/home/sharmap/Workplace/np4/e843/data/analysed/558_further_shift_2.root");
+  // tree->Add("/home/sharmap/Workplace/np4/e843/data/analysed/557_test.root");
+  tree->Add("/home/sharmap/Workplace/np4/e843/data/analysed/559_shifted.root");
 }
 
 void loadCUTS(){
@@ -295,8 +292,9 @@ void build_DC_5(){
     TH2F *h_cats1ycats2y = new TH2F("h_cats1ycats2y", "CATS1 Y vs CATS2 Y", 2400, -40, 40, 2400, -40, 40);
 
     TH2F *h_target = new TH2F("h_target","target reconstruction with cats", 2400, -40, 40, 2400, -40, 40);
-    TH2F *h_DC1 = new TH2F("h_DC1","DC1 reconstruction with cats", 2400, -40, 40, 2400, -40, 40);
-    TH2F *h_DC2 = new TH2F("h_DC2","DC2 reconstruction with cats", 2400, -40, 40, 2400, -40, 40);
+    TH2F *h_DC1 = new TH2F("h_DC1","DC reconstruction with cats", 1200, -60, 60, 1200, -60, 60);
+    TH2F *h_DC2 = new TH2F("h_DC2","DC2 reconstruction with cats", 1200, -60, 60, 1200, -60, 60);
+    TH2F *h_plastic = new TH2F("h_plastic","plastic reconstruction with cats", 3000, -50, 50, 3000, -50, 50);
 
     TH2F *h_only_dc2 = new TH2F("h_only_dc2","DC2 reconstruction with cats only dc2", 400,-200,200,400, -200, 200);
 
@@ -314,14 +312,14 @@ void build_DC_5(){
     TH2F* hNEw3 = new TH2F("hNEw3", "TS DC3 sub vs CATS1 X at DC3", 200,-200,0, 2000, -200, 200);
     TH2F* hNEw4 = new TH2F("hNEw4", "TS DC4 sub vs CATS1 X at DC4", 200,-200,0, 2000, -200, 200);
     TH2F* hNEw1 = new TH2F("hNEw1", "TS DC1 sub vs CATS1 Y at DC1", 200,-200,0, 2000, -200, 200);
-    TH2F* hNEw2 = new TH2F("hNEw2", "TS DC2 sub vs CATS1 Y at DC2", 200,-200,0, 2000, -200, 200);
+    TH2F* hNEw2 = new TH2F("hNEw2", "TS DC2 sub vs CATS1 Y at DC2", 200,-20,180, 2000, -200, 200);
 
     TH2F* hNEw3_gated = new TH2F("hNEw3_gated", "gated TS DC3 sub vs CATS1 X at DC3", 200,-200,0, 2000, -200, 200);
     TH2F* hNEw4_gated = new TH2F("hNEw4_gated", "gated TS DC4 sub vs CATS1 X at DC4", 200,-200,0, 2000, -200, 200);
     TH2F* hNEw1_gated = new TH2F("hNEw1_gated", "gated TS DC1 sub vs CATS1 Y at DC1", 200,-200,0, 2000, -200, 200);
     TH2F* hNEw2_gated = new TH2F("hNEw2_gated", "gated TS DC2 sub vs CATS1 Y at DC2", 200,-200,0, 2000, -200, 200);
 
-    TH2F* dc_spot = new TH2F("dc_spot", "DC spot", 800,-40,40,800,-40,40);
+    TH2F* dc_spot = new TH2F("dc_spot", "DC spot", 1200,-60,60,1200,-60,60);
     TH2F* h_DC1_hit = new TH2F("h_DC1_hit","DC1 hit positions", 800,-40,40,800,-40,40);
     TH2F* h_yplus = new TH2F("hplus_y", "DC2 TS plus CATS1 Y at DC1", 400,-200,200,2000,-200,200);
     TH2F* h_yminus = new TH2F("hminus_y", "DC1 TS plus CATS1 Y at DC1", 400,-200,200,2000,-200,200);
@@ -333,7 +331,7 @@ void build_DC_5(){
 
     
     Double_t Position[3] = {-1587.1, -1090.1, 1260.9}; //CATS1 z pos, CATS2 z pos, DC z pos
-    Double_t Position_ZDD[4] = {1260.9+10, 1260.9+30, 1560.9, 2060.9}; // Positions of DC1 (1 cm more), DC2 (3 cm more ), IC1, and Plastics
+    Double_t Position_ZDD[4] = {1260.9+10, 1260.9+30, 1560.9, 1261+658}; // Positions of DC1 (1 cm more), DC2 (3 cm more ), IC1 (probably incorrect), and Plastics (actual position of Plastic)
 
     Double_t DC_quad_coeff[4][2]={{-0.392921,-58.8316}, {0.419384,68.0564}, {0.39777,65.3414}, {-0.452811,-67.5281}}; //{slope, intercept} for DC1, DC2, DC3, DC4
     Double_t DC_plane_coeff[2][2]={{0.44121, 1.76974}, {0.471454,1.69337}}; //{slope, intercept} for DC12, DC34
@@ -341,11 +339,14 @@ void build_DC_5(){
     // Double_t cutoffs[4] = {-154,-157,-157, -152}; // Integer cutoffs for easier handling in cuts for DC1, DC2, DC3, DC4
     Double_t cutoffs[4] = {-152,-155,-155, -150}; // Integer cutoffs for easier handling in cuts for DC1, DC2, DC3, DC4
 
+
     Double_t Target_Z = 0;
     Double_t x_cats_consDC1 = 0;
     Double_t y_cats_consDC1 = 0;
     Double_t target_cons_X = 0;
     Double_t target_cons_y = 0;
+    Double_t plas_cons_X = 0;
+    Double_t plas_cons_y = 0;
     Double_t x_cats_consDC2 = 0;
     Double_t y_cats_consDC2 = 0;
     unsigned int DC_E1 = 0;
@@ -370,7 +371,7 @@ void build_DC_5(){
         TS_sub4 = -1000; TS_sub4_adj = -1000;  dc4_flag = false;
         // if (entry_count > max_entries) break;
 
-        if (/* *GATCONF_r == 1 || *GATCONF_r == 2 ||*GATCONF_r == 16 || */*GATCONF_r == 32) {
+        if (/* *GATCONF_r == 1 || *GATCONF_r == 2 || */ *GATCONF_r == 16 ||*GATCONF_r == 32) {
             if(phy_cats_r->PositionOnTargetY > -200 && phy_cats_r->PositionOnTargetX > -200){
               
               if(phy_zdd_r->PL_E.size()>0){
@@ -386,7 +387,7 @@ void build_DC_5(){
                 Double_t CATS1_X =  phy_cats_r->PositionX[0];
                 Double_t CATS1_Y =  phy_cats_r->PositionY[0];
                 Double_t CATS1_Z =  phy_cats_r->PositionZ[0];
-                Double_t CATS2_X =  (phy_cats_r->PositionX[1])     - 1; // Shift CATS2 X position by 1 cm
+                Double_t CATS2_X =  (phy_cats_r->PositionX[1])/*      - 1 */; // Shift CATS2 X position by 1 cm
                 Double_t CATS2_Y =  phy_cats_r->PositionY[1]; // Shift CATS2 Y position by -0.3 cm
                 Double_t CATS2_Z =  phy_cats_r->PositionZ[1];
 
@@ -402,6 +403,9 @@ void build_DC_5(){
 
                 target_cons_X = CATS1_X + ( Target_Z - Position[0])/ax;           //target const x
                 target_cons_y = CATS1_Y + ( Target_Z - Position[0])/ay;           //target const y
+
+                plas_cons_X = CATS1_X + ( Position_ZDD[3] - Position[0])/ax;      //plastic const x
+                plas_cons_y = CATS1_Y + ( Position_ZDD[3] - Position[0])/ay;      //plastic const y
 
                 for(int k= Position[0]; k<Position_ZDD[3]; k+=10){
                     Trajectory_XZ->Fill(k, CATS1_X + (k - Position[0])/ax);
@@ -471,8 +475,15 @@ void build_DC_5(){
                     h_cats1ycats2y->Fill(CATS1_Y,CATS2_Y);
                     
                     h_target->Fill(target_cons_X,target_cons_y);
-                    h_DC1->Fill(x_cats_consDC1,y_cats_consDC1);
-                    h_DC2->Fill(x_cats_consDC2,y_cats_consDC2);
+                    h_plastic->Fill(plas_cons_X,plas_cons_y);
+                  
+                  if((DC_TS1_r.GetSize()==1 &&  DC_TS3_r.GetSize()==1)||
+                     (DC_TS2_r.GetSize()==1 &&  DC_TS3_r.GetSize()==1)|| 
+                     (DC_TS1_r.GetSize()==1 &&  DC_TS4_r.GetSize()==1)|| 
+                     (DC_TS2_r.GetSize()==1 &&  DC_TS4_r.GetSize()==1)){
+                      h_DC1->Fill(x_cats_consDC1,y_cats_consDC1);
+                      h_DC2->Fill(x_cats_consDC2,y_cats_consDC2);
+                  }
 
                   if(TS_sub3_adj>=(-10) && TS_sub3_adj<= 90)
                   {
@@ -491,24 +502,24 @@ void build_DC_5(){
                   }
                   if(TS_sub2_adj>=(-10) && TS_sub2_adj<= 90)
                   {
-                    hNEw2->Fill(TS_sub2, CATS1_Y + ( Position_ZDD[1] - Position[0])/ay);
+                    hNEw2->Fill(TS_sub2_adj, CATS1_Y + ( Position_ZDD[1] - Position[0])/ay);
                     dc2_flag = true;
                   }
                   // if(cut_dc5->IsInside(x_cats_consDC1, y_cats_consDC1)){
                   // the 4 quadrants
-                  if(dc3_flag && dc2_flag){dc_spot->Fill(  TS_sub3_adj_d*DC_plane_coeff[1][0] + DC_plane_coeff[1][1],    TS_sub2_adj_d*DC_plane_coeff[0][0] + DC_plane_coeff[0][1]);
+                  if(dc3_flag && dc2_flag){dc_spot->Fill(  TS_sub3_adj_d*DC_plane_coeff[1][0] + DC_plane_coeff[1][1] -3.5,    TS_sub2_adj_d*DC_plane_coeff[0][0] + DC_plane_coeff[0][1] -2.9 );
                   // cout<<"(x,y) is: ("<<TS_sub3_adj_d*DC_plane_coeff[1][0] + DC_plane_coeff[1][1]<<","<<  TS_sub2_adj_d*DC_plane_coeff[0][0] + DC_plane_coeff[0][1]<<")"<<endl;
                     // h_DC1_hit->Fill(x_cats_consDC1, y_cats_consDC1);
                   }  //quad 1
-                  if(dc4_flag && dc2_flag){dc_spot->Fill(-(TS_sub4_adj_d*DC_plane_coeff[1][0] + DC_plane_coeff[1][1]),   TS_sub2_adj_d*DC_plane_coeff[0][0] + DC_plane_coeff[0][1]);
+                  if(dc4_flag && dc2_flag){dc_spot->Fill(-(TS_sub4_adj_d*DC_plane_coeff[1][0] + DC_plane_coeff[1][1]) -3.5,   TS_sub2_adj_d*DC_plane_coeff[0][0] + DC_plane_coeff[0][1] -2.9);
                   // cout<<"(x,y) is: ("<<-(TS_sub4_adj_d*DC_plane_coeff[1][0] + DC_plane_coeff[1][1])<<","<<  TS_sub2_adj_d*DC_plane_coeff[0][0] + DC_plane_coeff[0][1]<<")"<<endl;
                     // h_DC1_hit->Fill(x_cats_consDC1, y_cats_consDC1);
                   }  //quad 2
-                  if(dc4_flag && dc1_flag){dc_spot->Fill(-(TS_sub4_adj_d*DC_plane_coeff[1][0] + DC_plane_coeff[1][1]), -(TS_sub1_adj_d*DC_plane_coeff[0][0] + DC_plane_coeff[0][1]));
+                  if(dc4_flag && dc1_flag){dc_spot->Fill(-(TS_sub4_adj_d*DC_plane_coeff[1][0] + DC_plane_coeff[1][1]) - 3.5, -(TS_sub1_adj_d*DC_plane_coeff[0][0] + DC_plane_coeff[0][1]) -2.9);
                   // cout<<"(x,y) is: ("<<-(TS_sub4_adj_d*DC_plane_coeff[1][0] + DC_plane_coeff[1][1])<<","<<  -(TS_sub1_adj_d*DC_plane_coeff[0][0] + DC_plane_coeff[0][1])<<")"<<endl;
                     // h_DC1_hit->Fill(x_cats_consDC1, y_cats_consDC1);
                   }  //quad 3
-                  if(dc3_flag && dc1_flag){dc_spot->Fill(  TS_sub3_adj_d*DC_plane_coeff[1][0] + DC_plane_coeff[1][1],  -(TS_sub1_adj_d*DC_plane_coeff[0][0] + DC_plane_coeff[0][1]));
+                  if(dc3_flag && dc1_flag){dc_spot->Fill(  TS_sub3_adj_d*DC_plane_coeff[1][0] + DC_plane_coeff[1][1] -3.5,  -(TS_sub1_adj_d*DC_plane_coeff[0][0] + DC_plane_coeff[0][1]) -2.9);
                   // cout<<"(x,y) is: ("<<TS_sub3_adj_d*DC_plane_coeff[1][0] + DC_plane_coeff[1][1]<<","<<   -(TS_sub1_adj_d*DC_plane_coeff[0][0] + DC_plane_coeff[0][1])<<")"<<endl;
                     // h_DC1_hit->Fill(x_cats_consDC1, y_cats_consDC1);
                   }  //quad 4
@@ -709,10 +720,30 @@ void build_DC_5(){
     cut_left->Draw("same");
     cut_right->Draw("same");
     c7->cd(3);
+    h_DC1->Rebin2D(8,8);
+    // h_DC1->SetStats(0);
     h_DC1->Draw("colz");
     c7->cd(4);
-    h_DC2->Draw("colz");
+    h_DC2->Rebin2D(8,8);
 
+    h_DC2->Draw("colz");
+    c7->cd(2);
+    //plastic reconstruction spot
+    h_plastic->Draw("colz");
+    //creating virtual lines for 5 plastics stacked vertically
+
+    TLine* topline = new TLine(-50, 10, 50, 10);
+    TLine* mid1 = new TLine(-50, 6, 50, 6);
+    TLine* mid2 = new TLine(-50, 2, 50, 2);
+    TLine* mid3 = new TLine(-50, -2, 50, -2);
+    TLine* mid4 = new TLine(-50, -6, 50, -6);
+    TLine* bottomline = new TLine(-50, -10, 50, -10);
+    TLine* plas_lines[6] = {topline, mid1, mid2, mid3, mid4, bottomline};
+    for(int i=0; i<6; i++){
+        plas_lines[i]->SetLineColor(kRed);
+        plas_lines[i]->SetLineStyle(2);
+        plas_lines[i]->Draw("same");
+    }
 
 
     TCanvas *c13 = new TCanvas("c13", "raw dist. vs drift_time", 1200,900);
@@ -844,6 +875,7 @@ void build_DC_5(){
     dc_spot->SetTitle("DC spot");
     dc_spot->GetXaxis()->SetTitle("X Position (mm)");
     dc_spot->GetYaxis()->SetTitle("Y Position (mm)");
+    dc_spot->Rebin2D(8,8);
     dc_spot->Draw("COLZ");
     c15->Update();
 

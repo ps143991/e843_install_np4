@@ -62,7 +62,6 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
 
   // world volume logical
   if (!m_world_log) {
-
     m_world_log = new G4LogicalVolume(m_world_box, Vacuum, "m_world_log", 0, 0, 0);
   }
   // world volume physical
@@ -70,28 +69,17 @@ G4VPhysicalVolume* DetectorConstruction::Construct() {
     m_world_phys = new G4PVPlacement(0, G4ThreeVector(), m_world_log, "world", 0, false, 0);
 
   // world volume visual attribute
-  G4VisAttributes* VisAtt = new G4VisAttributes(G4VisAttributes::GetInvisible());
+  auto VisAtt = new G4VisAttributes(G4VisAttributes::GetInvisible());
   m_world_log->SetVisAttributes(VisAtt);
-
-  // Require all detector to build there own geometry
+  // Require all detector to build their own geometry
   nptool::Application::GetApplication()->InitSimulation("geant4");
 
+  // Initialiaze scorer for each detector
+  nptool::Application::GetApplication()->InitializeScorers();
+
+  // Build geometry for each detector
   nptool::Application::GetApplication()->ConstructGeometry();
 
-  /*
-    auto dummy_box = new G4Box("dummy_box", 1 * cm, 1 * cm, 1 * cm);
-    auto dummy_log = new G4LogicalVolume(dummy_box, Vacuum, "dummy_log", 0, 0, 0);
-    new G4PVPlacement(new G4RotationMatrix(0, 0, 0), G4ThreeVector(), "dummy", dummy_log, m_world_phys, false, 0);
-  */
-
   return m_world_phys;
-}
-
-//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
-void DetectorConstruction::ReadAllSensitive(const G4Event* event) {
-  /*  unsigned int mysize = m_Detectors.size();
-    for (unsigned short i = 0; i < mysize; i++) {
-      (m_Detectors[i]->*m_ReadSensitivePtr)(event);
-    }*/
 }
 

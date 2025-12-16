@@ -45,6 +45,7 @@ void EbyEDetector::BuildRawEvent(const std::string& daq_name,
     void*              commonframe) {
 #ifdef MFM_FOUND
   int type_key = ((MFMCommonFrame*)commonframe)->GetFrameType();
+  // if (type_key == 34) cout<<"EBYE: **** PS: DEBUG: In BuildRawEvent, type_key is: "<<type_key<<endl;
   if (type_key == MFM_EBY_EN_TS_FRAME_TYPE) {
     TreatFrame((MFMCommonFrame*)commonframe);
   }
@@ -53,6 +54,8 @@ void EbyEDetector::BuildRawEvent(const std::string& daq_name,
 
 void EbyEDetector::TreatFrame(void* commonframe) {
 #ifdef MFM_FOUND
+
+  // cout<<"EBYE: **** PS: DEBUG: In TreatFrame"<<endl;
   unsigned short     NItems = 0;
   unsigned short     value, label_id;
   std::string        label;

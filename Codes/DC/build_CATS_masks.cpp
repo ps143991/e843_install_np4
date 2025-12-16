@@ -106,13 +106,16 @@ void target_mask(){
 void loadMask1file(){
   tree_mask1 = new TChain("PhysicsTree");
   // tree_mask1->Add("../../data/analysed/504.root");
-  tree_mask1->Add("../../data/analysed/504_further_shift1.root");
+  // tree_mask1->Add("../../data/analysed/504_further_shift1.root");
+  tree_mask1->Add("../../data/analysed/504_further_shift_2.root");
+
 
 }
 void loadMask2file(){
   tree_mask2 = new TChain("PhysicsTree");
   // tree_mask2->Add("../../data/analysed/505.root");
-  tree_mask2->Add("../../data/analysed/505_further_shift1.root");
+  // tree_mask2->Add("../../data/analysed/505_further_shift1.root");
+  tree_mask2->Add("../../data/analysed/505_further_shift_2.root");
 
 }
 
@@ -121,9 +124,11 @@ void loadFILES() {
   tree = new TChain("PhysicsTree");
   // tree->Add("../../data/analysed/525.root");
   tree->Add("../../data/analysed/525_further_shift_2_full.root");
+  // tree->Add("../../data/analysed/525_further_shift1_full.root");
+
 }
 void loadMask(){
-    TFile *maskfile = new TFile("./target_mask.cpp","READ");
+    // TFile *maskfile = new TFile("./target_mask.cpp","READ");
     // CatsMask* DC_mask = (CatsMask*)maskfile->Get("DC_mask");
     // nptool::DetectorManager::getInstance()->GetDetector<CatsPhysics>("Cats")->SetMask(DC_mask);
 }
@@ -491,14 +496,14 @@ void build_CATS_masks(){
     h_hole1->GetYaxis()->SetTitle("Y Position (mm)");
     TH1F *proj_hole1_X = (TH1F*)h_hole1->ProjectionX();
     proj_hole1_X->Draw();
-    proj_hole1_X->Fit("gaus","Q","",-5,5);
+    proj_hole1_X->Fit("gaus","","",-5,5);
     TF1* Xh1 = (TF1*)proj_hole1_X->GetFunction("gaus");
     Double_t Mean_XH1 =  Xh1->GetParameter(1);
     cout<<"Difference of Hole 1 surveyor - measured: "<<holes_Target_X[RIGHT_MIDDLE] - Mean_XH1<<endl;
     TH1F *proj_hole1_Y = (TH1F*)h_hole1->ProjectionY();
     proj_hole1_Y->SetLineColor(kGreen+2);
     proj_hole1_Y->Draw("same");
-    proj_hole1_Y->Fit("gaus","Q","",-8,8); 
+    proj_hole1_Y->Fit("gaus","","",-8,8); 
     TF1* Yh1 = (TF1*)proj_hole1_Y->GetFunction("gaus");
     Double_t Mean_YH1 =  Yh1->GetParameter(1);
     cout<<"Difference of Hole 1 surveyor - measured (Y): "<<holes_Target_Y[RIGHT_MIDDLE] - Mean_YH1<<endl;
@@ -509,14 +514,14 @@ void build_CATS_masks(){
     h_hole2->GetYaxis()->SetTitle("Y Position (mm)");
     TH1F *proj_hole2_X = (TH1F*)h_hole2->ProjectionX();
     proj_hole2_X->Draw();
-    proj_hole2_X->Fit("gaus","Q","",-5,5); 
+    proj_hole2_X->Fit("gaus","","",-5,5); 
     TF1* Xh2 = (TF1*)proj_hole2_X->GetFunction("gaus");
     Double_t Mean_XH2 =  Xh2->GetParameter(1);
     cout<<"Difference of Hole 2 surveyor - measured: "<<holes_Target_X[IDENTIFIER_HOLE] - Mean_XH2<<endl;
     TH1F *proj_hole2_Y = (TH1F*)h_hole2->ProjectionY();
     proj_hole2_Y->SetLineColor(kGreen+2);
     proj_hole2_Y->Draw("same");
-    proj_hole2_Y->Fit("gaus","Q","",-8,8); 
+    proj_hole2_Y->Fit("gaus","","",-8,8); 
     TF1* Yh2 = (TF1*)proj_hole2_Y->GetFunction("gaus");
     Double_t Mean_YH2 =  Yh2->GetParameter(1);
     cout<<"Difference of Hole 2 surveyor - measured (Y): "<<holes_Target_Y[IDENTIFIER_HOLE] - Mean_YH2<<endl;
@@ -527,14 +532,14 @@ void build_CATS_masks(){
     h_hole3->GetYaxis()->SetTitle("Y Position (mm)");
     TH1F *proj_hole3_X = (TH1F*)h_hole3->ProjectionX();
     proj_hole3_X->Draw();
-    proj_hole3_X->Fit("gaus","Q","",-5,5);
+    proj_hole3_X->Fit("gaus","","",-5,5);
     TF1* Xh3 = (TF1*)proj_hole3_X->GetFunction("gaus");
     Double_t Mean_XH3 =  Xh3->GetParameter(1);
     cout<<"Difference of Hole 3 surveyor - measured: "<<holes_Target_X[CENTER] - Mean_XH3<<endl;
     TH1F *proj_hole3_Y = (TH1F*)h_hole3->ProjectionY();
     proj_hole3_Y->SetLineColor(kGreen+2);
     proj_hole3_Y->Draw("same");
-    proj_hole3_Y->Fit("gaus","Q","",-8,8); 
+    proj_hole3_Y->Fit("gaus","","",-8,8); 
     TF1* Yh3 = (TF1*)proj_hole3_Y->GetFunction("gaus");
     Double_t Mean_YH3 =  Yh3->GetParameter(1);
     cout<<"Difference of Hole 3 surveyor - measured (Y): "<<holes_Target_Y[CENTER] - Mean_YH3<<endl;
@@ -545,14 +550,14 @@ void build_CATS_masks(){
     h_hole4->GetYaxis()->SetTitle("Y Position (mm)");
     TH1F *proj_hole4_X = (TH1F*)h_hole4->ProjectionX();
     proj_hole4_X->Draw();
-    proj_hole4_X->Fit("gaus","Q","",-5,5);
+    proj_hole4_X->Fit("gaus","","",-5,5);
     TF1* Xh4 = (TF1*)proj_hole4_X->GetFunction("gaus");
     Double_t Mean_XH4 =  Xh4->GetParameter(1);
     cout<<"Difference of Hole 4 surveyor - measured: "<<holes_Target_X[BOTTOM_MIDDLE] - Mean_XH4<<endl;
     TH1F *proj_hole4_Y = (TH1F*)h_hole4->ProjectionY();
     proj_hole4_Y->SetLineColor(kGreen+2);
     proj_hole4_Y->Draw("same");
-    proj_hole4_Y->Fit("gaus","Q","",-8,8); 
+    proj_hole4_Y->Fit("gaus","","",-8,8); 
     TF1* Yh4 = (TF1*)proj_hole4_Y->GetFunction("gaus");
     Double_t Mean_YH4 =  Yh4->GetParameter(1);
     cout<<"Difference of Hole 4 surveyor - measured (Y): "<<holes_Target_Y[BOTTOM_MIDDLE] - Mean_YH4<<endl;

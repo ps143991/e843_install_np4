@@ -1,0 +1,4 @@
+[ libNPCATS.so ]
+# List of selected classes
+class TCATSData
+header TCATSData.h

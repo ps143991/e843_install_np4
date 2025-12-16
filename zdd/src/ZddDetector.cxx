@@ -152,7 +152,7 @@ void ZddDetector::BuildPhysicalEvent() {
   // if (m_PhysicsData->IC_Nbr.size() > 0)
   Match_PL();
 
-  Match_Exo();
+  Treat_Exo();
   Match_DC();
   SortIC.clear();
   SortPL.clear();
@@ -160,17 +160,13 @@ void ZddDetector::BuildPhysicalEvent() {
 }
 
 ///////////////////////////////////////////////////////////////////////////
-void ZddDetector::Match_Exo(){
-    m_PhysicsData->Exo_Nbr.clear();
-    m_PhysicsData->Exo_E.clear();
-    m_PhysicsData->Exo_TS.clear();
-    for(auto it = SortEXO.begin(); it != SortEXO.end(); ++it){
-      for (const auto& data: it->second){
-          m_PhysicsData->Exo_Nbr.push_back(it->first);
-          m_PhysicsData->Exo_E.push_back(data.first);
-          m_PhysicsData->Exo_TS.push_back(data.second);
-      }
- }
+void ZddDetector::Treat_Exo() {
+  unsigned int size = m_CalData->GetZDD_EXOMult();
+  for (unsigned int i = 0; i < size; i++) {
+    m_PhysicsData->Exo_Nbr.push_back(m_CalData->GetZDD_EXON(i));
+    m_PhysicsData->Exo_E.push_back(m_CalData->GetZDD_EXOE(i));
+    m_PhysicsData->Exo_TS.push_back(m_CalData->GetZDD_EXOTS(i));
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////////
@@ -186,34 +182,6 @@ void ZddDetector::Match_DC() {
     }
   }
 }
-/*SortIC2.clear();
-
-  for (int ps = 0; ps<6; ps++){ //0->5 5CHIOs ZDD + 1 CHIO E9
-    for (int i=0; i<m_RawData->GetZDD_IC_Mult(ps); i++){  //[0-PS]th det. : 0,1,2,size(0th det)
-      if (m_RawData->GetZDD_IC_E(ps, i) >= m_IC_E_RAW_Threshold) {
-
-        if(!RefTS_Name.empty()){
-          std::string TSName = "IC_"+std::to_string(ps);
-          //cout<<"the TSNAME is "<<TSName<<"should be : "<<ps<<endl;
-          TSEvent->AddTimeStamp(TSName,m_RawData->GetZDD_IC_TS(ps,i));
-          TSEvent->AddTimeStamp(RefTS_Name, RefTS);
-          //cout<<"debug: IC ts: "<<TSName<<" "<<m_RawData->GetZDD_IC_TS(ps,i)<<" refts "<<RefTS_Name<<" "<<RefTS<<endl;
-          if (TSEvent->MatchTS(TSName)){
-                //Trying feeding directly to a map!!
-                //cout<<"made it"<<endl;
-                SortIC2[ps].push_back(std::make_pair(m_RawData->GetZDD_IC_E(ps,i), m_RawData->GetZDD_IC_TS(ps,i)));
-          }
-          TSEvent->ClearTimeStamps();
-        }
-        // else, all datas are filled
-        else{
-          //m_PreTreatedData->SetZDDIC(ps, m_RawData->GetZDD_IC_E(ps,i), m_RawData->GetZDD_IC_TS(ps,i));
-          //cout<<" IC "<<ps+1<<" energy "<<m_RawData->GetZDD_IC_E(ps,i)<<" ts "<<m_RawData->GetZDD_IC_TS(ps,i)<<endl;
-          SortIC2[ps].push_back(std::make_pair(m_RawData->GetZDD_IC_E(ps,i), m_RawData->GetZDD_IC_TS(ps,i)));
-        }
-      }
-    }
-  }*/
 
 void ZddDetector::Match_IC() {
   unsigned long long prevTS = 0;
@@ -279,8 +247,8 @@ void ZddDetector::Match_IC() {
   }
   m_PhysicsData->ICSumGroupMult.push_back(locGroup);
 }
-  //////////////////////////////////////VALERIAN's METHOD//////////////////////
-/* void ZddDetector::Match_PL() {
+
+void ZddDetector::Match_PL() {
   for (unsigned int i = 0; i < m_CalData->GetZDD_PLMult(); i++) {
     SortPL[m_CalData->GetZDD_PLN(i) % 5].push_back(
         std::make_pair(m_CalData->GetZDD_PLE(i), m_CalData->GetZDD_PLTS(i)));
@@ -289,34 +257,17 @@ void ZddDetector::Match_IC() {
     if (it->second.size() == 2) {
       m_PhysicsData->PL_Nbr.push_back(it->first);
       m_PhysicsData->PL_E.push_back(
-          sqrt((it->second)[0].first * (it->second)[1].first ));
+          sqrt((it->second)[0].first * (it->second)[1].first));
       m_PhysicsData->PL_TS.push_back(
           ((it->second)[0].second + (it->second)[1].second) / 2);
     }
   }
-} */
-//////////////////////////////////////////OLD method PS modified//////////////
-
-
-void ZddDetector::Match_PL(){
-    m_PhysicsData->PL_Nbr.clear();
-    m_PhysicsData->PL_E.clear();
-    m_PhysicsData->PL_TS.clear();
-    for(auto it = SortPL.begin(); it != SortPL.end(); ++it){
-      for (const auto& data: it->second){
-          m_PhysicsData->PL_Nbr.push_back(it->first);
-          m_PhysicsData->PL_E.push_back(data.first);
-          m_PhysicsData->PL_TS.push_back(data.second);
-      }
- }
 }
 
 void ZddDetector::PreTreat() {
   ClearPreTreatedData();
   m_IC_Mult = m_RawData->GetZDD_ICMult();
   m_PL_Mult = m_RawData->GetZDD_PLMult();
-  if(m_PL_Mult>0)
-  //cout<<"plastic mult is: "<<m_PL_Mult<<endl;
   m_DC_Mult = m_RawData->GetZDD_DCMult();
   m_EXO_Mult = m_RawData->GetZDD_EXOMult();
   // cout<<"pretreat ran with m_EXO_mult "<<m_EXO_Mult<<endl;
@@ -336,76 +287,41 @@ void ZddDetector::PreTreat() {
                         m_RawData->GetZDD_ICE(i), m_RawData->GetZDD_ICTS(i));
     // }
   }
-  SortPL.clear();
-  for(int ps = 0; ps<10; ps++){
-    for (int i = 0; i<m_RawData->GetZDD_PL_Mult(ps); i++){
-      if (m_RawData->GetZDD_PL_E(ps,i) > m_PL_E_RAW_Threshold){
-        /* if(!RefTS_Name.empty()){
-          std::string TSName = "PL_"+std::to_string(ps);
-          TSEvent->AddTimeStamp(TSName,m_RawData->GetZDD_PL_TS(ps,i));
-          TSEvent->AddTimeStamp(RefTS_Name, RefTS);
 
-          if (TSEvent->MatchTS(TSName)){
-            //m_PreTreatedData->SetZDDPL(ps,m_RawData->GetZDD_PL_E(ps,i), m_RawData->GetZDD_PL_TS(ps,i));
-            SortPL[ps].push_back(std::make_pair(m_RawData->GetZDD_PL_E(ps,i), m_RawData->GetZDD_PL_TS(ps,i)));
-          }
-          TSEvent->ClearTimeStamps();
-        }
-        // else, all datas are filled
-        else{ */
-          //m_PreTreatedData->SetZDDPL(ps, m_RawData->GetZDD_PL_E(ps,i), m_RawData->GetZDD_PL_TS(ps,i));
-          SortPL[ps].push_back(std::make_pair(m_RawData->GetZDD_PL_E(ps,i), m_RawData->GetZDD_PL_TS(ps,i)));
-        //}
-      }
+  for (unsigned int i = 0; i < m_PL_Mult; ++i) {
+    if (m_RawData->GetZDD_PLE(i) > m_PL_E_RAW_Threshold) {
+      m_CalData->SetZDDPL(m_RawData->GetZDD_PLN(i), m_RawData->GetZDD_PLE(i),
+                          m_RawData->GetZDD_PLTS(i));
     }
   }
-  
 
+  // std:: cout << " PS TESTING:::: AM I HERE??" << std::endl;
 
+  for (unsigned int i = 0; i < m_DC_Mult; ++i) {
+    if (m_RawData->GetZDD_DCE(i) > m_DC_E_RAW_Threshold) {
+      m_CalData->SetZDDDC(m_RawData->GetZDD_DCN(i), m_RawData->GetZDD_DCE(i),
+                          m_RawData->GetZDD_DCTS(i));
+    }
+  }
   SortDC.clear();
-  for(int ps = 0; ps<4; ps++){
-    for (int i = 0; i<m_RawData->GetZDD_DC_Mult(ps); i++){
-      if (m_RawData->GetZDD_DC_E(ps,i)>m_DC_E_RAW_Threshold){
-        /*if(!RefTS_Name.empty()){
-          std::string TSName = "DC_"+std::to_string(ps);
-          TSEvent->AddTimeStamp(TSName,m_RawData->GetZDD_DC_TS(ps,i));
-          TSEvent->AddTimeStamp(RefTS_Name, RefTS);
-
-          if (TSEvent->MatchTS(TSName)){
-            m_PreTreatedData->SetZDDDC(ps,m_RawData->GetZDD_DC_E(ps,i), m_RawData->GetZDD_DC_TS(ps,i));
-          }
-          TSEvent->ClearTimeStamps();
-        }
-        // else, all datas are filled
-        else{*/
-          //m_PreTreatedData->SetZDDDC(ps, m_RawData->GetZDD_DC_E(ps,i), m_RawData->GetZDD_DC_TS(ps,i));
-            SortDC[ps].push_back(std::make_pair(m_RawData->GetZDD_DC_E(ps,i), m_RawData->GetZDD_DC_TS(ps,i)));
-        //}
+  for (int ps = 0; ps < 4; ps++) {
+    for (int i = 0; i < m_RawData->GetZDD_DC_Mult(ps); i++) {
+      if (m_RawData->GetZDD_DC_E(ps, i) > m_DC_E_RAW_Threshold) {
+        SortDC[ps].push_back(std::make_pair(m_RawData->GetZDD_DC_E(ps, i),
+                                            m_RawData->GetZDD_DC_TS(ps, i)));
       }
     }
   }
 
-  SortEXO.clear();
-  for(int ps = 0; ps<4; ps++){
-    for (int i = 0; i<m_RawData->GetZDD_EXO_Mult(ps); i++){
-      if (m_RawData->GetZDD_EXO_E(ps,i)>m_EXO_E_RAW_Threshold){
-        /*if(!RefTS_Name.empty()){
-          std::string TSName = "EXO_"+std::to_string(ps);
-          TSEvent->AddTimeStamp(TSName,m_RawData->GetZDD_EXO_TS(ps,i));
-          TSEvent->AddTimeStamp(RefTS_Name, RefTS);
-
-          if (TSEvent->MatchTS(TSName)){
-            m_PreTreatedData->SetZDDEXO(ps,m_RawData->GetZDD_EXO_E(ps,i), m_RawData->GetZDD_EXO_TS(ps,i));
-          }
-          TSEvent->ClearTimeStamps();
-        }
-        // else, all datas are filled
-        else{*/
-          //m_PreTreatedData->SetZDDEXO(ps, m_RawData->GetZDD_EXO_E(ps,i), m_RawData->GetZDD_EXO_TS(ps,i));
-          SortEXO[ps].push_back(std::make_pair(m_RawData->GetZDD_EXO_E(ps,i), m_RawData->GetZDD_EXO_TS(ps,i)));
-        //}
-      }
-    }
+  for (unsigned int i = 0; i < m_EXO_Mult; ++i) {
+    // if (m_RawData->GetZDD_EXOE(i) > m_EXO_E_RAW_Threshold) {
+//    std::cout << "here, PRETREAT----" << std::endl;
+//    std::cout << fZDDEXO_E(i) << std::endl;
+//    std::cout << fZDDEXO_Time(i) << std::endl;
+    m_CalData->SetZDDEXO(m_RawData->GetZDD_EXON(i), fZDDEXO_E(i),
+                         m_RawData->GetZDD_EXOTS(i),
+                         m_RawData->GetZDD_EXOTime(i));
+    // }
   }
 
   // if(m_RawData->GetZDD_DCMult()>0){

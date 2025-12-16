@@ -6,17 +6,26 @@ using namespace std;
 ////////////////////////////////////////////////////////////////////////////////
 void user_analysis::Analysis_ZDD::Init() {
   auto app = nptool::Application::GetApplication();
-
-    tac = std::dynamic_pointer_cast<tac::TacDetector>(app->GetDetector("tac"));
+  
+    gatconf = std::dynamic_pointer_cast<ebye::EbyEDetector>(app->GetDetector("ebye"));
+    // tac = std::dynamic_pointer_cast<tac::TacDetector>(app->GetDetector("tac"));
     zdd = std::dynamic_pointer_cast<zdd::ZddDetector>(app->GetDetector("zdd"));
 }
 
+void user_analysis::Analysis_ZDD::TreatGATCONF(){
+   GATCONFMASTER=*(gatconf->GenericRawBranch["GATCONF"]);
+   if (GATCONFMASTER==1 /* || GATCONFMASTER==2 || GATCONFMASTER==16 || GATCONFMASTER==32 */){
+    decider = true;
+   }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 void user_analysis::Analysis_ZDD::TreatEvent() {
     Clear();
-    TreatZDD();
-    
+    TreatGATCONF();
+    if(decider){
+        TreatZDD();
+    }
 }
 
 void user_analysis::Analysis_ZDD::TreatZDD(){

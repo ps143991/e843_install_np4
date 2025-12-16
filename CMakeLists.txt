@@ -5,6 +5,7 @@ cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
 project(nptool_project CXX)                                                              
 set(CMAKE_CXX_STANDARD 17)
 
+
 add_compile_options("-Wno-return-type-c-linkage") 
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY  ${CMAKE_INSTALL_PREFIX}/bin )   
@@ -55,9 +56,13 @@ else()
   message(STATUS "Geant4 not found: compiling with no Geant4 support" )
 endif()
 
+
+
 if(EXISTS "duplicate.cmake")     
   include("duplicate.cmake")
 endif()
+
+
 
 add_subdirectory("analysis")
 if(${nptool_Geant4_FOUND})

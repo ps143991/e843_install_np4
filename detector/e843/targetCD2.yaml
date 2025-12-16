@@ -1,0 +1,14 @@
+
+# Target "detector" file
+# a target block with a subblock
+target:
+ thickness: 5 um # ~ 0.5 mg/cm2
+ radius: 20 mm
+ material: 
+  name: CD2
+  density: 1.06 g/cm3
+ angle: 0 deg
+ x: 0 mm
+ y: 0 mm
+ z: 0 mm
+ stl file: "/path/to/stl"

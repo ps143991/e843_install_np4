@@ -24,7 +24,6 @@
 #include "TZDDPhysics.h"
 #include "NPReaction.h"
 #include "NPEnergyLoss.h"
-#include "TZDDPhysics.h"
 #include <iostream>
 #include <TVector.h>
 #include <TVector3.h>

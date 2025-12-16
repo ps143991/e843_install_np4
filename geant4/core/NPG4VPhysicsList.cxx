@@ -60,7 +60,7 @@ void nptool::geant4::VPhysicsList::ReadFastProcessConfiguration(std::string& fil
         m_fast_process.push_back(fast_process);
       }
       else {
-        message("yellow", "core", "nptool::geant4::PrimaryGeneratorAction", token + " does not name a beam process");
+        message("yellow", "core", "nptool::geant4::Physics list", token + " does not name a beam process");
       }
     }
   }

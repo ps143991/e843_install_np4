@@ -78,7 +78,7 @@ void nptool::geant4::Source::ReadConfiguration(nptool::InputParser& parser) {
 // Generate Event
 void nptool::geant4::Source::GeneratePrimaries(void* anEvent) {
   for (auto& source : m_sources) {
-    auto m_particleGun = new G4ParticleGun(1);
+  auto m_particleGun = std::make_shared<G4ParticleGun>(1);
     if (!source.particle) {
       auto N = new nptool::Particle(source.particle_name);
       source.particle

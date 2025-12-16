@@ -44,7 +44,6 @@ nptool::geant4::Beam::~Beam() { delete m_Beam; }
 void nptool::geant4::Beam::ReadConfiguration(nptool::InputParser& parser) { m_Beam->ReadConfiguration(parser); }
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 void nptool::geant4::Beam::GeneratePrimaries(void* anEvent) {
-
   if (((G4Event*)anEvent)->GetEventID() == 0) {
     // Define the particle to be shoot
     if (m_Beam->GetZ() == 0 && m_Beam->GetA() == 1)
@@ -66,7 +65,7 @@ void nptool::geant4::Beam::GeneratePrimaries(void* anEvent) {
   ///////////////////////////////////////////////////////////////////////
   // G4ThreeVector InterCoord;
 
-  auto m_particleGun = new G4ParticleGun(1);
+  auto m_particleGun = std::make_shared<G4ParticleGun>(1);
   double InitialBeamEnergy, x0, y0, z0, Beam_thetaX, Beam_phiY;
 
   m_Beam->GenerateRandomEvent(InitialBeamEnergy, x0, y0, z0, Beam_thetaX, Beam_phiY);
@@ -88,7 +87,6 @@ void nptool::geant4::Beam::GeneratePrimaries(void* anEvent) {
   m_particleGun->SetParticlePosition(BeamPos);
   m_particleGun->SetParticleEnergy(InitialBeamEnergy);
   m_particleGun->GeneratePrimaryVertex((G4Event*)anEvent);
-
   // m_ParticleStack->AddBeamParticleToStack(BeamParticle);
 }
 

@@ -1,0 +1,24 @@
+beam:
+  Particle: 24Ne
+  Energy: 192 MeV
+  SigmaEnergy: 0 MeV
+  ZEmission: -1000 mm
+  ZProfile: 0 mm
+  SigmaThetaX: 0 deg
+  SigmaPhiY: 0 deg
+  SigmaX: 0 mm
+  SigmaY: 0 mm
+  MeanThetaX: 0 mm
+  MeanPhiY: 0 mm
+  MeanX: 0 mm
+  MeanY: 0 mm
+
+two-body-reaction:
+  Beam: 24Ne
+  Target: 2H
+  Light: 1H
+  Heavy: 25Ne
+  ExcitationEnergyLight: 0 MeV 
+  ExcitationEnergyHeavy: 0.0 MeV
+  CrossSectionPath: reaction/Ne24dp_CS.txt CS
+  # CrossSectionPath: reaction/flat.txt CS
