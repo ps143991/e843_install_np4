@@ -47,7 +47,7 @@ TCutG *cut_cats1_down;
 void loadFILES() {
   tree = new TChain("PhysicsTree");
 //   tree->Add("/home/sharmap/Workplace/np4/e843/data/analysed/525_further_shift1.root");
-    tree->Add("/home/sharmap/Workplace/np4/e843/data/analysed/523_further_shift_2_full.root");
+    tree->Add("/home/sharmap/Workplace/np4/e843/data/analysed/525_further_shift_2_full.root");
 }
 void loadCUTS(){
   TFile *cut_L = new TFile("/home/sharmap/Workplace/np4/e843/data/analysed/cuts/cut_left.root","READ");
@@ -194,7 +194,7 @@ void build_trajectory(){
         pos_mask_1_Y = -1000.0;
         pos_mask_2_Y = -1000.0;
 
-        if (*GATCONF_r == 2) {
+        if (*GATCONF_r == 4) {
             if(phy_cats_r->PositionOnTargetY > -200 && phy_cats_r->PositionOnTargetX > -200){
 
 

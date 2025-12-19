@@ -875,7 +875,7 @@ void build_DC_6(){
     dc_spot->SetTitle("DC spot");
     dc_spot->GetXaxis()->SetTitle("X Position (mm)");
     dc_spot->GetYaxis()->SetTitle("Y Position (mm)");
-    dc_spot->Rebin2D(8,8);
+    // dc_spot->Rebin2D(8,8);
     dc_spot->Draw("COLZ");
     c15->Update();
 

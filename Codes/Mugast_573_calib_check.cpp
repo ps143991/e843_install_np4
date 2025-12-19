@@ -54,13 +54,13 @@ void loadFILES() {
     tree = new TChain("RawTree");
     // tree->Add("/home/sharmap/Workplace/np4/e843/data/converted/573_with_MMGonly.root");
     tree->Add("/home/sharmap/Workplace/np4/e843/data/converted/573_with_MMGonly0.root");
-    tree->Add("/home/sharmap/Workplace/np4/e843/data/converted/573_with_MMGonly1.root");
-    tree->Add("/home/sharmap/Workplace/np4/e843/data/converted/573_with_MMGonly2.root");
-    tree->Add("/home/sharmap/Workplace/np4/e843/data/converted/573_with_MMGonly3.root");
-    tree->Add("/home/sharmap/Workplace/np4/e843/data/converted/573_with_MMGonly4.root");
-    tree->Add("/home/sharmap/Workplace/np4/e843/data/converted/573_with_MMGonly5.root");
-    tree->Add("/home/sharmap/Workplace/np4/e843/data/converted/573_with_MMGonly6.root");
-    tree->Add("/home/sharmap/Workplace/np4/e843/data/converted/573_with_MMGonly7.root");
+    // tree->Add("/home/sharmap/Workplace/np4/e843/data/converted/573_with_MMGonly1.root");
+    // tree->Add("/home/sharmap/Workplace/np4/e843/data/converted/573_with_MMGonly2.root");
+    // tree->Add("/home/sharmap/Workplace/np4/e843/data/converted/573_with_MMGonly3.root");
+    // tree->Add("/home/sharmap/Workplace/np4/e843/data/converted/573_with_MMGonly4.root");
+    // tree->Add("/home/sharmap/Workplace/np4/e843/data/converted/573_with_MMGonly5.root");
+    // tree->Add("/home/sharmap/Workplace/np4/e843/data/converted/573_with_MMGonly6.root");
+    // tree->Add("/home/sharmap/Workplace/np4/e843/data/converted/573_with_MMGonly7.root");
 }
 
 void loadCalib(){
@@ -121,14 +121,14 @@ void loadCalib(){
 }
 
 
-int Mugast_573_calibrated(){
+int Mugast_573_calib_check(){
 
     std::cout << "Init dummy application to use the detectors" << std::endl;
     auto app = nptool::Application::InitApplication("");
     loadCalib();
     loadFILES();
     cout<<"Total Entries in tree1: "<<tree->GetEntries()<<endl;
-
+    
     TTreeReader reader(tree);
     TTreeReaderValue<mugast::MugastData> mugast_r(reader, "mugast");
     TTreeReaderArray<unsigned short> tele_X(reader, "fMG_DSSDXE_DetectorNbr");
@@ -158,12 +158,14 @@ int Mugast_573_calibrated(){
     long long so_far = 0;
     while(reader.Next() && so_far < 100000) {
         so_far++;
-        if(reader.GetCurrentEntry() % 1000000 == 0) {
-            cout << "Processing entry: " << (static_cast<double>(reader.GetCurrentEntry()) / tree->GetEntries()) * 100.0 << "%" << endl;
-        }
+        // if(reader.GetCurrentEntry() % 1000000 == 0) {
+        //     cout << "Processing entry: " << (static_cast<double>(reader.GetCurrentEntry()) / tree->GetEntries()) * 100.0 << "%" << endl;
+        // }
 
         const int nX = tele_X.GetSize();
         const int nY = tele_Y.GetSize();
+
+        cout<<"size is: "<<nX<<" "<<nY<<endl;
 
         for(int i = 0; i<nX; ++i){
             if (tele_X[i] == tele_under_insp) { // telescope number set at top of the code

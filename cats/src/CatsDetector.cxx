@@ -97,6 +97,14 @@ void CatsDetector::AddCATS(XYZVector C_X1_Y1, XYZVector C_X28_Y1,
                            UShort_t N) {
   m_NumberOfCATS++;
 
+  //debug statements for corners
+
+  cout<<"CATS Detector " << N << " corners: " << endl;
+  cout<<"C_X1_Y1: "<<C_X1_Y1.X()<<" "<<C_X1_Y1.Y()<<" "<<C_X1_Y1.Z()<<endl;
+  cout<<"C_X28_Y1: "<<C_X28_Y1.X()<<" "<<C_X28_Y1.Y()<<" "<<C_X28_Y1.Z()<<endl;
+  cout<<"C_X1_Y28: "<<C_X1_Y28.X()<<" "<<C_X1_Y28.Y()<<" "<<C_X1_Y28.Z()<<endl;
+  cout<<"C_X28_Y28: "<<C_X28_Y28.X()<<" "<<C_X28_Y28.Y()<<" "<<C_X28_Y28.Z()<<endl;
+
   // remove warning
   C_X28_Y28 *= 1;
 
@@ -583,11 +591,13 @@ void CatsDetector::ReadAnalysisConfig() {
         if (DataBuffer.compare(5, 4, "STRX") == 0) {
           channel = atoi(DataBuffer.substr(9).c_str());
           *(m_XChannelStatus[Detector - 1].begin() + channel - 1) = false;
+          cout<<"\033[31m"<<" DISABLING CATS "<<Detector<<" STRIP X "<<channel<<endl<<"\033[0m";
         }
 
         else if (DataBuffer.compare(5, 4, "STRY") == 0) {
           channel = atoi(DataBuffer.substr(9).c_str());
           *(m_YChannelStatus[Detector - 1].begin() + channel - 1) = false;
+          cout<<"\033[31m"<<" DISABLING CATS "<<Detector<<" STRIP Y "<<channel<<endl<<"\033[0m";
         }
 
         else
@@ -622,28 +632,30 @@ void CatsDetector::ReadAnalysisConfig() {
 
       else if (whatToDo == "INVERSIONX") {
         AnalysisConfigFile >> DataBuffer;
-        cout << whatToDo << "  " << DataBuffer;
+        cout << whatToDo << "  " << DataBuffer<<endl;
         int Detector = atoi(DataBuffer.substr(4, 1).c_str());
         for (unsigned int strip = 0; strip < 28; strip++) {
           *(m_CATSXInversion[Detector - 1].begin() + strip) = 27 - strip;
-
           // *(m_CATSXInversion[Detector - 1].begin() + strip) = 28 - strip;
-
         }
+          cout<<"\033[31m"<<" INVERSIONX in CATS "<<Detector<<"\033[0m"<<endl;
+
       }
 
       else if (whatToDo == "INVERSIONY") {
         AnalysisConfigFile >> DataBuffer;
-        cout << whatToDo << "  " << DataBuffer;
+        cout << whatToDo << "  " << DataBuffer<<endl;
         int Detector = atoi(DataBuffer.substr(4, 1).c_str());
         for (unsigned int strip = 0; strip < 28; strip++) {
           *(m_CATSYInversion[Detector - 1].begin() + strip) = 27 - strip;
+
         }
+        cout<<"\033[31m"<<" INVERSIONY in CATS "<<Detector<<"\033[0m"<<endl;
       }
 
       else if (whatToDo == "RECONSTRUCTION_METHOD") {
         AnalysisConfigFile >> DataBuffer;
-        cout << whatToDo << "  " << DataBuffer;
+        cout << whatToDo << "  " << DataBuffer<<endl;
         // DataBuffer is of form CATSNX
         // Look for the CATS Number removing the first 4 letters and the
         // trailling letter
@@ -664,6 +676,7 @@ void CatsDetector::ReadAnalysisConfig() {
         AnalysisConfigFile >> DataBuffer;
         cout << whatToDo << "  " << DataBuffer << endl;
         m_PhysicsData->m_Zproj = atoi(DataBuffer.c_str());
+        cout<<"\033[31m"<<" Target Z Position: "<<m_PhysicsData->m_Zproj<<"\033[0m";
       }
 
       else {

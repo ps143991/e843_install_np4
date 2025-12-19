@@ -17,7 +17,7 @@ void user_analysis::Analysis::Init() {
 
     //red color output message: hello world
 
-    cout<<"\033[1;31m works fine till here "<<endl;
+    // cout<<"\033[1;31m works fine till here "<<endl;
 
 
     
@@ -145,7 +145,7 @@ void user_analysis::Analysis::TreatCATS(){
         CATS1_YY =  cats->m_PhysicsData->PositionY[0];
         CATS2_XX =  cats->m_PhysicsData->PositionX[1];
         CATS2_YY =  cats->m_PhysicsData->PositionY[1];
-    	  BeamImpact = TVector3(-(cats->m_PhysicsData->PositionOnTargetX),(cats->m_PhysicsData->PositionOnTargetY),0);
+    	  BeamImpact = TVector3((cats->m_PhysicsData->PositionOnTargetX),(cats->m_PhysicsData->PositionOnTargetY),0);
         //BeamImpact = TVector3(-(cats->m_PhysicsData->PositionOnTargetX)+1.7,-(cats->m_PhysicsData->PositionOnTargetY)+2.3,0); ///correctone cats3   ====>>>>> OZGE was using this: PS April 23, 2025
         //BeamImpact = TVector3(-(cats->m_PhysicsData->PositionOnTargetX)+1.5,-(cats->m_PhysicsData->PositionOnTargetY)+3,0); ///correctone cats9
         //BeamImpact = TVector3((cats->m_PhysicsData->PositionOnTargetX)-1.835,(cats->m_PhysicsData->PositionOnTargetY)-1.51,0); ///new one cast2
@@ -170,7 +170,7 @@ void user_analysis::Analysis::TreatCATS(){
 
 ////////////////////////////////////////////////////////////////////////////////
 void user_analysis::Analysis::TreatDC(){
-  
+      
 }
   // 
 
@@ -268,10 +268,13 @@ void user_analysis::Analysis::TreatMugast(){      //From TreatMugast in 10March,
                 //      // Part 4 : Theta CM Calculation
             MG_ThetaCM.push_back(reaction_dp->EnergyLabToThetaCM(MG_ELab[countMugast], MG_ThetaLab[countMugast])/deg);
 
-            if(MG_ELab[0]>1.0 && abs(TAC_MMG_CATS1[0]-387)>25 && TAC_CATS_PL[0]>300){
+
+            // work by PS::::::::::::::::::: separating it to find easily ::::::::::::::::::
+
+            /* if(MG_ELab[0]>1.0 && abs(TAC_MMG_CATS1[0]-387)>25 && TAC_CATS_PL[0]>300){
                 Ex_f.push_back(MG_Ex[countMugast]);
                 dc_found = true;
-            }
+            } */
 
             // cout<<"Raw Energy MG: "<<Energy<<" Corrected Energy MG: "<<Energycor<<" Theta Lab MG: "<<MG_ThetaLab[countMugast]<<" Ex. true: "<<MG_Ex[countMugast]<<" Ex. corrected: "<<MG_Ex_lin[countMugast]<<endl;
 
@@ -490,6 +493,9 @@ void user_analysis::Analysis::SetDataOutput(std::shared_ptr<nptool::VDataOutput>
   Tree->Branch("OriginalBeamEnergy2",&OriginalBeamEnergy2);
   Tree->Branch("OriginalBeamEnergync",&OriginalBeamEnergync);
 
+  Tree->Branch("TAC_CATS_PL",&TAC_CATS_PL);
+  Tree->Branch("TAC_MMG_CATS1",&TAC_MMG_CATS1);
+  Tree->Branch("TAC_D4_CATS1nc",&TAC_D4_CATS1nc);
   
   // ------------ EXOGAM ------------
   Tree->Branch("EDC", &EDC); // Doppler corrected energy in EXOGAM
