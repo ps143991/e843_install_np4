@@ -296,6 +296,7 @@ void Reaction::KineRelativistic(double& ThetaLab3, double& KineticEnergyLab3, do
 double Reaction::ReconstructRelativistic(double EnergyLab, double ThetaLab, double PhiLab) {
   // EnergyLab in MeV
   // ThetaLab in rad
+  // cout<<"philab is "<<PhiLab<<endl;
   double E3 = m3 + EnergyLab;
   double p_Lab_3 = sqrt(E3 * E3 - m3 * m3);
   fEnergyImpulsionLab_3 =

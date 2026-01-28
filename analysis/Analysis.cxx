@@ -80,9 +80,22 @@ void user_analysis::Analysis::Init() {
 ////////////////////////////////////////////////////////////////////////////////
 
 void user_analysis::Analysis::TreatGATCONF(){
+
+   if(mugast->m_PhysicsData->DSSD_E.size()==1){
+    if(mugast->m_PhysicsData->DSSD_E[0]>0.88){
+      bMUGAST = true;
+    } else{
+      bMUGAST = false;
+    }
+  }
+  if(must2->m_PhysicsData->Si_E.size() == 1 && must2->m_PhysicsData->CsI_E.size() == 1 && must2->m_PhysicsData->TelescopeNumber.size() == 1){
+    bMUST2 = true;
+  } else bMUST2 = false;
+
    GATCONFMASTER=*(gatconf->GenericRawBranch["GATCONF"]);
    if (GATCONFMASTER==1 /* || GATCONFMASTER==2 || GATCONFMASTER==16 || GATCONFMASTER==32 */){
-    decider = true;
+    if(mugast->m_PhysicsData->DSSD_E.size()==1){
+    decider = true;}
         // cout<<"decider "<<decider<<endl;
 
     GATCONFMASTERTS=*(gatconf->GenericRawBranchTS["GATCONFTS"]);
@@ -96,7 +109,7 @@ void user_analysis::Analysis::TreatEvent() {
     Clear();
     TreatGATCONF();
 
-    if(decider){
+    if(decider && bMUGAST){
     TreatCATS();
       if(bCATS){
         // cout<<"bcats is true in analysis "<<endl;
@@ -105,6 +118,7 @@ void user_analysis::Analysis::TreatEvent() {
         if (dc_found) {TreatDC();}
       }
     }
+    m_keep_event = bCATS && bMUGAST && decider && TAC_TOF ;
 }
 
 void user_analysis::Analysis::TreatTOF(){
@@ -124,7 +138,8 @@ void user_analysis::Analysis::TreatTOF(){
         }
         else if (tac->m_PhysicsData->TAC_Name[i].compare("TAC_D4_CATS1") == 0) {
                 TAC_D4_CATS1nc .push_back( tac->m_PhysicsData->TAC_Time[i]);
-                if (tac->m_PhysicsData->TAC_Time[i] > 0) TAC_TOF = true;
+                if (tac->m_PhysicsData->TAC_Time[i] > 0) {/* cout<<"TAC tof is: "<<tac->m_PhysicsData->TAC_Time[i]<<endl; */ TAC_TOF = true;}
+                
       }
   }
 }
@@ -155,7 +170,7 @@ void user_analysis::Analysis::TreatCATS(){
         //BeamImpact = TVector3(-(cats->m_PhysicsData->PositionOnTargetX),(cats->m_PhysicsData->PositionOnTargetY)-4,0); ///new one cats5
         //BeamImpact = TVector3(-(cats->m_PhysicsData->PositionOnTargetX)+1.5,(cats->m_PhysicsData->PositionOnTargetY)-3,0); ///new one cats8 target centered
         //BeamImpact = TVector3(-(cats->m_PhysicsData->PositionOnTargetX)-0.5,(cats->m_PhysicsData->PositionOnTargetY)-1.3,0);//cats7
-        BeamDirection = TVector3(CATS1_XX - CATS2_XX, CATS1_YY - CATS2_YY, -(cats->m_PhysicsData->PositionZ[0] - cats->m_PhysicsData->PositionZ[1]));
+        BeamDirection = TVector3(CATS2_XX - CATS1_XX, CATS2_YY - CATS1_YY, (cats->m_PhysicsData->PositionZ[1] - cats->m_PhysicsData->PositionZ[0]));
                 
         bCATS = true;
         // cout<<"bcats returned true"<<endl; countPS_bcats++; cout<<"count ps_bcats: "<<countPS_bcats<<" "<<endl;
@@ -186,7 +201,7 @@ void user_analysis::Analysis::TreatMugast(){      //From TreatMugast in 10March,
     for(unsigned int countMugast = 0; countMugast < mugast->m_PhysicsData->DSSD_E.size(); countMugast++){
           // if(countMugast>1)cout<<"more than 2 mugast hit!"<<endl;
         // cout<<"time is: "<<mugast->m_PhysicsData->DSSD_T[countMugast]<<" ";
-        // cout<< "GATCONFMASTERTS: " << GATCONFMASTERTS << endl;
+        // if(GATCONFMASTERTS>32650963337861) cout<< "GATCONFMASTERTS: " << GATCONFMASTERTS << endl;
 
         MG_DetNum.push_back( mugast->m_PhysicsData->TelescopeNumber[countMugast]);
         MG_DetM++;
@@ -203,6 +218,7 @@ void user_analysis::Analysis::TreatMugast(){      //From TreatMugast in 10March,
         if (TAC_TOF==true){
           // cout<<"Debug PS: true or not? "<< TAC_TOF << endl;
           TOF = (Time_0_Ref - TAC_D4_CATS1nc[0]) * Channel_Calib / D4_CATS1_L / 1e7;  // experiment
+          // if(GATCONFMASTERTS>32650963337861) cout<<"TOF is: "<<TOF<<endl;
           reaction_dp->GetNucleus1()->SetTimeOfFlight(TOF);
 
               // cout<<"Debug PS: TOF "<< TOF << endl;
@@ -210,7 +226,7 @@ void user_analysis::Analysis::TreatMugast(){      //From TreatMugast in 10March,
           reaction_dp->SetBeamEnergy(reaction_dp->GetNucleus1()->GetEnergy());
           OriginalBeamEnergy = reaction_dp->GetBeamEnergy();
           if(OriginalBeamEnergy>800){
-            OriginalBeamEnergy = HeavyMylar.Slow(OriginalBeamEnergy, 1.5*micrometer, 0);
+            OriginalBeamEnergy = HeavyMylar.Slow(OriginalBeamEnergy, 8.4*micrometer, 0);
             OriginalBeamEnergy = Beam_Target.Slow(OriginalBeamEnergy, TargetThickness * 0.5, 0);
 
             reaction_dp->SetBeamEnergy(OriginalBeamEnergy);
@@ -262,8 +278,8 @@ void user_analysis::Analysis::TreatMugast(){      //From TreatMugast in 10March,
 
             // Part 3 : Excitation Energy Calculation
 
-            MG_Ex.push_back(reaction_dp->ReconstructRelativistic(Energycor, thetalab_tmp)); //charlies method
-            MG_Ex_lin.push_back((reaction_dp->ReconstructRelativistic(Energy, thetalab_tmp))-(0.01992656*MG_ThetaLab[countMugast]-2.63549658)); //charlies method without correction
+            MG_Ex.push_back(reaction_dp->ReconstructRelativistic(Energycor, thetalab_tmp, philab_tmp)); //charlies method
+            // MG_Ex_lin.push_back((reaction_dp->ReconstructRelativistic(Energy, thetalab_tmp))-(0.01992656*MG_ThetaLab[countMugast]-2.63549658)); //charlies method without correction
             
                 //      // Part 4 : Theta CM Calculation
             MG_ThetaCM.push_back(reaction_dp->EnergyLabToThetaCM(MG_ELab[countMugast], MG_ThetaLab[countMugast])/deg);
@@ -276,7 +292,7 @@ void user_analysis::Analysis::TreatMugast(){      //From TreatMugast in 10March,
                 dc_found = true;
             } */
 
-            // cout<<"Raw Energy MG: "<<Energy<<" Corrected Energy MG: "<<Energycor<<" Theta Lab MG: "<<MG_ThetaLab[countMugast]<<" Ex. true: "<<MG_Ex[countMugast]<<" Ex. corrected: "<<MG_Ex_lin[countMugast]<<endl;
+            // cout<<"Raw Energy MG: "<<Energy<<" Corrected Energy MG: "<<Energycor<<" Theta Lab MG: "<<MG_ThetaLab[countMugast]<<" Ex. true: "<<MG_Ex[countMugast]<<endl;
 
           }
         // cout<<"***********************************************************************************************"<<endl;
@@ -518,7 +534,11 @@ void user_analysis::Analysis::Clear() {
     TAC_D4_CATS1nc.clear();
     TAC_TOF = false;
     decider = false;
+    bMUGAST = false;
+    bMUST2 = false;
+
     bCATS = false;
+    m_keep_event = false;
     MG_DetM= 0;
     MG_DetNum.clear();
     MG_Ex.clear();

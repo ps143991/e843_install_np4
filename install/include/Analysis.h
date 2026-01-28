@@ -31,7 +31,7 @@ namespace user_analysis {
     // if this method return false, the event is discarded
     // Caution : this change the size of the tree,
     // so the friend mecanism no longer work
-    bool FillOutputCondition() { return true; };
+    bool FillOutputCondition() { return m_keep_event; };
 
     void SetDataOutput(std::shared_ptr<nptool::VDataOutput>);
     void SetDataInput(std::shared_ptr<nptool::VDataInput>){};
@@ -67,6 +67,9 @@ namespace user_analysis {
 
     private:
     bool bCATS;
+    bool m_keep_event = false;
+    bool bMUGAST = false;
+    bool bMUST2 = false ;
     int gf;
     double TOF;
     

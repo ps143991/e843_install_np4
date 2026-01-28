@@ -68,7 +68,10 @@ struct CircleGroup {
 
 };
 
-  Double_t holes_Target_X[11] = {-2.4, -3.6, -2.4, -1.5, -7.37, 2.57, -12.34, 7.54, -2.947, -2.071, -0.62586};
+  //Double_t holes_Target_X[11] = {-2.4, -3.6, -2.4, -1.5, -7.37, 2.57, -12.34, 7.54, -2.947, -2.071, -0.62586};
+  //changing the values to positive in x
+  Double_t holes_Target_X[11] = {2.4, 3.6, 2.4, 1.5, 7.37, -2.57, 12.34, -7.54, 2.947, 2.071, 0.62586};
+  
   Double_t holes_Target_Y[11] = {-2.1, 8.8, -2.1, -10.1, -2.6471, -1.5528, -3.194, -1.006, 2.87, -5.082, 0.102821};
 
   enum { OUTER=0, TOP_LEFT, CENTER, BOTTOM_RIGHT, LEFT_MIDDLE, RIGHT_MIDDLE, FAR_LEFT, FAR_RIGHT, TOP_MIDDLE, BOTTOM_MIDDLE, IDENTIFIER_HOLE };
@@ -123,8 +126,10 @@ void loadMask2file(){
 void loadFILES() {
   tree = new TChain("PhysicsTree");
   // tree->Add("../../data/analysed/525.root");
-  tree->Add("../../data/analysed/525_further_shift_2_full.root");
+  // tree->Add("../../data/analysed/525_further_shift_2_full.root");
   // tree->Add("../../data/analysed/525_further_shift1_full.root");
+  tree->Add("../../data/analysed/525_sara_full.root");
+    
 
 }
 void loadMask(){

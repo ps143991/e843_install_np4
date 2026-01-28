@@ -1,0 +1,41 @@
+cats:
+# CATS 1
+ CATSNumber: 1
+ X01_Y01:  42.9372  -42.6154   -1587.1 mm
+ X28_Y01: -28.0790  -41.6154   -1587.1 mm
+ X01_Y28:  42.9372   29.5046   -1587.1 mm
+ X28_Y28: -28.0790   29.5046   -1587.1 mm
+
+cats:
+ #CATS 2
+ CATSNumber: 2
+ X01_Y01:  33.5929  -38.1093   -1090.1 mm
+ X28_Y01: -37.4981  -38.1093   -1090.1 mm
+ X01_Y28:  33.5929   33.0107   -1090.1 mm
+ X28_Y28: -37.4981   33.0107   -1090.1 mm
+ 
+mask:
+ MaskNumber: 1
+ Z: -1732.1 mm
+mask:
+ MaskNumber: 2
+ Z: -1235.1 mm
+
+#x-axis
+#both CATS1X and CATS2X shifted by -0.5mm
+#CATS1X shifted by -0.1mm further
+
+#with these, my mask 1 x is -0.007 mm
+# and mask 2 x is: 0.09 mm
+
+#y-axis
+#CATS2Y shifted by -1.2mm
+#CATS1Y shifted by -0.2mm
+#CATS2Y shifted by -0.2mm
+#CATS1Y shifted by -0.05mm
+#CATS2Y shifted by -0.17mm
+
+#with these, my mask 1 x is 0.19 mm
+# and mask 2 y is: -1.12 mm
+
+# micro shifted both cats to match the target holes better
