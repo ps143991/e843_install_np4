@@ -6,6 +6,7 @@
 #include "TMath.h"
 #include "TCanvas.h"
 #include "TFile.h"
+#include "TSpectrum.h"
 
 using namespace std;
 
@@ -311,7 +312,12 @@ void function_(TH1 *h, double meanPu, double meanAm, double meanCm,
   cm_sat2->SetLineColor(kRed);
   cm_sat2->Draw("same");
   
+
+   Pu->Draw("same");
+ Am->Draw("same");
+ Cm->Draw("same");
 }
+
 void calibrator_3_alpha(){
   load_file();
   f->cd();
@@ -324,7 +330,8 @@ void calibrator_3_alpha(){
   // hh1 = (TH1D*)c1->Get("h_Tele_1_X_strip_066");
   //retrieve the histogram from the canvas defined as OBJ: TH1D
 
-  hh1 = (TH1D*)c1->FindObject("h_T1_X_strip_080");
+  // hh1 = (TH1D*)c1->FindObject("h_T1_X_strip_080");
+   hh1 = (TH1D*)c1->FindObject("h_T1_X_strip_083");
 
 
   if(!hh1){
@@ -333,6 +340,42 @@ void calibrator_3_alpha(){
   }
   TCanvas* c2 = new TCanvas("c2","Fit Triple Alpha Sources",800,600);
   c2->cd();
+  hh1->SetAxisRange(8300, 9000, "X");
   hh1->Draw();
-  function_(hh1, 8797.7, 8840, 8876.79, 3.24, 3.38, 3.86);
+
+  Double_t a = -999, b = -999, c = -999;
+
+  TSpectrum s(50);
+  Int_t nPeaks = s.Search(hh1, 2, "nodraw", 0.05);
+
+  if (nPeaks > 0) {
+
+    struct Peak {
+      Double_t x;
+      Double_t height;
+    };
+
+    std::vector<Peak> peaks;
+
+    Double_t* xpos = s.GetPositionX();
+
+    for (int i = 0; i < nPeaks; i++) {
+      int bin = hh1->FindBin(xpos[i]);
+      peaks.push_back({xpos[i], hh1->GetBinContent(bin)});
+    }
+
+    // sort by descending bin content
+    std::sort(peaks.begin(), peaks.end(),
+              [](const Peak& p1, const Peak& p2) {
+                return p1.height > p2.height;
+              });
+
+    if (peaks.size() > 0) a = peaks[0].x;
+    if (peaks.size() > 1) b = peaks[1].x;
+    if (peaks.size() > 2) c = peaks[2].x;
+  }
+  std::cout << "Detected peak positions: a=" << a << ", b=" << b << ", c=" << c << "\n";
+
+  
+  function_(hh1, a,b,c, 3.24, 3.38, 3.86);
 }
